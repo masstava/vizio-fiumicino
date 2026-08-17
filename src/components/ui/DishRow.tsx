@@ -23,9 +23,9 @@ interface DishRowProps {
 }
 
 export function DishRow({ dish, tone = "light", className }: DishRowProps) {
-  const hasMeta =
-    (dish.badges && dish.badges.length > 0) ||
-    (dish.allergeni && dish.allergeni.length > 0);
+  const hasBadges = dish.badges && dish.badges.length > 0;
+  const hasAllergeni = dish.allergeni && dish.allergeni.length > 0;
+  const hasMeta = hasBadges || hasAllergeni;
 
   return (
     <div
@@ -84,16 +84,20 @@ export function DishRow({ dish, tone = "light", className }: DishRowProps) {
           </p>
         )}
 
-        {/* Badges + Allergens */}
+        {/* Badges e Allergeni — sempre su righe separate */}
         {hasMeta && (
-          <div className="flex flex-wrap items-center gap-2 mt-2">
-            {dish.badges?.map((text) => (
-              <Badge key={text} variant={tone === "dark" ? "dark" : "light"}>
-                {text}
-              </Badge>
-            ))}
-            {dish.allergeni && dish.allergeni.length > 0 && (
-              <AllergenCodes codes={dish.allergeni} tone={tone} />
+          <div className="mt-2 flex flex-col gap-1.5">
+            {hasBadges && (
+              <div className="flex flex-wrap gap-2">
+                {dish.badges!.map((text) => (
+                  <Badge key={text} variant={tone === "dark" ? "dark" : "light"}>
+                    {text}
+                  </Badge>
+                ))}
+              </div>
+            )}
+            {hasAllergeni && (
+              <AllergenCodes codes={dish.allergeni!} tone={tone} />
             )}
           </div>
         )}

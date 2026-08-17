@@ -360,6 +360,69 @@ export default function StyleguidePage() {
         </div>
       </Section>
 
+      {/* ── PREVIEW MOBILE 380px ── */}
+      <Section tone="light">
+        <h2 className="font-serif text-2xl font-medium text-ink mb-2">
+          Preview mobile — 380px
+        </h2>
+        <p className="font-sans text-sm text-muted mb-8">
+          Contenitore fisso a 380px per verificare la resa su smartphone
+          senza ridimensionare la finestra.
+        </p>
+
+        {/* Cornice device */}
+        <div className="mx-auto w-[380px] max-w-full border border-ink/20 rounded-[2px] overflow-hidden shadow-sm">
+
+          {/* Sezione chiara */}
+          <div className="bg-cream px-5 py-5">
+            <p className="font-sans text-[9px] tracking-[0.18em] uppercase text-muted mb-4">
+              Componenti — sfondo chiaro
+            </p>
+            <div className="mb-4">
+              <Button variant="primary">Prenota un tavolo</Button>
+            </div>
+            <div className="flex flex-wrap gap-2 mb-4">
+              <Badge variant="light">Signature</Badge>
+              <Badge variant="light">Stagionale</Badge>
+              <Badge variant="light">Senza glutine</Badge>
+            </div>
+            <div className="flex gap-6 mb-3">
+              <PriceTag price={24.0} tone="light" />
+              <PriceTag price={8.5} variable={true} tone="light" />
+            </div>
+            <AllergenCodes codes={[1, 3, 7, 12]} tone="light" />
+          </div>
+
+          {/* DishRow su chiaro — badge multipli */}
+          <div className="bg-cream px-5">
+            <p className="font-sans text-[9px] tracking-[0.18em] uppercase text-muted py-3 border-t border-ink/10">
+              DishRow con badge multipli
+            </p>
+            {DISHES_LIGHT.map((dish) => (
+              <DishRow key={`mob-${dish.id}`} dish={dish} tone="light" />
+            ))}
+          </div>
+
+          {/* Sezione scura */}
+          <div className="bg-dark px-5 py-5">
+            <p className="font-sans text-[9px] tracking-[0.18em] uppercase text-muted-dark mb-4">
+              Componenti — sfondo scuro
+            </p>
+            <div className="mb-4">
+              <Button variant="outline">Scopri l&apos;experience</Button>
+            </div>
+            <div className="flex flex-wrap gap-2 mb-4">
+              <Badge variant="dark">Experience</Badge>
+              <Badge variant="dark">Solo su prenotazione</Badge>
+            </div>
+            {DISHES_DARK.map((dish) => (
+              <DishRow key={`mob-${dish.id}`} dish={dish} tone="dark" />
+            ))}
+          </div>
+
+        </div>
+      </Section>
+
       {/* Footer */}
       <Section tone="dark">
         <p className="font-sans text-xs text-muted-dark text-center">
