@@ -124,7 +124,7 @@ export function DishForm({
     prezzo: prezzo ? Number(prezzo) : null,
     prezzo_variabile: prezzoVariabile,
     foto_url: fotoPreviewUrl ?? fotoUrl,
-    allergeni: Array.from(allergeniSelected).sort((a, b) => a - b),
+    allergeni: Array.from(allergeniSelected),
     badges: badges.map((b) => b.testo).filter((t) => t.trim().length > 0),
   };
 

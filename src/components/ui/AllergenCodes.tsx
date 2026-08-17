@@ -13,6 +13,11 @@ export function AllergenCodes({
 }: AllergenCodesProps) {
   if (codes.length === 0) return null;
 
+  // Unica fonte di verità per l'ordine di visualizzazione: sempre
+  // crescente, indipendentemente da come arriva l'array in ingresso
+  // (dati grezzi dal DB, selezione locale nel form, ecc.).
+  const sorted = [...codes].sort((a, b) => a - b);
+
   return (
     <span
       className={cn(
@@ -20,9 +25,9 @@ export function AllergenCodes({
         tone === "light" ? "text-muted" : "text-muted-dark",
         className,
       )}
-      title={`Allergeni: ${codes.join(", ")}`}
+      title={`Allergeni: ${sorted.join(", ")}`}
     >
-      {codes.join(" ")}
+      {sorted.join(" ")}
     </span>
   );
 }
