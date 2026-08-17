@@ -23,6 +23,28 @@ export async function deletePiatto(id: string) {
   revalidatePath("/gestione/menu");
 }
 
+export interface OrdinePiatto {
+  id: string;
+  ordine: number;
+}
+
+export async function reorderPiatti(
+  categoriaId: string,
+  ordini: OrdinePiatto[],
+) {
+  const supabase = await createClient();
+
+  // Una singola chiamata RPC = un'unica istruzione SQL batch,
+  // atomica: l'intera categoria si riordina o nessuna riga cambia.
+  const { error } = await supabase.rpc("reorder_piatti", {
+    p_categoria_id: categoriaId,
+    p_ordini: ordini,
+  });
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/gestione/menu");
+}
+
 export interface SavePiattoInput {
   id: string | null;
   categoria_id: string;

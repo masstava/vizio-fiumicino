@@ -1,9 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { AdminDishRow } from "./AdminDishRow";
-import { deletePiatto } from "../_actions";
-import type { MacroGroup } from "./types";
+import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  TouchSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { SortableDishRow } from "./SortableDishRow";
+import { deletePiatto, reorderPiatti } from "../_actions";
+import type { MacroGroup, PiattoListItem } from "./types";
 
 interface MenuListClientProps {
   groups: MacroGroup[];
@@ -11,6 +27,21 @@ interface MenuListClientProps {
 
 export function MenuListClient({ groups: initialGroups }: MenuListClientProps) {
   const [groups, setGroups] = useState(initialGroups);
+
+  const sensors = useSensors(
+    // Mouse/trackpad: una piccola soglia di distanza evita che un
+    // semplice click sui pulsanti della riga venga scambiato per drag.
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    // Touch: un breve delay lascia lo scroll naturale della pagina
+    // funzionare; solo una pressione prolungata sulla maniglia avvia
+    // il trascinamento.
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 200, tolerance: 8 },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
   function removeLocally(piattoId: string) {
     setGroups((prev) =>
@@ -38,6 +69,46 @@ export function MenuListClient({ groups: initialGroups }: MenuListClientProps) {
       setGroups(previousGroups);
       console.error(err);
       window.alert("Errore durante l'eliminazione. Riprova.");
+    }
+  }
+
+  function setCategoriaPiatti(categoriaId: string, piatti: PiattoListItem[]) {
+    setGroups((prev) =>
+      prev.map((macro) => ({
+        ...macro,
+        categorie: macro.categorie.map((cat) =>
+          cat.id === categoriaId ? { ...cat, piatti } : cat,
+        ),
+      })),
+    );
+  }
+
+  async function handleDragEnd(
+    categoriaId: string,
+    piatti: PiattoListItem[],
+    event: DragEndEvent,
+  ) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = piatti.findIndex((p) => p.id === active.id);
+    const newIndex = piatti.findIndex((p) => p.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const reordered = arrayMove(piatti, oldIndex, newIndex);
+
+    // Ottimistico: l'ordine visivo cambia subito, senza aspettare il server.
+    setCategoriaPiatti(categoriaId, reordered);
+
+    try {
+      await reorderPiatti(
+        categoriaId,
+        reordered.map((p, index) => ({ id: p.id, ordine: index })),
+      );
+    } catch (err) {
+      setCategoriaPiatti(categoriaId, piatti); // rollback all'ordine precedente
+      console.error(err);
+      window.alert("Errore durante il riordino. Riprova.");
     }
   }
 
@@ -73,15 +144,28 @@ export function MenuListClient({ groups: initialGroups }: MenuListClientProps) {
                     <p className="font-sans text-[10px] tracking-widest uppercase text-muted mb-1">
                       {cat.nome}
                     </p>
-                    <div>
-                      {cat.piatti.map((dish) => (
-                        <AdminDishRow
-                          key={dish.id}
-                          dish={dish}
-                          onDelete={() => handleDelete(dish.id, dish.nome)}
-                        />
-                      ))}
-                    </div>
+                    <DndContext
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={(event) =>
+                        handleDragEnd(cat.id, cat.piatti, event)
+                      }
+                    >
+                      <SortableContext
+                        items={cat.piatti.map((p) => p.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        <div>
+                          {cat.piatti.map((dish) => (
+                            <SortableDishRow
+                              key={dish.id}
+                              dish={dish}
+                              onDelete={() => handleDelete(dish.id, dish.nome)}
+                            />
+                          ))}
+                        </div>
+                      </SortableContext>
+                    </DndContext>
                   </div>
                 );
               })}
