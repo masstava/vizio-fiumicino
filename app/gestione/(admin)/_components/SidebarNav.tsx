@@ -18,7 +18,10 @@ export function SidebarNav() {
   return (
     <nav>
       {NAV_ITEMS.map((item) => {
-        const isActive = pathname === item.href;
+        const isActive =
+          item.href === "/gestione"
+            ? pathname === "/gestione"
+            : pathname.startsWith(item.href);
         return (
           <Link
             key={item.href}
