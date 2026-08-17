@@ -129,12 +129,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 10,
   },
-  dayBlock: {
-    marginBottom: 18,
-  },
   row: {
     flexDirection: "row",
     alignItems: "flex-end",
+    marginBottom: 18,
   },
   dayName: {
     fontFamily: "Fraunces",
@@ -155,14 +153,6 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     fontSize: 17,
     color: COLORS.bordeaux,
-  },
-  extraTime: {
-    fontFamily: "Fraunces",
-    fontWeight: 600,
-    fontSize: 17,
-    color: COLORS.bordeaux,
-    textAlign: "right",
-    marginTop: 3,
   },
 });
 
@@ -186,6 +176,14 @@ interface OrariDocumentProps {
 function formatFascia(fascia: OrarioFascia): string {
   if (!fascia.apertura || !fascia.chiusura) return "CHIUSO";
   return `${fascia.apertura} – ${fascia.chiusura}`;
+}
+
+// Tutte le fasce di un giorno stanno sulla stessa riga (separate da
+// "/"), non una sotto l'altra: con più giorni a doppia fascia, righe
+// impilate spingerebbero il footer fuori dalla singola pagina A4.
+function formatGiorno(giorno: OrarioGiorno): string {
+  if (giorno.chiuso || giorno.fasce.length === 0) return "CHIUSO";
+  return giorno.fasce.map(formatFascia).join(" / ");
 }
 
 export function OrariDocument({
@@ -216,27 +214,13 @@ export function OrariDocument({
             ) : null}
           </View>
 
-          {giorni.map((giorno) => {
-            const displayFasce =
-              giorno.chiuso || giorno.fasce.length === 0
-                ? [{ apertura: null, chiusura: null }]
-                : giorno.fasce;
-
-            return (
-              <View key={giorno.nome} style={styles.dayBlock}>
-                <View style={styles.row}>
-                  <Text style={styles.dayName}>{giorno.nome.toUpperCase()}</Text>
-                  <View style={styles.dottedLine} />
-                  <Text style={styles.time}>{formatFascia(displayFasce[0])}</Text>
-                </View>
-                {displayFasce.slice(1).map((fascia, index) => (
-                  <Text key={index} style={styles.extraTime}>
-                    {formatFascia(fascia)}
-                  </Text>
-                ))}
-              </View>
-            );
-          })}
+          {giorni.map((giorno) => (
+            <View key={giorno.nome} style={styles.row}>
+              <Text style={styles.dayName}>{giorno.nome.toUpperCase()}</Text>
+              <View style={styles.dottedLine} />
+              <Text style={styles.time}>{formatGiorno(giorno)}</Text>
+            </View>
+          ))}
         </View>
 
         {hasFooterImage ? (
