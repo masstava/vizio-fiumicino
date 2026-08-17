@@ -110,12 +110,12 @@ const styles = StyleSheet.create({
   },
   titleBlock: {
     alignItems: "center",
-    marginBottom: 52,
+    marginBottom: 56,
   },
   title: {
     fontFamily: "Fraunces",
     fontWeight: 500,
-    fontSize: 20,
+    fontSize: 40,
     letterSpacing: 3,
     color: COLORS.bordeaux,
     textAlign: "center",
@@ -123,44 +123,58 @@ const styles = StyleSheet.create({
   subtitle: {
     fontFamily: "Fraunces",
     fontWeight: 400,
-    fontSize: 12,
+    fontSize: 24,
     letterSpacing: 1,
     color: COLORS.muted,
     textAlign: "center",
-    marginTop: 8,
+    marginTop: 10,
+  },
+  dayBlock: {
+    marginBottom: 18,
   },
   row: {
     flexDirection: "row",
     alignItems: "flex-end",
-    marginBottom: 30,
   },
   dayName: {
     fontFamily: "Fraunces",
     fontWeight: 400,
-    fontSize: 28,
+    fontSize: 17,
     color: COLORS.ink,
   },
   dottedLine: {
     flexGrow: 1,
-    marginHorizontal: 12,
-    marginBottom: 9,
-    borderBottomWidth: 1.5,
+    marginHorizontal: 8,
+    marginBottom: 5,
+    borderBottomWidth: 1,
     borderBottomStyle: "dotted",
     borderBottomColor: COLORS.muted,
   },
   time: {
     fontFamily: "Fraunces",
     fontWeight: 600,
-    fontSize: 28,
+    fontSize: 17,
     color: COLORS.bordeaux,
   },
+  extraTime: {
+    fontFamily: "Fraunces",
+    fontWeight: 600,
+    fontSize: 17,
+    color: COLORS.bordeaux,
+    textAlign: "right",
+    marginTop: 3,
+  },
 });
+
+export interface OrarioFascia {
+  apertura: string | null;
+  chiusura: string | null;
+}
 
 export interface OrarioGiorno {
   nome: string;
   chiuso: boolean;
-  apertura: string | null;
-  chiusura: string | null;
+  fasce: OrarioFascia[];
 }
 
 interface OrariDocumentProps {
@@ -169,9 +183,9 @@ interface OrariDocumentProps {
   sottotitolo?: string;
 }
 
-function formatOrario(giorno: OrarioGiorno): string {
-  if (giorno.chiuso || !giorno.apertura || !giorno.chiusura) return "CHIUSO";
-  return `${giorno.apertura} – ${giorno.chiusura}`;
+function formatFascia(fascia: OrarioFascia): string {
+  if (!fascia.apertura || !fascia.chiusura) return "CHIUSO";
+  return `${fascia.apertura} – ${fascia.chiusura}`;
 }
 
 export function OrariDocument({
@@ -202,13 +216,27 @@ export function OrariDocument({
             ) : null}
           </View>
 
-          {giorni.map((giorno) => (
-            <View key={giorno.nome} style={styles.row}>
-              <Text style={styles.dayName}>{giorno.nome.toUpperCase()}</Text>
-              <View style={styles.dottedLine} />
-              <Text style={styles.time}>{formatOrario(giorno)}</Text>
-            </View>
-          ))}
+          {giorni.map((giorno) => {
+            const displayFasce =
+              giorno.chiuso || giorno.fasce.length === 0
+                ? [{ apertura: null, chiusura: null }]
+                : giorno.fasce;
+
+            return (
+              <View key={giorno.nome} style={styles.dayBlock}>
+                <View style={styles.row}>
+                  <Text style={styles.dayName}>{giorno.nome.toUpperCase()}</Text>
+                  <View style={styles.dottedLine} />
+                  <Text style={styles.time}>{formatFascia(displayFasce[0])}</Text>
+                </View>
+                {displayFasce.slice(1).map((fascia, index) => (
+                  <Text key={index} style={styles.extraTime}>
+                    {formatFascia(fascia)}
+                  </Text>
+                ))}
+              </View>
+            );
+          })}
         </View>
 
         {hasFooterImage ? (

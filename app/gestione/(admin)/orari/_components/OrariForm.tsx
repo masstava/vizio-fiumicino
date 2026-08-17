@@ -4,47 +4,106 @@ import { useState } from "react";
 import { cn } from "@/src/lib/utils";
 import { Button } from "@/src/components/ui/Button";
 import { Switch } from "@/src/components/ui/Switch";
-import { saveOrari } from "../_actions";
+import { saveOrari, type FasciaInput } from "../_actions";
 import { formatOrariPreview } from "./formatPreview";
-import type { OrarioRow } from "./types";
+import type { OrarioGiornoRow } from "./types";
 
-interface RowState {
+interface FasciaState {
+  key: string;
+  apertura: string;
+  chiusura: string;
+}
+
+interface DayState {
   giorno_settimana: number;
   nome: string;
   chiuso: boolean;
-  apertura: string;
-  chiusura: string;
+  fasce: FasciaState[];
 }
 
 function toInputTime(value: string | null): string {
   return value ? value.slice(0, 5) : "";
 }
 
-function buildInitialRows(initialOrari: OrarioRow[]): RowState[] {
-  return initialOrari.map((r) => ({
-    giorno_settimana: r.giorno_settimana,
-    nome: r.nome,
-    chiuso: !r.apertura && !r.chiusura,
-    apertura: toInputTime(r.apertura),
-    chiusura: toInputTime(r.chiusura),
-  }));
+function buildInitialDays(initialOrari: OrarioGiornoRow[]): DayState[] {
+  return initialOrari.map((day) => {
+    const validFasce = day.fasce.filter((f) => f.apertura && f.chiusura);
+    const chiuso = validFasce.length === 0;
+
+    return {
+      giorno_settimana: day.giorno_settimana,
+      nome: day.nome,
+      chiuso,
+      fasce: chiuso
+        ? [{ key: day.fasce[0]?.id ?? crypto.randomUUID(), apertura: "", chiusura: "" }]
+        : validFasce.map((f) => ({
+            key: f.id,
+            apertura: toInputTime(f.apertura),
+            chiusura: toInputTime(f.chiusura),
+          })),
+    };
+  });
 }
 
 const inputClass =
   "bg-cream border border-ink/20 rounded-[2px] px-3 py-1.5 font-sans text-sm text-ink focus:outline-none focus:border-bordeaux/50 transition-colors disabled:opacity-40";
 
-export function OrariForm({ initialOrari }: { initialOrari: OrarioRow[] }) {
-  const [rows, setRows] = useState<RowState[]>(() =>
-    buildInitialRows(initialOrari),
-  );
+export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] }) {
+  const [days, setDays] = useState<DayState[]>(() => buildInitialDays(initialOrari));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [justSaved, setJustSaved] = useState(false);
 
-  function updateRow(index: number, patch: Partial<RowState>) {
+  function updateDay(dayIndex: number, patch: Partial<DayState>) {
     setJustSaved(false);
-    setRows((prev) =>
-      prev.map((r, i) => (i === index ? { ...r, ...patch } : r)),
+    setDays((prev) => prev.map((d, i) => (i === dayIndex ? { ...d, ...patch } : d)));
+  }
+
+  function updateFascia(
+    dayIndex: number,
+    fasciaIndex: number,
+    patch: Partial<FasciaState>,
+  ) {
+    setJustSaved(false);
+    setDays((prev) =>
+      prev.map((d, i) =>
+        i === dayIndex
+          ? {
+              ...d,
+              fasce: d.fasce.map((f, fi) =>
+                fi === fasciaIndex ? { ...f, ...patch } : f,
+              ),
+            }
+          : d,
+      ),
+    );
+  }
+
+  function addFascia(dayIndex: number) {
+    setJustSaved(false);
+    setDays((prev) =>
+      prev.map((d, i) =>
+        i === dayIndex
+          ? {
+              ...d,
+              fasce: [
+                ...d.fasce,
+                { key: crypto.randomUUID(), apertura: "", chiusura: "" },
+              ],
+            }
+          : d,
+      ),
+    );
+  }
+
+  function removeFascia(dayIndex: number, fasciaIndex: number) {
+    setJustSaved(false);
+    setDays((prev) =>
+      prev.map((d, i) =>
+        i === dayIndex
+          ? { ...d, fasce: d.fasce.filter((_, fi) => fi !== fasciaIndex) }
+          : d,
+      ),
     );
   }
 
@@ -52,13 +111,31 @@ export function OrariForm({ initialOrari }: { initialOrari: OrarioRow[] }) {
     setSaving(true);
     setError(null);
     try {
-      await saveOrari(
-        rows.map((r) => ({
-          giorno_settimana: r.giorno_settimana,
-          apertura: r.chiuso ? null : r.apertura || null,
-          chiusura: r.chiuso ? null : r.chiusura || null,
-        })),
-      );
+      const rows: FasciaInput[] = days.flatMap((day): FasciaInput[] => {
+        const validFasce = day.chiuso
+          ? []
+          : day.fasce.filter((f) => f.apertura && f.chiusura);
+
+        if (validFasce.length === 0) {
+          return [
+            {
+              giorno_settimana: day.giorno_settimana,
+              ordine: 0,
+              apertura: null,
+              chiusura: null,
+            },
+          ];
+        }
+
+        return validFasce.map((f, index) => ({
+          giorno_settimana: day.giorno_settimana,
+          ordine: index,
+          apertura: f.apertura,
+          chiusura: f.chiusura,
+        }));
+      });
+
+      await saveOrari(rows);
       setJustSaved(true);
     } catch (err) {
       setError(
@@ -69,47 +146,88 @@ export function OrariForm({ initialOrari }: { initialOrari: OrarioRow[] }) {
     }
   }
 
-  const previewText = formatOrariPreview(rows);
+  const previewText = formatOrariPreview(
+    days.map((d) => ({
+      nome: d.nome,
+      chiuso: d.chiuso,
+      fasce: d.chiuso
+        ? []
+        : d.fasce
+            .filter((f) => f.apertura && f.chiusura)
+            .map((f) => ({ apertura: f.apertura, chiusura: f.chiusura })),
+    })),
+  );
 
   return (
     <div className="max-w-2xl">
       <div>
-        {rows.map((row, index) => (
+        {days.map((day, dayIndex) => (
           <div
-            key={row.giorno_settimana}
-            className="flex flex-wrap items-center gap-4 py-3 border-b border-ink/10"
+            key={day.giorno_settimana}
+            className="py-4 border-b border-ink/10"
           >
-            <span className="font-sans text-sm font-medium text-ink w-24 flex-shrink-0">
-              {row.nome}
-            </span>
-
-            <Switch
-              checked={row.chiuso}
-              onChange={(chiuso) => updateRow(index, { chiuso })}
-              label="Chiuso"
-            />
-
-            <div className="flex items-center gap-2">
-              <label className="font-sans text-xs text-muted">Apertura</label>
-              <input
-                type="time"
-                disabled={row.chiuso}
-                value={row.apertura}
-                onChange={(e) => updateRow(index, { apertura: e.target.value })}
-                className={cn(inputClass, "w-28")}
+            <div className="flex flex-wrap items-center gap-4">
+              <span className="font-sans text-sm font-medium text-ink w-24 flex-shrink-0">
+                {day.nome}
+              </span>
+              <Switch
+                checked={day.chiuso}
+                onChange={(chiuso) => updateDay(dayIndex, { chiuso })}
+                label="Chiuso"
               />
             </div>
 
-            <div className="flex items-center gap-2">
-              <label className="font-sans text-xs text-muted">Chiusura</label>
-              <input
-                type="time"
-                disabled={row.chiuso}
-                value={row.chiusura}
-                onChange={(e) => updateRow(index, { chiusura: e.target.value })}
-                className={cn(inputClass, "w-28")}
-              />
-            </div>
+            {!day.chiuso && (
+              <div className="mt-3 sm:pl-28 space-y-2">
+                {day.fasce.map((fascia, fasciaIndex) => (
+                  <div key={fascia.key} className="flex items-center gap-2">
+                    <label className="font-sans text-xs text-muted">
+                      Apertura
+                    </label>
+                    <input
+                      type="time"
+                      value={fascia.apertura}
+                      onChange={(e) =>
+                        updateFascia(dayIndex, fasciaIndex, {
+                          apertura: e.target.value,
+                        })
+                      }
+                      className={cn(inputClass, "w-28")}
+                    />
+                    <label className="font-sans text-xs text-muted">
+                      Chiusura
+                    </label>
+                    <input
+                      type="time"
+                      value={fascia.chiusura}
+                      onChange={(e) =>
+                        updateFascia(dayIndex, fasciaIndex, {
+                          chiusura: e.target.value,
+                        })
+                      }
+                      className={cn(inputClass, "w-28")}
+                    />
+                    {day.fasce.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeFascia(dayIndex, fasciaIndex)}
+                        className="font-sans text-lg leading-none text-muted hover:text-bordeaux px-1"
+                        aria-label="Rimuovi fascia oraria"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => addFascia(dayIndex)}
+                  className="font-sans text-xs text-bordeaux hover:opacity-70"
+                >
+                  + Aggiungi fascia oraria
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>

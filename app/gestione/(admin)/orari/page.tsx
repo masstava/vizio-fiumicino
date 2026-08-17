@@ -1,7 +1,7 @@
 import { createClient } from "@/src/lib/supabase/server";
 import { OrariForm } from "./_components/OrariForm";
 import { PdfDownloadControls } from "./_components/PdfDownloadControls";
-import type { OrarioRow } from "./_components/types";
+import type { OrarioFasciaRow, OrarioGiornoRow } from "./_components/types";
 
 export const dynamic = "force-dynamic";
 
@@ -20,45 +20,62 @@ export default async function OrariPage() {
 
   const { data: existingRows } = await supabase
     .from("orari")
-    .select("giorno_settimana, apertura, chiusura")
-    .order("giorno_settimana");
+    .select("id, giorno_settimana, ordine, apertura, chiusura")
+    .order("giorno_settimana")
+    .order("ordine");
 
-  const existingByDay = new Map(
-    (existingRows ?? []).map((r) => [r.giorno_settimana, r]),
+  const rowsByDay = new Map<number, OrarioFasciaRow[]>();
+  (existingRows ?? []).forEach((r) => {
+    const arr = rowsByDay.get(r.giorno_settimana) ?? [];
+    arr.push({
+      id: r.id,
+      ordine: r.ordine,
+      apertura: r.apertura,
+      chiusura: r.chiusura,
+    });
+    rowsByDay.set(r.giorno_settimana, arr);
+  });
+
+  // Primo accesso: i giorni senza nessuna fascia vengono inizializzati
+  // con una fascia vuota (chiuso di default). Non c'è più un vincolo
+  // di unicità su giorno_settimana da sfruttare per un upsert sicuro
+  // contro le race concorrenti: accettabile, è uno scenario solo di
+  // primo avvio (nel peggiore dei casi una fascia "chiuso" duplicata,
+  // visibile e rimovibile subito dall'admin).
+  const missingDays = GIORNI_LABELS.map((_, giorno) => giorno).filter(
+    (giorno) => !rowsByDay.has(giorno),
   );
 
-  // Primo accesso: la tabella "orari" non ha ancora le 7 righe.
-  // Le inizializziamo con orari nulli. Upsert + ignoreDuplicates
-  // rende l'operazione sicura anche se due utenti la eseguono
-  // in contemporanea.
-  if (existingByDay.size < 7) {
-    const missing = GIORNI_LABELS.map((_, giorno) => giorno)
-      .filter((giorno) => !existingByDay.has(giorno))
-      .map((giorno) => ({
-        giorno_settimana: giorno,
-        apertura: null,
-        chiusura: null,
-      }));
+  if (missingDays.length > 0) {
+    const toInsert = missingDays.map((giorno) => ({
+      giorno_settimana: giorno,
+      ordine: 0,
+      apertura: null,
+      chiusura: null,
+    }));
 
-    if (missing.length > 0) {
-      await supabase
-        .from("orari")
-        .upsert(missing, {
-          onConflict: "giorno_settimana",
-          ignoreDuplicates: true,
-        });
-    }
+    const { data: inserted } = await supabase
+      .from("orari")
+      .insert(toInsert)
+      .select("id, giorno_settimana, ordine, apertura, chiusura");
+
+    (inserted ?? []).forEach((r) => {
+      rowsByDay.set(r.giorno_settimana, [
+        {
+          id: r.id,
+          ordine: r.ordine,
+          apertura: r.apertura,
+          chiusura: r.chiusura,
+        },
+      ]);
+    });
   }
 
-  const orari: OrarioRow[] = GIORNI_LABELS.map((nome, giorno) => {
-    const row = existingByDay.get(giorno);
-    return {
-      giorno_settimana: giorno,
-      nome,
-      apertura: row?.apertura ?? null,
-      chiusura: row?.chiusura ?? null,
-    };
-  });
+  const orari: OrarioGiornoRow[] = GIORNI_LABELS.map((nome, giorno) => ({
+    giorno_settimana: giorno,
+    nome,
+    fasce: (rowsByDay.get(giorno) ?? []).slice().sort((a, b) => a.ordine - b.ordine),
+  }));
 
   return (
     <div className="p-8 md:p-12">

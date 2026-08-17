@@ -29,25 +29,32 @@ export async function GET(request: NextRequest) {
 
   const { data: rows, error } = await supabase
     .from("orari")
-    .select("giorno_settimana, apertura, chiusura")
-    .order("giorno_settimana");
+    .select("giorno_settimana, ordine, apertura, chiusura")
+    .order("giorno_settimana")
+    .order("ordine");
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  const byDay = new Map((rows ?? []).map((r) => [r.giorno_settimana, r]));
+  const byDay = new Map<
+    number,
+    { apertura: string | null; chiusura: string | null }[]
+  >();
+  (rows ?? []).forEach((r) => {
+    const arr = byDay.get(r.giorno_settimana) ?? [];
+    arr.push({
+      apertura: toDisplayTime(r.apertura),
+      chiusura: toDisplayTime(r.chiusura),
+    });
+    byDay.set(r.giorno_settimana, arr);
+  });
 
   const giorni: OrarioGiorno[] = GIORNI_LABELS.map((nome, giorno) => {
-    const row = byDay.get(giorno);
-    const apertura = toDisplayTime(row?.apertura);
-    const chiusura = toDisplayTime(row?.chiusura);
-    return {
-      nome,
-      chiuso: !apertura && !chiusura,
-      apertura,
-      chiusura,
-    };
+    const fasce = byDay.get(giorno) ?? [];
+    const chiuso =
+      fasce.length === 0 || fasce.every((f) => !f.apertura && !f.chiusura);
+    return { nome, chiuso, fasce };
   });
 
   // OrariDocument non usa hook: chiamarlo come funzione pura restituisce

@@ -1,13 +1,28 @@
-interface RowForPreview {
-  nome: string;
-  chiuso: boolean;
+interface FasciaForPreview {
   apertura: string;
   chiusura: string;
 }
 
+interface RowForPreview {
+  nome: string;
+  chiuso: boolean;
+  fasce: FasciaForPreview[];
+}
+
+function fasceKey(fasce: FasciaForPreview[]): string {
+  return fasce.map((f) => `${f.apertura}-${f.chiusura}`).join("|");
+}
+
+function fasceLabel(fasce: FasciaForPreview[]): string {
+  const valid = fasce.filter((f) => f.apertura && f.chiusura);
+  if (valid.length === 0) return "orario da definire";
+  return valid.map((f) => `${f.apertura}–${f.chiusura}`).join(", ");
+}
+
 /**
- * Raggruppa i giorni consecutivi con lo stesso orario (o stesso stato
- * "chiuso") in un'unica riga, es. "Martedì–Domenica 18:00–01:00".
+ * Raggruppa i giorni consecutivi con lo stesso set di fasce orarie
+ * (o stesso stato "chiuso") in un'unica riga, es.
+ * "Martedì–Domenica 12:00–15:00, 18:00–01:00".
  * Nessun wraparound Domenica→Lunedì: la settimana resta lineare.
  */
 export function formatOrariPreview(rows: RowForPreview[]): string {
@@ -17,29 +32,25 @@ export function formatOrariPreview(rows: RowForPreview[]): string {
     start: number;
     end: number;
     chiuso: boolean;
-    apertura: string;
-    chiusura: string;
+    key: string;
+    fasce: FasciaForPreview[];
   }
 
   const groups: Group[] = [];
 
   rows.forEach((row, index) => {
+    const key = row.chiuso ? "chiuso" : fasceKey(row.fasce);
     const last = groups[groups.length - 1];
-    const sameAsLast =
-      last &&
-      last.chiuso === row.chiuso &&
-      (row.chiuso ||
-        (last.apertura === row.apertura && last.chiusura === row.chiusura));
 
-    if (sameAsLast) {
+    if (last && last.key === key) {
       last.end = index;
     } else {
       groups.push({
         start: index,
         end: index,
         chiuso: row.chiuso,
-        apertura: row.apertura,
-        chiusura: row.chiusura,
+        key,
+        fasce: row.fasce,
       });
     }
   });
@@ -52,8 +63,7 @@ export function formatOrariPreview(rows: RowForPreview[]): string {
           : `${rows[g.start].nome}–${rows[g.end].nome}`;
 
       if (g.chiuso) return `${dayLabel} — chiuso`;
-      if (!g.apertura || !g.chiusura) return `${dayLabel} — orario da definire`;
-      return `${dayLabel} ${g.apertura}–${g.chiusura}`;
+      return `${dayLabel} ${fasceLabel(g.fasce)}`;
     })
     .join(", ");
 }
