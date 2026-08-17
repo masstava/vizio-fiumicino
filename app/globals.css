@@ -1,6 +1,17 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: ui-sans-serif, system-ui, sans-serif;
-  --font-serif: ui-serif, Georgia, serif;
+  /* Font — variabili CSS iniettate da next/font nel root layout */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
+
+  /* Palette colori */
+  --color-ink: #1a1a1a;
+  --color-cream: #f7f2e9;
+  --color-dark: #0a0705;
+  --color-bordeaux: #8b1a1a;
+  --color-gold: #d9a05b;
+  --color-cream-text: #f5efe4;
+  --color-muted: #5f5e5a;
+  --color-muted-dark: #d8c7b0;
 }
