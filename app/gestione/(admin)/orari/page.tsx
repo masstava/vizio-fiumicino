@@ -1,4 +1,5 @@
 import { createClient } from "@/src/lib/supabase/server";
+import { Button } from "@/src/components/ui/Button";
 import { OrariForm } from "./_components/OrariForm";
 import type { OrarioRow } from "./_components/types";
 
@@ -61,10 +62,19 @@ export default async function OrariPage() {
 
   return (
     <div className="p-8 md:p-12">
-      <p className="font-sans text-[10px] tracking-widest uppercase text-muted mb-3">
-        Gestione
-      </p>
-      <h1 className="font-serif text-4xl font-medium text-ink mb-8">Orari</h1>
+      <div className="flex items-start justify-between gap-4 mb-8">
+        <div>
+          <p className="font-sans text-[10px] tracking-widest uppercase text-muted mb-3">
+            Gestione
+          </p>
+          <h1 className="font-serif text-4xl font-medium text-ink">Orari</h1>
+        </div>
+        <a href="/api/pdf/orari" target="_blank" rel="noopener noreferrer">
+          <Button type="button" variant="primary">
+            Scarica PDF orari
+          </Button>
+        </a>
+      </div>
       <OrariForm initialOrari={orari} />
     </div>
   );
