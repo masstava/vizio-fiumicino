@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { createClient } from "@/src/lib/supabase/server";
 import { OrariDocument, type OrarioGiorno } from "@/src/lib/pdf/OrariDocument";
@@ -20,7 +20,11 @@ function toDisplayTime(value: string | null | undefined): string | null {
   return value ? value.slice(0, 5) : null;
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const titolo = request.nextUrl.searchParams.get("titolo")?.trim() || undefined;
+  const sottotitolo =
+    request.nextUrl.searchParams.get("sottotitolo")?.trim() || undefined;
+
   const supabase = await createClient();
 
   const { data: rows, error } = await supabase
@@ -50,7 +54,9 @@ export async function GET() {
   // direttamente l'elemento <Document>, il tipo che renderToBuffer si
   // aspetta (passare il componente wrapper via JSX/createElement non
   // tipizza correttamente con le definizioni di @react-pdf/renderer).
-  const buffer = await renderToBuffer(OrariDocument({ giorni }));
+  const buffer = await renderToBuffer(
+    OrariDocument({ giorni, titolo, sottotitolo }),
+  );
 
   return new NextResponse(new Uint8Array(buffer), {
     headers: {

@@ -1,6 +1,14 @@
 import fs from "fs";
 import path from "path";
-import { Document, Page, View, Text, Font, StyleSheet } from "@react-pdf/renderer";
+import {
+  Document,
+  Page,
+  View,
+  Text,
+  Image,
+  Font,
+  StyleSheet,
+} from "@react-pdf/renderer";
 
 // Fraunces auto-ospitato per il PDF: i file .woff sono committati in
 // questa cartella così la generazione non dipende da una fetch di rete
@@ -38,6 +46,21 @@ function registerFonts() {
 
 registerFonts();
 
+// Fasce header/footer: immagini reali fornite dal cliente. Se i file
+// non sono ancora presenti in public/pdf/, si ripiega su una fascia a
+// tinta piena con il wordmark testuale, così il PDF resta generabile
+// anche prima che le immagini vengano caricate nel progetto.
+const HEADER_IMAGE_PATH = path.join(process.cwd(), "public", "pdf", "orari-header.png");
+const FOOTER_IMAGE_PATH = path.join(process.cwd(), "public", "pdf", "orari-footer.png");
+
+function fileExists(filePath: string): boolean {
+  try {
+    return fs.existsSync(filePath);
+  } catch {
+    return false;
+  }
+}
+
 const COLORS = {
   ink: "#1A1A1A",
   cream: "#F7F2E9",
@@ -51,22 +74,43 @@ const styles = StyleSheet.create({
   page: {
     backgroundColor: COLORS.cream,
   },
-  darkBand: {
+  headerImage: {
+    width: "100%",
+  },
+  footerImage: {
+    width: "100%",
+  },
+  darkBandFallback: {
     backgroundColor: COLORS.dark,
     paddingVertical: 32,
     alignItems: "center",
   },
-  wordmark: {
+  wordmarkFallback: {
     fontFamily: "Fraunces",
     fontWeight: 600,
     fontSize: 42,
     letterSpacing: 6,
     color: COLORS.creamText,
   },
+  footerBandFallback: {
+    backgroundColor: COLORS.dark,
+    paddingVertical: 26,
+    alignItems: "center",
+  },
+  addressFallback: {
+    fontFamily: "Fraunces",
+    fontSize: 11,
+    letterSpacing: 1.5,
+    color: COLORS.creamText,
+  },
   content: {
     flexGrow: 1,
     paddingHorizontal: 64,
     paddingTop: 56,
+  },
+  titleBlock: {
+    alignItems: "center",
+    marginBottom: 52,
   },
   title: {
     fontFamily: "Fraunces",
@@ -75,43 +119,40 @@ const styles = StyleSheet.create({
     letterSpacing: 3,
     color: COLORS.bordeaux,
     textAlign: "center",
-    marginBottom: 48,
+  },
+  subtitle: {
+    fontFamily: "Fraunces",
+    fontWeight: 400,
+    fontSize: 12,
+    letterSpacing: 1,
+    color: COLORS.muted,
+    textAlign: "center",
+    marginTop: 8,
   },
   row: {
     flexDirection: "row",
     alignItems: "flex-end",
-    marginBottom: 20,
+    marginBottom: 30,
   },
   dayName: {
     fontFamily: "Fraunces",
     fontWeight: 400,
-    fontSize: 14,
+    fontSize: 28,
     color: COLORS.ink,
   },
   dottedLine: {
     flexGrow: 1,
-    marginHorizontal: 10,
-    marginBottom: 4,
-    borderBottomWidth: 1,
+    marginHorizontal: 12,
+    marginBottom: 9,
+    borderBottomWidth: 1.5,
     borderBottomStyle: "dotted",
     borderBottomColor: COLORS.muted,
   },
   time: {
     fontFamily: "Fraunces",
     fontWeight: 600,
-    fontSize: 14,
+    fontSize: 28,
     color: COLORS.bordeaux,
-  },
-  footerBand: {
-    backgroundColor: COLORS.dark,
-    paddingVertical: 26,
-    alignItems: "center",
-  },
-  address: {
-    fontFamily: "Fraunces",
-    fontSize: 11,
-    letterSpacing: 1.5,
-    color: COLORS.creamText,
   },
 });
 
@@ -124,6 +165,8 @@ export interface OrarioGiorno {
 
 interface OrariDocumentProps {
   giorni: OrarioGiorno[];
+  titolo?: string;
+  sottotitolo?: string;
 }
 
 function formatOrario(giorno: OrarioGiorno): string {
@@ -131,16 +174,33 @@ function formatOrario(giorno: OrarioGiorno): string {
   return `${giorno.apertura} – ${giorno.chiusura}`;
 }
 
-export function OrariDocument({ giorni }: OrariDocumentProps) {
+export function OrariDocument({
+  giorni,
+  titolo = "ORARI APERTURA",
+  sottotitolo,
+}: OrariDocumentProps) {
+  const hasHeaderImage = fileExists(HEADER_IMAGE_PATH);
+  const hasFooterImage = fileExists(FOOTER_IMAGE_PATH);
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <View style={styles.darkBand}>
-          <Text style={styles.wordmark}>VIZIO</Text>
-        </View>
+        {hasHeaderImage ? (
+          // eslint-disable-next-line jsx-a11y/alt-text -- Image di @react-pdf/renderer (PDF), non next/image: non ha prop "alt"
+          <Image src={HEADER_IMAGE_PATH} style={styles.headerImage} />
+        ) : (
+          <View style={styles.darkBandFallback}>
+            <Text style={styles.wordmarkFallback}>VIZIO</Text>
+          </View>
+        )}
 
         <View style={styles.content}>
-          <Text style={styles.title}>ORARI APERTURA</Text>
+          <View style={styles.titleBlock}>
+            <Text style={styles.title}>{titolo}</Text>
+            {sottotitolo ? (
+              <Text style={styles.subtitle}>{sottotitolo}</Text>
+            ) : null}
+          </View>
 
           {giorni.map((giorno) => (
             <View key={giorno.nome} style={styles.row}>
@@ -151,9 +211,16 @@ export function OrariDocument({ giorni }: OrariDocumentProps) {
           ))}
         </View>
 
-        <View style={styles.footerBand}>
-          <Text style={styles.address}>VIA DELLE OMBRINE 25, FIUMICINO</Text>
-        </View>
+        {hasFooterImage ? (
+          // eslint-disable-next-line jsx-a11y/alt-text -- Image di @react-pdf/renderer (PDF), non next/image: non ha prop "alt"
+          <Image src={FOOTER_IMAGE_PATH} style={styles.footerImage} />
+        ) : (
+          <View style={styles.footerBandFallback}>
+            <Text style={styles.addressFallback}>
+              VIA DELLE OMBRINE 25, FIUMICINO
+            </Text>
+          </View>
+        )}
       </Page>
     </Document>
   );

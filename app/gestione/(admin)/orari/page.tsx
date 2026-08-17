@@ -1,6 +1,6 @@
 import { createClient } from "@/src/lib/supabase/server";
-import { Button } from "@/src/components/ui/Button";
 import { OrariForm } from "./_components/OrariForm";
+import { PdfDownloadControls } from "./_components/PdfDownloadControls";
 import type { OrarioRow } from "./_components/types";
 
 export const dynamic = "force-dynamic";
@@ -62,20 +62,23 @@ export default async function OrariPage() {
 
   return (
     <div className="p-8 md:p-12">
-      <div className="flex items-start justify-between gap-4 mb-8">
-        <div>
-          <p className="font-sans text-[10px] tracking-widest uppercase text-muted mb-3">
-            Gestione
-          </p>
-          <h1 className="font-serif text-4xl font-medium text-ink">Orari</h1>
-        </div>
-        <a href="/api/pdf/orari" target="_blank" rel="noopener noreferrer">
-          <Button type="button" variant="primary">
-            Scarica PDF orari
-          </Button>
-        </a>
-      </div>
+      <p className="font-sans text-[10px] tracking-widest uppercase text-muted mb-3">
+        Gestione
+      </p>
+      <h1 className="font-serif text-4xl font-medium text-ink mb-8">Orari</h1>
+
       <OrariForm initialOrari={orari} />
+
+      <div className="mt-12 pt-8 border-t border-ink/10 max-w-2xl">
+        <h2 className="font-serif text-xl font-medium text-ink mb-1">
+          Esporta PDF
+        </h2>
+        <p className="font-sans text-sm text-muted mb-5">
+          Genera un cartello PDF con gli orari attuali. I campi sotto sono
+          opzionali e non vengono salvati.
+        </p>
+        <PdfDownloadControls />
+      </div>
     </div>
   );
 }
