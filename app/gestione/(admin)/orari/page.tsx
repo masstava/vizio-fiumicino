@@ -18,11 +18,16 @@ const GIORNI_LABELS = [
 export default async function OrariPage() {
   const supabase = await createClient();
 
-  const { data: existingRows } = await supabase
+  const { data: existingRows, error: fetchError } = await supabase
     .from("orari")
     .select("id, giorno_settimana, ordine, apertura, chiusura")
     .order("giorno_settimana")
     .order("ordine");
+
+  if (fetchError) {
+    console.error("[/gestione/orari] lettura orari fallita:", fetchError);
+    throw new Error(`Lettura orari fallita: ${fetchError.message}`);
+  }
 
   const rowsByDay = new Map<number, OrarioFasciaRow[]>();
   (existingRows ?? []).forEach((r) => {
@@ -54,10 +59,18 @@ export default async function OrariPage() {
       chiusura: null,
     }));
 
-    const { data: inserted } = await supabase
+    const { data: inserted, error: insertError } = await supabase
       .from("orari")
       .insert(toInsert)
       .select("id, giorno_settimana, ordine, apertura, chiusura");
+
+    if (insertError) {
+      console.error(
+        "[/gestione/orari] seed giorni mancanti fallito:",
+        insertError,
+      );
+      throw new Error(`Inizializzazione orari fallita: ${insertError.message}`);
+    }
 
     (inserted ?? []).forEach((r) => {
       rowsByDay.set(r.giorno_settimana, [

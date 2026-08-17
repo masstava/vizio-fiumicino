@@ -18,6 +18,11 @@ export async function saveOrari(rows: FasciaInput[]) {
   // non basta più a garantirlo, vedi migration save_orari_function).
   const { error } = await supabase.rpc("save_orari", { p_rows: rows });
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error("[saveOrari] RPC save_orari fallita:", error, {
+      rowsCount: rows.length,
+    });
+    throw new Error(error.message);
+  }
   revalidatePath("/gestione/orari");
 }

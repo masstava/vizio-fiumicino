@@ -96,6 +96,26 @@ export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] })
     );
   }
 
+  function applyToAllDays(sourceDayIndex: number) {
+    setJustSaved(false);
+    setDays((prev) => {
+      const source = prev[sourceDayIndex];
+      return prev.map((d) =>
+        d.giorno_settimana === source.giorno_settimana
+          ? d
+          : {
+              ...d,
+              chiuso: source.chiuso,
+              fasce: source.fasce.map((f) => ({
+                key: crypto.randomUUID(),
+                apertura: f.apertura,
+                chiusura: f.chiusura,
+              })),
+            },
+      );
+    });
+  }
+
   function removeFascia(dayIndex: number, fasciaIndex: number) {
     setJustSaved(false);
     setDays((prev) =>
@@ -166,15 +186,24 @@ export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] })
             key={day.giorno_settimana}
             className="py-4 border-b border-ink/10"
           >
-            <div className="flex flex-wrap items-center gap-4">
-              <span className="font-sans text-sm font-medium text-ink w-24 flex-shrink-0">
-                {day.nome}
-              </span>
-              <Switch
-                checked={day.chiuso}
-                onChange={(chiuso) => updateDay(dayIndex, { chiuso })}
-                label="Chiuso"
-              />
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <span className="font-sans text-sm font-medium text-ink w-24 flex-shrink-0">
+                  {day.nome}
+                </span>
+                <Switch
+                  checked={day.chiuso}
+                  onChange={(chiuso) => updateDay(dayIndex, { chiuso })}
+                  label="Chiuso"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => applyToAllDays(dayIndex)}
+                className="font-sans text-xs text-muted hover:text-bordeaux transition-colors"
+              >
+                Applica a tutti i giorni
+              </button>
             </div>
 
             {!day.chiuso && (
