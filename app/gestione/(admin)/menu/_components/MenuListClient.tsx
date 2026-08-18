@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   DndContext,
@@ -18,6 +18,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { AccordionSection } from "./AccordionSection";
 import { AdminDishRow } from "./AdminDishRow";
 import { SortableDishRow } from "./SortableDishRow";
 import { MenuFilters } from "./MenuFilters";
@@ -29,10 +30,88 @@ interface MenuListClientProps {
   groups: MacroGroup[];
 }
 
+function macroKey(id: string) {
+  return `m:${id}`;
+}
+
+function categoriaKey(id: string) {
+  return `c:${id}`;
+}
+
 export function MenuListClient({ groups: initialGroups }: MenuListClientProps) {
   const [groups, setGroups] = useState(initialGroups);
   const [search, setSearch] = useState("");
   const searchParams = useSearchParams();
+
+  // Stato di navigazione locale (non persistito): tutto collassato di
+  // default. Contiene le chiavi delle sezioni aperte, sia perché
+  // l'utente ha cliccato sull'intestazione sia perché un filtro/la
+  // ricerca le ha espanse automaticamente.
+  const [openSections, setOpenSections] = useState<Set<string>>(new Set());
+
+  function toggleSection(key: string) {
+    setOpenSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
+
+  const isSearching = search.trim().length >= 2;
+  const searchLower = search.trim().toLowerCase();
+  const macroSlug = searchParams.get("macro") ?? "all";
+  const categoriaSlug = searchParams.get("categoria") ?? "all";
+
+  // Espansione automatica: solo additiva (non richiude mai nulla da
+  // sola) così un click manuale dell'utente, una volta forzata
+  // l'apertura, resta sempre rispettato fino al prossimo cambio di
+  // filtro/ricerca.
+  useEffect(() => {
+    setOpenSections((prev) => {
+      const next = new Set(prev);
+
+      if (isSearching) {
+        groups.forEach((macro) => {
+          macro.categorie.forEach((cat) => {
+            const hasMatch = cat.piatti.some((p) =>
+              p.nome.toLowerCase().includes(searchLower),
+            );
+            if (hasMatch) {
+              next.add(categoriaKey(cat.id));
+              next.add(macroKey(macro.id));
+            }
+          });
+        });
+        return next;
+      }
+
+      if (macroSlug !== "all") {
+        const macro = groups.find((m) => slugify(m.nome) === macroSlug);
+        if (macro) {
+          next.add(macroKey(macro.id));
+          // Solo il filtro macro è attivo (nessuna categoria specifica
+          // selezionata): espande tutte le sue categorie, così l'intero
+          // sottoinsieme filtrato è visibile senza altri click.
+          if (categoriaSlug === "all") {
+            macro.categorie.forEach((cat) => next.add(categoriaKey(cat.id)));
+          }
+        }
+      }
+
+      if (categoriaSlug !== "all") {
+        groups.forEach((macro) => {
+          const cat = macro.categorie.find((c) => slugify(c.nome) === categoriaSlug);
+          if (cat) {
+            next.add(categoriaKey(cat.id));
+            next.add(macroKey(macro.id));
+          }
+        });
+      }
+
+      return next;
+    });
+  }, [groups, isSearching, searchLower, macroSlug, categoriaSlug]);
 
   const sensors = useSensors(
     // Mouse/trackpad: una piccola soglia di distanza evita che un
@@ -130,12 +209,6 @@ export function MenuListClient({ groups: initialGroups }: MenuListClientProps) {
     );
   }
 
-  const isSearching = search.trim().length >= 2;
-  const searchLower = search.trim().toLowerCase();
-
-  const macroSlug = searchParams.get("macro") ?? "all";
-  const categoriaSlug = searchParams.get("categoria") ?? "all";
-
   // Ricerca attiva: ignora i filtri select, cerca su tutto il menu,
   // nessun drag-and-drop (la vista mescola piatti di categorie diverse).
   // Filtri select attivi: mostra solo le macro/categorie selezionate,
@@ -182,20 +255,31 @@ export function MenuListClient({ groups: initialGroups }: MenuListClientProps) {
           if (!macroHasDishes) return null;
 
           return (
-            <div key={macro.id}>
-              <h2 className="font-serif text-xl font-medium text-ink mb-4 pb-2 border-b border-ink/15">
-                {macro.nome}
-              </h2>
-              <div className="space-y-6">
+            <AccordionSection
+              key={macro.id}
+              open={openSections.has(macroKey(macro.id))}
+              onToggle={() => toggleSection(macroKey(macro.id))}
+              headerClassName="mb-4 pb-2 border-b border-ink/15"
+              header={
+                <h2 className="font-serif text-xl font-medium text-ink">{macro.nome}</h2>
+              }
+            >
+              <div className="space-y-6 pt-1">
                 {macro.categorie.map((cat) => {
                   if (cat.piatti.length === 0) return null;
 
                   return (
-                    <div key={cat.id}>
-                      <p className="font-sans text-[10px] tracking-widest uppercase text-muted mb-1">
-                        {cat.nome} ({cat.piatti.length})
-                      </p>
-
+                    <AccordionSection
+                      key={cat.id}
+                      open={openSections.has(categoriaKey(cat.id))}
+                      onToggle={() => toggleSection(categoriaKey(cat.id))}
+                      headerClassName="mb-1"
+                      header={
+                        <p className="font-sans text-[10px] tracking-widest uppercase text-muted">
+                          {cat.nome} ({cat.piatti.length})
+                        </p>
+                      }
+                    >
                       {isSearching ? (
                         <div>
                           {cat.piatti.map((dish) => (
@@ -230,11 +314,11 @@ export function MenuListClient({ groups: initialGroups }: MenuListClientProps) {
                           </SortableContext>
                         </DndContext>
                       )}
-                    </div>
+                    </AccordionSection>
                   );
                 })}
               </div>
-            </div>
+            </AccordionSection>
           );
         })}
       </div>
