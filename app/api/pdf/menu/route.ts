@@ -1,3 +1,4 @@
+import QRCode from "qrcode";
 import { NextRequest, NextResponse } from "next/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { createClient } from "@/src/lib/supabase/server";
@@ -14,6 +15,9 @@ export const dynamic = "force-dynamic";
 // Prima fase: solo "Da mangiare". Le altre macro-categorie verranno
 // aggiunte dopo aver verificato l'impaginazione su questa porzione.
 const MACRO_NOME = "Da mangiare";
+
+const NEWSLETTER_SIGNUP_URL =
+  process.env.NEWSLETTER_SIGNUP_URL || "https://vizio-fiumicino.it";
 
 export async function GET(request: NextRequest) {
   const langParam = request.nextUrl.searchParams.get("lang");
@@ -124,8 +128,15 @@ export async function GET(request: NextRequest) {
     nome: lang === "en" ? a.nome_en : a.nome_it,
   }));
 
+  // Generato lato server: react-pdf accetta direttamente una data URL
+  // come src di Image, nessun file temporaneo da scrivere su disco.
+  const qrCodeDataUrl = await QRCode.toDataURL(NEWSLETTER_SIGNUP_URL, {
+    margin: 1,
+    width: 300,
+  });
+
   const buffer = await renderToBuffer(
-    MenuDocument({ categorie, allergeni, lang }),
+    MenuDocument({ categorie, allergeni, lang, qrCodeDataUrl }),
   );
 
   return new NextResponse(new Uint8Array(buffer), {

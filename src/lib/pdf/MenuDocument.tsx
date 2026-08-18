@@ -10,7 +10,6 @@ import {
   StyleSheet,
 } from "@react-pdf/renderer";
 
-const A4_WIDTH_PT = 595.28;
 const A4_HEIGHT_PT = 841.89;
 
 // Fraunces (titoli) + Inter (corpo/badge) auto-ospitati: nessuna fetch
@@ -72,15 +71,12 @@ function registerFonts() {
 
 registerFonts();
 
-// --- Asset a piena altezza/larghezza: dimensioni lette dal PNG reale
+// --- Colonna decorativa a piena altezza: larghezza letta dal PNG reale
 // (chunk IHDR) così la proporzione non è mai forzata né stirata, e si
-// aggiorna da sola quando i file vengono sostituiti. Fallback prudente
-// se un asset non è ancora presente.
+// aggiorna da sola quando il file viene sostituito. Fallback prudente
+// se l'asset non è ancora presente.
 const COLUMN_IMAGE_PATH = path.join(process.cwd(), "public", "pdf", "menu-colonna.png");
-const FOOTER_IMAGE_PATH = path.join(process.cwd(), "public", "pdf", "orari-footer.png");
-
 const FALLBACK_COLUMN_WIDTH = 170;
-const FALLBACK_FOOTER_HEIGHT = 130;
 
 function readPngDimensions(filePath: string): { width: number; height: number } | null {
   try {
@@ -100,12 +96,6 @@ const COLUMN_WIDTH = columnDimensions
   ? A4_HEIGHT_PT * (columnDimensions.width / columnDimensions.height)
   : FALLBACK_COLUMN_WIDTH;
 
-const footerImageExists = fs.existsSync(FOOTER_IMAGE_PATH);
-const footerDimensions = readPngDimensions(FOOTER_IMAGE_PATH);
-const FOOTER_HEIGHT = footerDimensions
-  ? A4_WIDTH_PT * (footerDimensions.height / footerDimensions.width)
-  : FALLBACK_FOOTER_HEIGHT;
-
 const CONTENT_GUTTER = 30;
 const CONTENT_LEFT = COLUMN_WIDTH + CONTENT_GUTTER;
 const CONTENT_RIGHT_MARGIN = 40;
@@ -113,6 +103,8 @@ const CONTENT_RIGHT_MARGIN = 40;
 // Titolo categoria + circa 2 piatti: se non c'è questo spazio residuo
 // in pagina, l'intero blocco (titolo compreso) passa alla successiva.
 const CATEGORY_ORPHAN_GUARD = 160;
+
+const QR_SIZE = 96;
 
 const COLORS = {
   ink: "#1A1A1A",
@@ -142,7 +134,20 @@ const styles = StyleSheet.create({
     height: A4_HEIGHT_PT,
     backgroundColor: COLORS.dark,
   },
-  coverContent: {
+  coverTop: {
+    position: "absolute",
+    top: 54,
+    left: CONTENT_LEFT,
+    right: 0,
+    alignItems: "center",
+  },
+  coverBrand: {
+    fontFamily: "Inter",
+    fontSize: 12,
+    letterSpacing: 1,
+    color: COLORS.ink,
+  },
+  coverCenter: {
     position: "absolute",
     top: 0,
     bottom: 0,
@@ -159,13 +164,18 @@ const styles = StyleSheet.create({
     letterSpacing: 4,
     color: COLORS.bordeaux,
   },
-  coverSubtitle: {
+  coverBottom: {
+    position: "absolute",
+    bottom: 44,
+    left: CONTENT_LEFT,
+    right: 0,
+    alignItems: "center",
+  },
+  coverAddress: {
     fontFamily: "Inter",
-    fontSize: 11,
+    fontSize: 10,
     color: COLORS.muted,
     letterSpacing: 0.5,
-    marginTop: 14,
-    textAlign: "center",
   },
   contentWrapper: {
     marginLeft: CONTENT_LEFT,
@@ -243,10 +253,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     marginBottom: 4,
   },
-  finalSection: {
-    marginTop: 10,
-    paddingBottom: FOOTER_HEIGHT + 20,
-  },
   legendTitle: {
     fontFamily: "Fraunces",
     fontWeight: 600,
@@ -284,20 +290,20 @@ const styles = StyleSheet.create({
     lineHeight: 1.5,
     textAlign: "center",
   },
-  footerImage: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    width: A4_WIDTH_PT,
-    height: FOOTER_HEIGHT,
+  qrBlock: {
+    marginTop: 36,
+    alignItems: "center",
   },
-  footerFallback: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    width: A4_WIDTH_PT,
-    height: FOOTER_HEIGHT,
-    backgroundColor: COLORS.dark,
+  qrImage: {
+    width: QR_SIZE,
+    height: QR_SIZE,
+  },
+  qrCaption: {
+    fontFamily: "Inter",
+    fontSize: 9,
+    color: COLORS.muted,
+    letterSpacing: 0.5,
+    marginTop: 8,
   },
 });
 
@@ -326,6 +332,7 @@ interface MenuDocumentProps {
   categorie: MenuCategoria[];
   allergeni: MenuAllergene[];
   lang: "it" | "en";
+  qrCodeDataUrl: string;
 }
 
 function formatPrezzo(prezzo: number, variabile: boolean): string {
@@ -342,16 +349,12 @@ function Column() {
   );
 }
 
-function Footer() {
-  return footerImageExists ? (
-    // eslint-disable-next-line jsx-a11y/alt-text -- Image di @react-pdf/renderer (PDF), non next/image: non ha prop "alt"
-    <Image src={FOOTER_IMAGE_PATH} style={styles.footerImage} />
-  ) : (
-    <View style={styles.footerFallback} />
-  );
-}
-
-export function MenuDocument({ categorie, allergeni, lang }: MenuDocumentProps) {
+export function MenuDocument({
+  categorie,
+  allergeni,
+  lang,
+  qrCodeDataUrl,
+}: MenuDocumentProps) {
   const allergeniLeft = allergeni.slice(0, 7);
   const allergeniRight = allergeni.slice(7);
 
@@ -362,14 +365,21 @@ export function MenuDocument({ categorie, allergeni, lang }: MenuDocumentProps) 
 
   return (
     <Document>
-      {/* Copertina */}
+      {/* Copertina — tre livelli distinti: marchio in alto, titolo al
+          centro, indirizzo in fondo pagina. */}
       <Page size="A4" style={styles.page}>
         <Column />
-        <View style={styles.coverContent}>
+
+        <View style={styles.coverTop}>
+          <Text style={styles.coverBrand}>Vizio Bistrot</Text>
+        </View>
+
+        <View style={styles.coverCenter}>
           <Text style={styles.coverTitle}>MENU</Text>
-          <Text style={styles.coverSubtitle}>
-            Vizio Bistrot — Via delle Ombrine 25, Fiumicino
-          </Text>
+        </View>
+
+        <View style={styles.coverBottom}>
+          <Text style={styles.coverAddress}>Via delle Ombrine 25, Fiumicino</Text>
         </View>
       </Page>
 
@@ -435,38 +445,49 @@ export function MenuDocument({ categorie, allergeni, lang }: MenuDocumentProps) 
               );
             }),
           ])}
+        </View>
+      </Page>
 
-          {/* Ultima pagina: forzata su un foglio nuovo (break), non
-              appesa in coda a qualunque spazio residuo dell'ultima
-              categoria. */}
-          <View break style={styles.finalSection}>
-            <Text style={styles.legendTitle}>
-              {lang === "en" ? "Allergens" : "Allergeni"}
+      {/* Pagina di chiusura: componente Page a sé stante, non una
+          sezione in coda al flusso — è sempre l'unico contenuto della
+          sua pagina, indipendentemente da quanto spazio resta dopo
+          l'ultima categoria. */}
+      <Page size="A4" style={styles.page}>
+        <Column />
+
+        <View style={styles.contentWrapper}>
+          <Text style={styles.legendTitle}>
+            {lang === "en" ? "Allergens" : "Allergeni"}
+          </Text>
+          <View style={styles.allergenGrid}>
+            <View style={styles.allergenColumn}>
+              {allergeniLeft.map((a) => (
+                <Text key={a.id} style={styles.allergenItem}>
+                  <Text style={styles.allergenNumber}>{a.id} </Text>
+                  {a.nome}
+                </Text>
+              ))}
+            </View>
+            <View style={styles.allergenColumn}>
+              {allergeniRight.map((a) => (
+                <Text key={a.id} style={styles.allergenItem}>
+                  <Text style={styles.allergenNumber}>{a.id} </Text>
+                  {a.nome}
+                </Text>
+              ))}
+            </View>
+          </View>
+
+          <View style={styles.thankYouBlock}>
+            <Text style={styles.thankYouText}>{thankYouText}</Text>
+          </View>
+
+          <View style={styles.qrBlock}>
+            {/* eslint-disable-next-line jsx-a11y/alt-text -- Image di @react-pdf/renderer (PDF), non next/image: non ha prop "alt" */}
+            <Image src={qrCodeDataUrl} style={styles.qrImage} />
+            <Text style={styles.qrCaption}>
+              {lang === "en" ? "Scan to subscribe" : "Inquadra per iscriverti"}
             </Text>
-            <View style={styles.allergenGrid}>
-              <View style={styles.allergenColumn}>
-                {allergeniLeft.map((a) => (
-                  <Text key={a.id} style={styles.allergenItem}>
-                    <Text style={styles.allergenNumber}>{a.id} </Text>
-                    {a.nome}
-                  </Text>
-                ))}
-              </View>
-              <View style={styles.allergenColumn}>
-                {allergeniRight.map((a) => (
-                  <Text key={a.id} style={styles.allergenItem}>
-                    <Text style={styles.allergenNumber}>{a.id} </Text>
-                    {a.nome}
-                  </Text>
-                ))}
-              </View>
-            </View>
-
-            <View style={styles.thankYouBlock}>
-              <Text style={styles.thankYouText}>{thankYouText}</Text>
-            </View>
-
-            <Footer />
           </View>
         </View>
       </Page>
