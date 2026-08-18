@@ -176,5 +176,5 @@ select c.nome as categoria, count(p.id) as elementi
 from public.categorie c
 join public.categorie_macro m on m.id = c.categoria_macro_id and m.nome in ('Vini', 'Experience')
 left join public.piatti p on p.categoria_id = c.id
-group by c.nome, c.ordine
+group by c.nome, c.ordine, m.ordine
 order by m.ordine, c.ordine;
