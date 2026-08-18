@@ -45,10 +45,14 @@ export function MenuFilters({ groups, search, onSearchChange }: MenuFiltersProps
   return (
     <div className="flex flex-wrap items-end gap-4 mb-8">
       <div>
-        <label className="font-sans text-[10px] tracking-widest uppercase text-muted block mb-1.5">
+        <label
+          htmlFor="menu-filter-macro"
+          className="font-sans text-[10px] tracking-widest uppercase text-muted block mb-1.5"
+        >
           Macro-categoria
         </label>
         <select
+          id="menu-filter-macro"
           className={fieldClass}
           value={macroSlug}
           onChange={(e) =>
@@ -65,10 +69,14 @@ export function MenuFilters({ groups, search, onSearchChange }: MenuFiltersProps
       </div>
 
       <div>
-        <label className="font-sans text-[10px] tracking-widest uppercase text-muted block mb-1.5">
+        <label
+          htmlFor="menu-filter-categoria"
+          className="font-sans text-[10px] tracking-widest uppercase text-muted block mb-1.5"
+        >
           Categoria
         </label>
         <select
+          id="menu-filter-categoria"
           className={fieldClass}
           value={categoriaSlug}
           onChange={(e) => updateParams({ categoria: e.target.value })}
@@ -83,10 +91,14 @@ export function MenuFilters({ groups, search, onSearchChange }: MenuFiltersProps
       </div>
 
       <div className="flex-1 min-w-[220px]">
-        <label className="font-sans text-[10px] tracking-widest uppercase text-muted block mb-1.5">
+        <label
+          htmlFor="menu-filter-search"
+          className="font-sans text-[10px] tracking-widest uppercase text-muted block mb-1.5"
+        >
           Cerca piatto
         </label>
         <input
+          id="menu-filter-search"
           type="search"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
