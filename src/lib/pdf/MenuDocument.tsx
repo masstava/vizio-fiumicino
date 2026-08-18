@@ -358,6 +358,41 @@ function formatPrezzo(prezzo: number, variabile: boolean): string {
   return `${formatted}€${variabile ? " / hg" : ""}`;
 }
 
+function renderDish(piatto: MenuPiatto) {
+  const hasMeta = piatto.badges.length > 0 || piatto.allergeni.length > 0;
+  const allergeniOrdinati = [...piatto.allergeni].sort((a, b) => a - b);
+
+  return (
+    <View key={piatto.id} wrap={false} style={styles.dishBlock}>
+      <View style={styles.dishRow}>
+        <Text style={styles.dishName}>{piatto.nome}</Text>
+        {piatto.prezzo != null && (
+          <Text style={styles.dishPrice}>
+            {formatPrezzo(piatto.prezzo, piatto.prezzo_variabile)}
+          </Text>
+        )}
+      </View>
+
+      {piatto.descrizione && (
+        <Text style={styles.dishDescription}>{piatto.descrizione}</Text>
+      )}
+
+      {hasMeta && (
+        <View style={styles.metaRow}>
+          {piatto.badges.map((badge, index) => (
+            <Text key={index} style={styles.badge}>
+              {badge}
+            </Text>
+          ))}
+          {allergeniOrdinati.length > 0 && (
+            <Text style={styles.allergenCodes}>{allergeniOrdinati.join(" ")}</Text>
+          )}
+        </View>
+      )}
+    </View>
+  );
+}
+
 function Column() {
   return columnImageExists ? (
     // eslint-disable-next-line jsx-a11y/alt-text -- Image di @react-pdf/renderer (PDF), non next/image: non ha prop "alt"
@@ -421,51 +456,39 @@ export function MenuDocument({
               appiattimento, i titoli di categoria restavano orfani in
               fondo pagina esattamente nei casi che minPresenceAhead
               dovrebbe prevenire. */}
-          {categorie.flatMap((cat) => [
-            <Text
-              key={`${cat.id}-title`}
-              style={styles.categoryTitle}
-              minPresenceAhead={CATEGORY_ORPHAN_GUARD}
-            >
-              {cat.nome}
-            </Text>,
-            ...cat.piatti.map((piatto) => {
-              const hasMeta = piatto.badges.length > 0 || piatto.allergeni.length > 0;
-              const allergeniOrdinati = [...piatto.allergeni].sort((a, b) => a - b);
+          {categorie.flatMap((cat) => {
+            const title = (
+              <Text
+                key={`${cat.id}-title`}
+                style={styles.categoryTitle}
+                minPresenceAhead={CATEGORY_ORPHAN_GUARD}
+              >
+                {cat.nome}
+              </Text>
+            );
 
-              return (
-                <View key={piatto.id} wrap={false} style={styles.dishBlock}>
-                  <View style={styles.dishRow}>
-                    <Text style={styles.dishName}>{piatto.nome}</Text>
-                    {piatto.prezzo != null && (
-                      <Text style={styles.dishPrice}>
-                        {formatPrezzo(piatto.prezzo, piatto.prezzo_variabile)}
-                      </Text>
-                    )}
-                  </View>
-
-                  {piatto.descrizione && (
-                    <Text style={styles.dishDescription}>{piatto.descrizione}</Text>
-                  )}
-
-                  {hasMeta && (
-                    <View style={styles.metaRow}>
-                      {piatto.badges.map((badge, index) => (
-                        <Text key={index} style={styles.badge}>
-                          {badge}
-                        </Text>
-                      ))}
-                      {allergeniOrdinati.length > 0 && (
-                        <Text style={styles.allergenCodes}>
-                          {allergeniOrdinati.join(" ")}
-                        </Text>
-                      )}
-                    </View>
-                  )}
+            // Categorie di 1-2 piatti sono già indivisibili per
+            // costruzione: nessun aggancio necessario. Da 3 piatti in
+            // su, gli ultimi due vengono uniti in un unico blocco
+            // wrap={false}, così l'ultimo piatto della categoria non
+            // può mai restare da solo, isolato, in cima a una nuova
+            // pagina — se il blocco non entra nello spazio residuo,
+            // react-pdf sposta entrambi i piatti insieme alla pagina
+            // successiva, comportamento accettato.
+            if (cat.piatti.length > 2) {
+              const iniziali = cat.piatti.slice(0, -2).map(renderDish);
+              const [penultimo, ultimo] = cat.piatti.slice(-2);
+              const ultimaCoppia = (
+                <View key={`${cat.id}-last-pair`} wrap={false}>
+                  {renderDish(penultimo)}
+                  {renderDish(ultimo)}
                 </View>
               );
-            }),
-          ])}
+              return [title, ...iniziali, ultimaCoppia];
+            }
+
+            return [title, ...cat.piatti.map(renderDish)];
+          })}
         </View>
       </Page>
 
