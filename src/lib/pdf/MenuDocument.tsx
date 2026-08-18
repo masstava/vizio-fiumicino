@@ -104,6 +104,17 @@ const CONTENT_RIGHT_MARGIN = 40;
 // in pagina, l'intero blocco (titolo compreso) passa alla successiva.
 const CATEGORY_ORPHAN_GUARD = 160;
 
+// Margine di sicurezza verticale (~1,4cm): nessun testo deve mai cadere
+// in questa fascia, in alto o in basso, su nessuna pagina. Impostato a
+// livello di <Page> (non su una View di contenuto) perché è l'unico modo
+// per cui il motore di paginazione lo ripete su OGNI pagina fisica
+// generata automaticamente per overflow, non solo sulla prima e
+// sull'ultima del flusso. La colonna decorativa (position: absolute,
+// dimensioni esplicite) non ne è influenzata: un elemento absolute è
+// posizionato rispetto al riquadro esterno della pagina, non rispetto
+// al suo padding — verificato empiricamente con un rendering di prova.
+const CONTENT_VERTICAL_SAFE_MARGIN = 40;
+
 const QR_SIZE = 96;
 
 const COLORS = {
@@ -117,6 +128,15 @@ const COLORS = {
 const styles = StyleSheet.create({
   page: {
     padding: 0,
+    backgroundColor: COLORS.cream,
+  },
+  // Usato dalle pagine con testo in flusso normale (contenuto e chiusura):
+  // il padding verticale è sulla Page stessa, non su una View interna,
+  // così si ripete identico su ogni pagina fisica generata per overflow.
+  pageContent: {
+    padding: 0,
+    paddingTop: CONTENT_VERTICAL_SAFE_MARGIN,
+    paddingBottom: CONTENT_VERTICAL_SAFE_MARGIN,
     backgroundColor: COLORS.cream,
   },
   columnImage: {
@@ -180,8 +200,6 @@ const styles = StyleSheet.create({
   contentWrapper: {
     marginLeft: CONTENT_LEFT,
     marginRight: CONTENT_RIGHT_MARGIN,
-    paddingTop: 50,
-    paddingBottom: 50,
   },
   categoryTitle: {
     fontFamily: "Fraunces",
@@ -384,8 +402,11 @@ export function MenuDocument({
       </Page>
 
       {/* Contenuto: un unico Page che si pagina da solo per overflow;
-          la colonna, marcata fixed, si ripete su ogni pagina generata. */}
-      <Page size="A4" style={styles.page}>
+          la colonna, marcata fixed, si ripete su ogni pagina generata.
+          style.pageContent applica il margine di sicurezza verticale a
+          ogni pagina fisica generata dall'overflow, non solo alla prima
+          e all'ultima del flusso. */}
+      <Page size="A4" style={styles.pageContent}>
         <Column />
 
         <View style={styles.contentWrapper}>
@@ -452,7 +473,7 @@ export function MenuDocument({
           sezione in coda al flusso — è sempre l'unico contenuto della
           sua pagina, indipendentemente da quanto spazio resta dopo
           l'ultima categoria. */}
-      <Page size="A4" style={styles.page}>
+      <Page size="A4" style={styles.pageContent}>
         <Column />
 
         <View style={styles.contentWrapper}>
