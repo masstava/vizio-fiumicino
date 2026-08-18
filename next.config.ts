@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
   // (la lettura avviene dentro la libreria, non nel nostro codice).
   outputFileTracingIncludes: {
     "/api/pdf/orari": ["./src/lib/pdf/fonts/**"],
+    "/api/pdf/menu": ["./src/lib/pdf/fonts/**"],
   },
 };
 
