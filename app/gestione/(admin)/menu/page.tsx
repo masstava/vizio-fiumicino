@@ -100,7 +100,7 @@ export default async function MenuPage() {
 
   return (
     <div className="p-8 md:p-12">
-      <div className="flex items-start justify-between gap-4 mb-8">
+      <div className="flex items-start justify-between gap-4 mb-2">
         <div>
           <p className="font-sans text-[10px] tracking-widest uppercase text-muted mb-3">
             Gestione
@@ -110,6 +110,28 @@ export default async function MenuPage() {
         <Link href="/gestione/menu/nuovo">
           <Button variant="primary">+ Aggiungi piatto</Button>
         </Link>
+      </div>
+
+      <div className="flex items-center gap-4 mb-8">
+        <a
+          href="/api/pdf/menu?lang=it"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-sans text-sm text-bordeaux hover:opacity-70 transition-opacity"
+        >
+          Scarica PDF menu (IT)
+        </a>
+        <a
+          href="/api/pdf/menu?lang=en"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-sans text-sm text-bordeaux hover:opacity-70 transition-opacity"
+        >
+          Download menu PDF (EN)
+        </a>
+        <span className="font-sans text-xs text-muted">
+          — solo sezione &quot;Da mangiare&quot; per ora
+        </span>
       </div>
 
       <MenuListClient groups={groups} />
