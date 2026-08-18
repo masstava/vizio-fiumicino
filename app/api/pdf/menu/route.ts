@@ -12,10 +12,6 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// Prima fase: solo "Da mangiare". Le altre macro-categorie verranno
-// aggiunte dopo aver verificato l'impaginazione su questa porzione.
-const MACRO_NOME = "Da mangiare";
-
 const NEWSLETTER_SIGNUP_URL =
   process.env.NEWSLETTER_SIGNUP_URL || "https://vizio-fiumicino.it";
 
@@ -25,30 +21,40 @@ export async function GET(request: NextRequest) {
 
   const supabase = await createClient();
 
-  const { data: macro, error: macroError } = await supabase
+  const { data: macroRows, error: macroError } = await supabase
     .from("categorie_macro")
-    .select("id")
-    .eq("nome", MACRO_NOME)
-    .maybeSingle();
+    .select("id, ordine")
+    .order("ordine");
 
-  if (macroError || !macro) {
-    return NextResponse.json(
-      { error: macroError?.message ?? `Macro-categoria "${MACRO_NOME}" non trovata.` },
-      { status: 500 },
-    );
+  if (macroError) {
+    return NextResponse.json({ error: macroError.message }, { status: 500 });
   }
 
-  const { data: categorieRows, error: categorieError } = await supabase
-    .from("categorie")
-    .select("id, nome, nome_en, ordine")
-    .eq("categoria_macro_id", macro.id)
-    .order("ordine");
+  const macroIds = (macroRows ?? []).map((m) => m.id);
+  const macroOrdineById = new Map((macroRows ?? []).map((m) => [m.id, m.ordine]));
+
+  const { data: categorieRowsRaw, error: categorieError } = macroIds.length
+    ? await supabase
+        .from("categorie")
+        .select("id, nome, nome_en, ordine, categoria_macro_id")
+        .in("categoria_macro_id", macroIds)
+    : { data: [], error: null };
 
   if (categorieError) {
     return NextResponse.json({ error: categorieError.message }, { status: 500 });
   }
 
-  const categoriaIds = (categorieRows ?? []).map((c) => c.id);
+  // Le categorie di ogni macro-categoria hanno un proprio "ordine" che
+  // riparte da 0 — l'ordinamento finale deve quindi essere a due
+  // livelli (prima la macro-categoria, poi la categoria al suo
+  // interno), non un semplice order() sulla sola tabella categorie.
+  const categorieRows = (categorieRowsRaw ?? []).slice().sort((a, b) => {
+    const macroA = macroOrdineById.get(a.categoria_macro_id) ?? 0;
+    const macroB = macroOrdineById.get(b.categoria_macro_id) ?? 0;
+    return macroA !== macroB ? macroA - macroB : a.ordine - b.ordine;
+  });
+
+  const categoriaIds = categorieRows.map((c) => c.id);
 
   const { data: piattiRows, error: piattiError } = categoriaIds.length
     ? await supabase
@@ -115,7 +121,7 @@ export async function GET(request: NextRequest) {
     piattiByCategoria.set(p.categoria_id, arr);
   });
 
-  const categorie: MenuCategoria[] = (categorieRows ?? [])
+  const categorie: MenuCategoria[] = categorieRows
     .map((c) => ({
       id: c.id,
       nome: lang === "en" ? c.nome_en || c.nome : c.nome,

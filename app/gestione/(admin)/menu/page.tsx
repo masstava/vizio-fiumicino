@@ -129,9 +129,6 @@ export default async function MenuPage() {
         >
           Download menu PDF (EN)
         </a>
-        <span className="font-sans text-xs text-muted">
-          — solo sezione &quot;Da mangiare&quot; per ora
-        </span>
       </div>
 
       <MenuListClient groups={groups} />
