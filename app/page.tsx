@@ -4,8 +4,10 @@ import { BarCocktailPreview } from "@/src/components/home/BarCocktailPreview";
 import { ExperienceEventi } from "@/src/components/home/ExperienceEventi";
 import { FeaturedDishes } from "@/src/components/home/FeaturedDishes";
 import type { FeaturedDish } from "@/src/components/home/FeaturedDishSlide";
+import { Footer, type GiornoOrario } from "@/src/components/home/Footer";
 import { Hero } from "@/src/components/home/Hero";
 import { MenuPreview } from "@/src/components/home/MenuPreview";
+import { Newsletter } from "@/src/components/home/Newsletter";
 import { SocialProof } from "@/src/components/home/SocialProof";
 import { StickyReservationBar } from "@/src/components/home/StickyReservationBar";
 import { ThreePillars } from "@/src/components/home/ThreePillars";
@@ -23,6 +25,18 @@ const MENU_PREVIEW_MACRO = "Da mangiare";
 const COCKTAIL_PREVIEW_LIMIT = 4;
 const COCKTAIL_PREVIEW_MACRO = "Bar & Cocktail";
 const COCKTAIL_PREVIEW_CATEGORIA = "Cocktail";
+
+// giorno_settimana: 0 = Lunedì ... 6 = Domenica (stessa convenzione
+// già usata in /gestione/orari e nella route del PDF orari).
+const GIORNI_LABELS = [
+  "Lunedì",
+  "Martedì",
+  "Mercoledì",
+  "Giovedì",
+  "Venerdì",
+  "Sabato",
+  "Domenica",
+] as const;
 
 export default async function Home() {
   const supabase = await createClient();
@@ -207,6 +221,27 @@ export default async function Home() {
     badges: cocktailBadgeByPiatto.get(p.id) ?? [],
   }));
 
+  // Orari per il footer: stessa fonte unica usata in /gestione/orari
+  // e nella route del PDF orari.
+  const { data: orariRows } = await supabase
+    .from("orari")
+    .select("giorno_settimana, apertura, chiusura")
+    .order("giorno_settimana")
+    .order("ordine");
+
+  const fasceByGiorno = new Map<number, { apertura: string; chiusura: string }[]>();
+  (orariRows ?? []).forEach((r) => {
+    if (!r.apertura || !r.chiusura) return;
+    const arr = fasceByGiorno.get(r.giorno_settimana) ?? [];
+    arr.push({ apertura: r.apertura.slice(0, 5), chiusura: r.chiusura.slice(0, 5) });
+    fasceByGiorno.set(r.giorno_settimana, arr);
+  });
+
+  const orariSettimana: GiornoOrario[] = GIORNI_LABELS.map((nome, giorno) => {
+    const fasce = fasceByGiorno.get(giorno) ?? [];
+    return { nome, chiuso: fasce.length === 0, fasce };
+  });
+
   return (
     <main>
       <StickyReservationBar />
@@ -217,6 +252,8 @@ export default async function Home() {
       <MenuPreview dishes={menuPreviewDishes} />
       <BarCocktailPreview dishes={cocktailDishes} />
       <ExperienceEventi />
+      <Newsletter />
+      <Footer orari={orariSettimana} />
     </main>
   );
 }
