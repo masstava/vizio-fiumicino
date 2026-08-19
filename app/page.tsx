@@ -1,11 +1,20 @@
 import { createClient } from "@/src/lib/supabase/server";
+import type { DishData } from "@/src/components/ui/DishRow";
 import { FeaturedDishes } from "@/src/components/home/FeaturedDishes";
 import type { FeaturedDish } from "@/src/components/home/FeaturedDishSlide";
 import { Hero } from "@/src/components/home/Hero";
+import { MenuPreview } from "@/src/components/home/MenuPreview";
+import { SocialProof } from "@/src/components/home/SocialProof";
 import { StickyReservationBar } from "@/src/components/home/StickyReservationBar";
 import { ThreePillars } from "@/src/components/home/ThreePillars";
 
 export const dynamic = "force-dynamic";
+
+// Numero di piatti mostrati nell'anteprima menu in home — il resto
+// del menu "Da mangiare" vive nella pagina menu completa (CTA "Vedi
+// il menu completo"). Cocktail/Bar hanno un proprio blocco separato.
+const MENU_PREVIEW_LIMIT = 6;
+const MENU_PREVIEW_MACRO = "Da mangiare";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -30,12 +39,107 @@ export default async function Home() {
     .map((e) => piattoById.get(e.piatto_id))
     .filter((p): p is FeaturedDish => p != null);
 
+  // Anteprima menu: prime N portate disponibili di "Da mangiare",
+  // ordinate per categoria poi per piatto (l'ordine della categoria
+  // riparte da 0 per ogni macro-categoria, quindi il sort a due
+  // livelli va fatto lato JS, come già nella route del PDF menu).
+  const { data: macroDaMangiare } = await supabase
+    .from("categorie_macro")
+    .select("id")
+    .eq("nome", MENU_PREVIEW_MACRO)
+    .maybeSingle();
+
+  const { data: categorieDaMangiare } = macroDaMangiare
+    ? await supabase
+        .from("categorie")
+        .select("id, ordine")
+        .eq("categoria_macro_id", macroDaMangiare.id)
+        .order("ordine")
+    : { data: [] as { id: string; ordine: number }[] };
+
+  const categoriaOrdineById = new Map(
+    (categorieDaMangiare ?? []).map((c) => [c.id, c.ordine]),
+  );
+  const categoriaIds = (categorieDaMangiare ?? []).map((c) => c.id);
+
+  const { data: menuPreviewRows } = categoriaIds.length
+    ? await supabase
+        .from("piatti")
+        .select(
+          "id, categoria_id, nome, descrizione, prezzo, prezzo_variabile, foto_url, ordine",
+        )
+        .in("categoria_id", categoriaIds)
+        .eq("disponibile", true)
+        .order("ordine")
+    : {
+        data: [] as {
+          id: string;
+          categoria_id: string;
+          nome: string;
+          descrizione: string | null;
+          prezzo: number | null;
+          prezzo_variabile: boolean;
+          foto_url: string | null;
+          ordine: number;
+        }[],
+      };
+
+  const menuPreviewPiatti = (menuPreviewRows ?? [])
+    .slice()
+    .sort((a, b) => {
+      const ca = categoriaOrdineById.get(a.categoria_id) ?? 0;
+      const cb = categoriaOrdineById.get(b.categoria_id) ?? 0;
+      return ca !== cb ? ca - cb : a.ordine - b.ordine;
+    })
+    .slice(0, MENU_PREVIEW_LIMIT);
+
+  const menuPreviewIds = menuPreviewPiatti.map((p) => p.id);
+
+  const [{ data: allergeniLinks }, { data: badgeLinks }] = await Promise.all([
+    menuPreviewIds.length
+      ? supabase
+          .from("piatti_allergeni")
+          .select("piatto_id, allergene_id")
+          .in("piatto_id", menuPreviewIds)
+      : Promise.resolve({ data: [] as { piatto_id: string; allergene_id: number }[] }),
+    menuPreviewIds.length
+      ? supabase.from("badge").select("piatto_id, testo").in("piatto_id", menuPreviewIds)
+      : Promise.resolve({ data: [] as { piatto_id: string; testo: string }[] }),
+  ]);
+
+  const allergeniByPiatto = new Map<string, number[]>();
+  (allergeniLinks ?? []).forEach((l) => {
+    const arr = allergeniByPiatto.get(l.piatto_id) ?? [];
+    arr.push(l.allergene_id);
+    allergeniByPiatto.set(l.piatto_id, arr);
+  });
+
+  const badgeByPiatto = new Map<string, string[]>();
+  (badgeLinks ?? []).forEach((b) => {
+    const arr = badgeByPiatto.get(b.piatto_id) ?? [];
+    arr.push(b.testo);
+    badgeByPiatto.set(b.piatto_id, arr);
+  });
+
+  const menuPreviewDishes: DishData[] = menuPreviewPiatti.map((p) => ({
+    id: p.id,
+    nome: p.nome,
+    descrizione: p.descrizione,
+    prezzo: p.prezzo,
+    prezzo_variabile: p.prezzo_variabile,
+    foto_url: p.foto_url,
+    allergeni: allergeniByPiatto.get(p.id) ?? [],
+    badges: badgeByPiatto.get(p.id) ?? [],
+  }));
+
   return (
     <main>
       <StickyReservationBar />
       <Hero />
       <ThreePillars />
       <FeaturedDishes dishes={featuredDishes} />
+      <SocialProof />
+      <MenuPreview dishes={menuPreviewDishes} />
     </main>
   );
 }
