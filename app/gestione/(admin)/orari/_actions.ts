@@ -10,6 +10,29 @@ export interface FasciaInput {
   chiusura: string | null;
 }
 
+export interface OrariConfigInput {
+  nota: string | null;
+  valida_fino_al: string | null;
+}
+
+// Riga singola garantita dallo schema (PK boolean con check), quindi
+// un update mirato basta: nessun rischio di duplicati.
+export async function saveOrariConfig(config: OrariConfigInput) {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("orari_config")
+    .update({ nota: config.nota, valida_fino_al: config.valida_fino_al })
+    .eq("id", true);
+
+  if (error) {
+    console.error("[saveOrariConfig] update orari_config fallito:", error);
+    throw new Error(error.message);
+  }
+  revalidatePath("/gestione/orari");
+  revalidatePath("/");
+}
+
 export async function saveOrari(rows: FasciaInput[]) {
   const supabase = await createClient();
 
@@ -25,4 +48,5 @@ export async function saveOrari(rows: FasciaInput[]) {
     throw new Error(error.message);
   }
   revalidatePath("/gestione/orari");
+  revalidatePath("/");
 }

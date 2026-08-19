@@ -1,6 +1,7 @@
 import { Button } from "@/src/components/ui/Button";
 import { FlameMark } from "@/src/components/ui/FlameMark";
 import { ImagePlaceholder } from "@/src/components/ui/ImagePlaceholder";
+import { RECENSIONI } from "@/src/lib/contatti";
 
 // Video reale del locale, ospitato su Supabase Storage (bucket
 // pubblico "sito-media", non è un piatto quindi non passa dalla
@@ -52,14 +53,16 @@ export function Hero() {
           Prenota un tavolo
         </Button>
 
-        {/* Dato statico per ora: diventerà un fetch reale quando
-            arriverà l'integrazione con l'API Google (step dedicato
-            successivo). Volutamente discreto: non deve competere con
-            la CTA sopra. Contrasto: text-gold su bg-dark ≈ 8.7:1,
-            text-muted-dark su bg-dark ≈ 12.2:1. */}
+        {/* Valori statici letti dalla fonte unica: diventeranno un
+            fetch reale quando arriverà l'integrazione con l'API
+            Google (step dedicato successivo). Volutamente discreto:
+            non deve competere con la CTA sopra. Contrasto: text-gold
+            su bg-dark ≈ 8.7:1, text-muted-dark su bg-dark ≈ 12.2:1. */}
         <p className="mt-4 font-sans text-xs text-muted-dark">
-          <span className="text-gold" aria-hidden="true">★</span>{" "}
-          4,8 su 137 recensioni Google
+          {RECENSIONI.rating}
+          <span className="text-gold" aria-hidden="true">★</span>
+          {" · "}
+          {RECENSIONI.totale} recensioni Google
         </p>
       </div>
     </section>

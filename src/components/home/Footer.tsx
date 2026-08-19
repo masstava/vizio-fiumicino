@@ -1,3 +1,6 @@
+import { SocialIcon } from "@/src/components/ui/SocialIcon";
+import { CONTATTI } from "@/src/lib/contatti";
+
 interface FasciaOraria {
   apertura: string;
   chiusura: string;
@@ -12,6 +15,8 @@ export interface GiornoOrario {
 interface FooterProps {
   orari: GiornoOrario[];
   apertoOra: boolean;
+  /** Nota orari temporanei, se impostata in dashboard. */
+  notaOrari?: string | null;
 }
 
 // Raggruppa i giorni consecutivi con le stesse fasce (o stesso stato
@@ -62,16 +67,25 @@ function groupOrari(rows: GiornoOrario[]): string[] {
 // <address> per l'indirizzo reale: struttura semantica già pronta
 // per lo schema markup Restaurant/LocalBusiness futuro, senza
 // doverla riscrivere in quello step.
-export function Footer({ orari, apertoOra }: FooterProps) {
+export function Footer({ orari, apertoOra, notaOrari }: FooterProps) {
   const orariLines = groupOrari(orari);
 
   return (
     <footer id="contatti" className="bg-dark px-6 py-12 text-cream-text md:px-12 lg:px-16">
       <div className="grid gap-10 md:grid-cols-3">
         <div>
-          <p className="font-serif text-xl font-medium">Vizio Bistrot</p>
+          <p className="font-serif text-xl font-medium">{CONTATTI.nome}</p>
+          {/* L'indirizzo apre la scheda Google Maps: utile su mobile
+              (avvia la navigazione) e coerente col NAP. */}
           <address className="mt-2 font-sans text-sm not-italic leading-relaxed text-muted-dark">
-            Via delle Ombrine 25, Fiumicino
+            <a
+              href={CONTATTI.google.scheda}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-4 transition-colors hover:text-cream-text"
+            >
+              {CONTATTI.indirizzo.completo}
+            </a>
           </address>
         </div>
 
@@ -101,23 +115,60 @@ export function Footer({ orari, apertoOra }: FooterProps) {
           ) : (
             <p className="font-sans text-sm text-muted-dark">Orari da definire</p>
           )}
+          {/* Nota orari temporanei, se impostata in dashboard: evita
+              che un orario stagionale passi per definitivo. */}
+          {notaOrari && (
+            <p className="mt-2 font-sans text-xs italic text-muted-dark">
+              {notaOrari}
+            </p>
+          )}
         </div>
 
         <div>
           <p className="mb-2 font-sans text-[10px] tracking-widest uppercase text-muted-dark">
             Contatti
           </p>
-          {/* Nessun telefono/email/social reale disponibile ancora —
-              segnalato come placeholder, stesso trattamento già
-              usato per le CTA di prenotazione/recensione/contatto. */}
-          <p className="font-sans text-sm text-muted-dark">
-            Contatti e social in arrivo
-          </p>
+          <ul className="space-y-1 font-sans text-sm leading-relaxed">
+            <li>
+              <a
+                href={CONTATTI.telefono.href}
+                className="underline underline-offset-4 transition-colors hover:text-cream-text"
+              >
+                {CONTATTI.telefono.display}
+              </a>
+            </li>
+            <li>
+              <a
+                href={CONTATTI.whatsapp.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-4 transition-colors hover:text-cream-text"
+              >
+                WhatsApp {CONTATTI.whatsapp.display}
+              </a>
+            </li>
+          </ul>
+
+          <ul className="mt-4 flex items-center gap-4">
+            {CONTATTI.social.map((s) => (
+              <li key={s.nome}>
+                <a
+                  href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={s.nome}
+                  className="inline-flex text-muted-dark transition-colors hover:text-cream-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text"
+                >
+                  <SocialIcon nome={s.nome} className="h-5 w-5" />
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
       <p className="mt-10 font-sans text-xs text-muted-dark">
-        © {new Date().getFullYear()} Vizio Bistrot
+        © {new Date().getFullYear()} {CONTATTI.nome}
       </p>
     </footer>
   );

@@ -1,7 +1,9 @@
 import { createClient } from "@/src/lib/supabase/server";
 import { OrariForm } from "./_components/OrariForm";
+import { OrariNotaForm } from "./_components/OrariNotaForm";
 import { PdfDownloadControls } from "./_components/PdfDownloadControls";
 import type { OrarioFasciaRow, OrarioGiornoRow } from "./_components/types";
+import { isScaduta } from "@/src/lib/orari";
 
 export const dynamic = "force-dynamic";
 
@@ -84,6 +86,11 @@ export default async function OrariPage() {
     });
   }
 
+  const { data: config } = await supabase
+    .from("orari_config")
+    .select("nota, valida_fino_al")
+    .maybeSingle();
+
   const orari: OrarioGiornoRow[] = GIORNI_LABELS.map((nome, giorno) => ({
     giorno_settimana: giorno,
     nome,
@@ -98,6 +105,14 @@ export default async function OrariPage() {
       <h1 className="font-serif text-4xl font-medium text-ink mb-8">Orari</h1>
 
       <OrariForm initialOrari={orari} />
+
+      <div className="mt-12 pt-8 border-t border-ink/10">
+        <OrariNotaForm
+          initialNota={config?.nota ?? null}
+          initialValidaFinoAl={config?.valida_fino_al ?? null}
+          scaduta={isScaduta(config?.valida_fino_al ?? null)}
+        />
+      </div>
 
       <div className="mt-12 pt-8 border-t border-ink/10 max-w-2xl">
         <h2 className="font-serif text-xl font-medium text-ink mb-1">

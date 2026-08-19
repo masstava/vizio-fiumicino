@@ -56,6 +56,30 @@ function fasciaCoprendoOra(
   return comeIeri ? time < fascia.chiusura : time >= fascia.apertura;
 }
 
+// La data di validità di una nota orari è passata? Confronto fatto
+// sul calendario di Roma (non su quello del server, che su Vercel è
+// UTC): altrimenti a cavallo della mezzanotte l'avviso comparirebbe
+// o sparirebbe con un giorno di scarto.
+export function isScaduta(
+  validaFinoAl: string | null,
+  now: Date = new Date(),
+): boolean {
+  if (!validaFinoAl) return false;
+
+  // "en-CA" produce YYYY-MM-DD, direttamente confrontabile con il
+  // formato date di Postgres.
+  const oggiRoma = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Rome",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(now);
+
+  // Scaduta solo dal giorno DOPO: "valida fino al 31/8" resta valida
+  // per tutto il 31.
+  return oggiRoma > validaFinoAl;
+}
+
 export function isApertoOra(
   giorni: OrarioGiorno[],
   now: Date = new Date(),

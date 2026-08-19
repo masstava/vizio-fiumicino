@@ -231,6 +231,15 @@ export default async function Home() {
     return { nome, chiuso: fasce.length === 0, fasce };
   });
 
+  // Nota orari temporanei (es. orario estivo): mostrata sul sito
+  // accanto agli orari, così un orario stagionale non passa per
+  // definitivo. La data di validità è solo un promemoria per la
+  // dashboard, qui non serve.
+  const { data: orariConfig } = await supabase
+    .from("orari_config")
+    .select("nota")
+    .maybeSingle();
+
   const apertoOra = isApertoOra(
     Array.from(fasceByGiorno.entries()).map(([giorno_settimana, fasce]) => ({
       giorno_settimana,
@@ -249,7 +258,11 @@ export default async function Home() {
       <BarCocktailPreview dishes={cocktailDishes} />
       <ExperienceEventi />
       <Newsletter />
-      <Footer orari={orariSettimana} apertoOra={apertoOra} />
+      <Footer
+        orari={orariSettimana}
+        apertoOra={apertoOra}
+        notaOrari={orariConfig?.nota ?? null}
+      />
     </main>
   );
 }
