@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { DarkSectionAccent } from "@/src/components/ui/DarkSectionAccent";
+import { FlameMark } from "@/src/components/ui/FlameMark";
 import { Section } from "@/src/components/ui/Section";
 import { CompactDishCard, type HybridDish } from "./CompactDishCard";
 import { EditorialDishCard } from "./EditorialDishCard";
@@ -18,27 +20,35 @@ export function BarCocktailPreview({ dishes }: BarCocktailPreviewProps) {
   const [hero, ...rest] = dishes;
 
   return (
-    <Section tone="dark" id="cocktail">
-      <p className="mb-8 font-sans text-[10px] tracking-widest uppercase text-muted-dark">
-        Cocktail &amp; Bar
-      </p>
-      <div className="space-y-10">
-        <EditorialDishCard dish={hero} tone="dark" />
-        {rest.length > 0 && (
-          <div className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2 md:grid-cols-3">
-            {rest.map((dish) => (
-              <CompactDishCard key={dish.id} dish={dish} tone="dark" />
-            ))}
-          </div>
-        )}
-      </div>
-      <div className="mt-10">
-        <Link
-          href="/menu"
-          className="font-sans text-sm font-medium text-gold underline underline-offset-4 hover:opacity-80"
-        >
-          Vedi il menu completo
-        </Link>
+    <Section
+      tone="dark"
+      id="cocktail"
+      className="relative isolate overflow-hidden"
+    >
+      <DarkSectionAccent />
+      <div className="relative">
+        <p className="mb-8 flex items-center gap-2 font-sans text-[10px] tracking-widest uppercase text-muted-dark">
+          <FlameMark className="h-3.5 w-3.5 text-gold/70" />
+          Cocktail &amp; Bar
+        </p>
+        <div className="space-y-10">
+          <EditorialDishCard dish={hero} tone="dark" />
+          {rest.length > 0 && (
+            <div className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2 md:grid-cols-3">
+              {rest.map((dish) => (
+                <CompactDishCard key={dish.id} dish={dish} tone="dark" />
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="mt-10">
+          <Link
+            href="/menu"
+            className="font-sans text-sm font-medium text-gold underline underline-offset-4 hover:opacity-80"
+          >
+            Vedi il menu completo
+          </Link>
+        </div>
       </div>
     </Section>
   );

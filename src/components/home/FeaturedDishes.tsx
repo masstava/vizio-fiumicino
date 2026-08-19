@@ -1,3 +1,5 @@
+import { DarkSectionAccent } from "@/src/components/ui/DarkSectionAccent";
+import { FlameMark } from "@/src/components/ui/FlameMark";
 import { Section } from "@/src/components/ui/Section";
 import { FeaturedDishSlide, type FeaturedDish } from "./FeaturedDishSlide";
 import { FeaturedDishesSlider } from "./FeaturedDishesSlider";
@@ -14,15 +16,23 @@ export function FeaturedDishes({ dishes }: FeaturedDishesProps) {
   if (dishes.length === 0) return null;
 
   return (
-    <Section tone="dark" id="piatti-in-evidenza">
-      <p className="mb-8 font-sans text-[10px] tracking-widest uppercase text-muted-dark">
-        In evidenza
-      </p>
-      {dishes.length === 1 ? (
-        <FeaturedDishSlide dish={dishes[0]} />
-      ) : (
-        <FeaturedDishesSlider dishes={dishes} />
-      )}
+    <Section
+      tone="dark"
+      id="piatti-in-evidenza"
+      className="relative isolate overflow-hidden"
+    >
+      <DarkSectionAccent />
+      <div className="relative">
+        <p className="mb-8 flex items-center gap-2 font-sans text-[10px] tracking-widest uppercase text-muted-dark">
+          <FlameMark className="h-3.5 w-3.5 text-gold/70" />
+          In evidenza
+        </p>
+        {dishes.length === 1 ? (
+          <FeaturedDishSlide dish={dishes[0]} />
+        ) : (
+          <FeaturedDishesSlider dishes={dishes} />
+        )}
+      </div>
     </Section>
   );
 }
