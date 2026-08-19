@@ -1,5 +1,7 @@
 import { createClient } from "@/src/lib/supabase/server";
 import type { DishData } from "@/src/components/ui/DishRow";
+import { BarCocktailPreview } from "@/src/components/home/BarCocktailPreview";
+import { ExperienceEventi } from "@/src/components/home/ExperienceEventi";
 import { FeaturedDishes } from "@/src/components/home/FeaturedDishes";
 import type { FeaturedDish } from "@/src/components/home/FeaturedDishSlide";
 import { Hero } from "@/src/components/home/Hero";
@@ -15,6 +17,12 @@ export const dynamic = "force-dynamic";
 // il menu completo"). Cocktail/Bar hanno un proprio blocco separato.
 const MENU_PREVIEW_LIMIT = 6;
 const MENU_PREVIEW_MACRO = "Da mangiare";
+
+// Teaser più corto: solo la categoria "Cocktail" (non tutti gli
+// spirits/birre/bar della macro), a scopo di assaggio visivo.
+const COCKTAIL_PREVIEW_LIMIT = 4;
+const COCKTAIL_PREVIEW_MACRO = "Bar & Cocktail";
+const COCKTAIL_PREVIEW_CATEGORIA = "Cocktail";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -132,6 +140,73 @@ export default async function Home() {
     badges: badgeByPiatto.get(p.id) ?? [],
   }));
 
+  // Teaser Cocktail & Bar: singola categoria, quindi nessun sort a
+  // due livelli necessario — si può limitare già in query.
+  const { data: macroBarCocktail } = await supabase
+    .from("categorie_macro")
+    .select("id")
+    .eq("nome", COCKTAIL_PREVIEW_MACRO)
+    .maybeSingle();
+
+  const { data: categoriaCocktail } = macroBarCocktail
+    ? await supabase
+        .from("categorie")
+        .select("id")
+        .eq("categoria_macro_id", macroBarCocktail.id)
+        .eq("nome", COCKTAIL_PREVIEW_CATEGORIA)
+        .maybeSingle()
+    : { data: null };
+
+  const { data: cocktailRows } = categoriaCocktail
+    ? await supabase
+        .from("piatti")
+        .select("id, nome, descrizione, prezzo, prezzo_variabile, foto_url")
+        .eq("categoria_id", categoriaCocktail.id)
+        .eq("disponibile", true)
+        .order("ordine")
+        .limit(COCKTAIL_PREVIEW_LIMIT)
+    : { data: [] as DishData[] };
+
+  const cocktailIds = (cocktailRows ?? []).map((p) => p.id);
+
+  const [{ data: cocktailAllergeniLinks }, { data: cocktailBadgeLinks }] =
+    await Promise.all([
+      cocktailIds.length
+        ? supabase
+            .from("piatti_allergeni")
+            .select("piatto_id, allergene_id")
+            .in("piatto_id", cocktailIds)
+        : Promise.resolve({ data: [] as { piatto_id: string; allergene_id: number }[] }),
+      cocktailIds.length
+        ? supabase.from("badge").select("piatto_id, testo").in("piatto_id", cocktailIds)
+        : Promise.resolve({ data: [] as { piatto_id: string; testo: string }[] }),
+    ]);
+
+  const cocktailAllergeniByPiatto = new Map<string, number[]>();
+  (cocktailAllergeniLinks ?? []).forEach((l) => {
+    const arr = cocktailAllergeniByPiatto.get(l.piatto_id) ?? [];
+    arr.push(l.allergene_id);
+    cocktailAllergeniByPiatto.set(l.piatto_id, arr);
+  });
+
+  const cocktailBadgeByPiatto = new Map<string, string[]>();
+  (cocktailBadgeLinks ?? []).forEach((b) => {
+    const arr = cocktailBadgeByPiatto.get(b.piatto_id) ?? [];
+    arr.push(b.testo);
+    cocktailBadgeByPiatto.set(b.piatto_id, arr);
+  });
+
+  const cocktailDishes: DishData[] = (cocktailRows ?? []).map((p) => ({
+    id: p.id,
+    nome: p.nome,
+    descrizione: p.descrizione,
+    prezzo: p.prezzo,
+    prezzo_variabile: p.prezzo_variabile,
+    foto_url: p.foto_url,
+    allergeni: cocktailAllergeniByPiatto.get(p.id) ?? [],
+    badges: cocktailBadgeByPiatto.get(p.id) ?? [],
+  }));
+
   return (
     <main>
       <StickyReservationBar />
@@ -140,6 +215,8 @@ export default async function Home() {
       <FeaturedDishes dishes={featuredDishes} />
       <SocialProof />
       <MenuPreview dishes={menuPreviewDishes} />
+      <BarCocktailPreview dishes={cocktailDishes} />
+      <ExperienceEventi />
     </main>
   );
 }
