@@ -1,14 +1,16 @@
 import Link from "next/link";
-import { DishRow, type DishData } from "@/src/components/ui/DishRow";
 import { Section } from "@/src/components/ui/Section";
+import { EditorialDishCard } from "./EditorialDishCard";
+import type { FeaturedDish } from "./FeaturedDishSlide";
 
 interface BarCocktailPreviewProps {
-  dishes: DishData[];
+  dishes: FeaturedDish[];
 }
 
-// Tema scuro. Stessa fonte dati e stesso componente (DishRow) del
-// blocco Menu — qui prezzo/allergeni/badge restano visibili, non è
-// un blocco "leva di desiderio" come i piatti in evidenza.
+// Tema scuro. Layout editoriale (foto + nome/descrizione, nessun
+// prezzo) — stessa logica del blocco "Piatti in evidenza", non più
+// un elenco compatto di righe. Contrasto: text-cream-text su bg-dark
+// ≈ 17.6:1, text-muted-dark su bg-dark ≈ 12.2:1 — oltre 4.5:1.
 export function BarCocktailPreview({ dishes }: BarCocktailPreviewProps) {
   if (dishes.length === 0) return null;
 
@@ -17,12 +19,17 @@ export function BarCocktailPreview({ dishes }: BarCocktailPreviewProps) {
       <p className="mb-8 font-sans text-[10px] tracking-widest uppercase text-muted-dark">
         Cocktail &amp; Bar
       </p>
-      <div>
-        {dishes.map((dish) => (
-          <DishRow key={dish.id} dish={dish} tone="dark" />
+      <div className="space-y-14">
+        {dishes.map((dish, index) => (
+          <EditorialDishCard
+            key={dish.id}
+            dish={dish}
+            tone="dark"
+            reverse={index % 2 === 1}
+          />
         ))}
       </div>
-      <div className="mt-8">
+      <div className="mt-12">
         <Link
           href="/menu"
           className="font-sans text-sm font-medium text-gold underline underline-offset-4 hover:opacity-80"

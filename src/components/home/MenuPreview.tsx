@@ -1,14 +1,16 @@
 import Link from "next/link";
-import { DishRow, type DishData } from "@/src/components/ui/DishRow";
 import { Section } from "@/src/components/ui/Section";
+import { EditorialDishCard } from "./EditorialDishCard";
+import type { FeaturedDish } from "./FeaturedDishSlide";
 
 interface MenuPreviewProps {
-  dishes: DishData[];
+  dishes: FeaturedDish[];
 }
 
-// Tema chiaro. Il mix foto/no-foto è già gestito da DishRow stesso
-// (fallback automatico a ImagePlaceholder quando foto_url è vuoto),
-// nessuna logica aggiuntiva necessaria qui.
+// Tema chiaro. Layout editoriale (foto + nome/descrizione, nessun
+// prezzo) — stessa logica del blocco "Piatti in evidenza", non più
+// un elenco compatto di righe. Il prezzo resta sempre visibile nella
+// pagina menu completo raggiunta dalla CTA, che qui non cambia.
 export function MenuPreview({ dishes }: MenuPreviewProps) {
   if (dishes.length === 0) return null;
 
@@ -17,12 +19,17 @@ export function MenuPreview({ dishes }: MenuPreviewProps) {
       <p className="mb-8 font-sans text-[10px] tracking-widest uppercase text-muted">
         Il menu
       </p>
-      <div>
-        {dishes.map((dish) => (
-          <DishRow key={dish.id} dish={dish} tone="light" />
+      <div className="space-y-14">
+        {dishes.map((dish, index) => (
+          <EditorialDishCard
+            key={dish.id}
+            dish={dish}
+            tone="light"
+            reverse={index % 2 === 1}
+          />
         ))}
       </div>
-      <div className="mt-8">
+      <div className="mt-12">
         <Link
           href="/menu"
           className="font-sans text-sm font-medium text-bordeaux underline underline-offset-4 hover:opacity-80"
