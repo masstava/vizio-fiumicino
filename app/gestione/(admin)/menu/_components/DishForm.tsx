@@ -91,6 +91,9 @@ export function DishForm({
   const [inEvidenzaOrdine, setInEvidenzaOrdine] = useState(
     initialData?.in_evidenza_ordine ?? 0,
   );
+  const [evidenzaBlockedMessage, setEvidenzaBlockedMessage] = useState<
+    string | null
+  >(null);
 
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -129,6 +132,17 @@ export function DishForm({
   };
 
   const showEvidenzaWarning = inEvidenza && otherEvidenzaCount >= 3;
+
+  function handleToggleEvidenza(next: boolean) {
+    if (next && otherEvidenzaCount >= 3) {
+      setEvidenzaBlockedMessage(
+        "Massimo 3 piatti in evidenza in home. Disattivane uno prima di aggiungerne un altro.",
+      );
+      return;
+    }
+    setEvidenzaBlockedMessage(null);
+    setInEvidenza(next);
+  }
 
   function toggleAllergene(id: number) {
     setAllergeniSelected((prev) => {
@@ -432,9 +446,14 @@ export function DishForm({
           <div className="space-y-2">
             <Switch
               checked={inEvidenza}
-              onChange={setInEvidenza}
+              onChange={handleToggleEvidenza}
               label="In evidenza in home"
             />
+            {evidenzaBlockedMessage && (
+              <p className="font-sans text-xs text-cream-text bg-bordeaux border border-bordeaux inline-block px-2.5 py-1 rounded-[2px]">
+                {evidenzaBlockedMessage}
+              </p>
+            )}
             {inEvidenza && (
               <div className="flex items-center gap-2 pl-1">
                 <label className="font-sans text-xs text-muted">Ordine</label>
