@@ -65,7 +65,7 @@ export function Footer({ orari }: FooterProps) {
   const orariLines = groupOrari(orari);
 
   return (
-    <footer className="bg-dark px-6 py-12 text-cream-text md:px-12 lg:px-16">
+    <footer id="contatti" className="bg-dark px-6 py-12 text-cream-text md:px-12 lg:px-16">
       <div className="grid gap-10 md:grid-cols-3">
         <div>
           <p className="font-serif text-xl font-medium">Vizio Bistrot</p>

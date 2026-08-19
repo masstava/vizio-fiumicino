@@ -7,8 +7,8 @@ import { Footer, type GiornoOrario } from "@/src/components/home/Footer";
 import { Hero } from "@/src/components/home/Hero";
 import { MenuPreview } from "@/src/components/home/MenuPreview";
 import { Newsletter } from "@/src/components/home/Newsletter";
+import { SiteHeader } from "@/src/components/home/SiteHeader";
 import { SocialProof } from "@/src/components/home/SocialProof";
-import { StickyReservationBar } from "@/src/components/home/StickyReservationBar";
 import { ThreePillars } from "@/src/components/home/ThreePillars";
 
 export const dynamic = "force-dynamic";
@@ -171,7 +171,7 @@ export default async function Home() {
 
   return (
     <main>
-      <StickyReservationBar />
+      <SiteHeader />
       <Hero />
       <ThreePillars />
       <FeaturedDishes dishes={featuredDishes} />

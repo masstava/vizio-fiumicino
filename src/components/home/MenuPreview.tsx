@@ -15,7 +15,7 @@ export function MenuPreview({ dishes }: MenuPreviewProps) {
   if (dishes.length === 0) return null;
 
   return (
-    <Section tone="light">
+    <Section tone="light" id="menu">
       <p className="mb-8 font-sans text-[10px] tracking-widest uppercase text-muted">
         Il menu
       </p>

@@ -14,7 +14,7 @@ export function FeaturedDishes({ dishes }: FeaturedDishesProps) {
   if (dishes.length === 0) return null;
 
   return (
-    <Section tone="dark">
+    <Section tone="dark" id="piatti-in-evidenza">
       <p className="mb-8 font-sans text-[10px] tracking-widest uppercase text-muted-dark">
         In evidenza
       </p>

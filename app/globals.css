@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+/* Compensa l'header sticky quando si naviga verso un'ancora (#menu,
+   #cocktail, ecc.), così la sezione non finisce nascosta sotto di
+   esso. */
+html {
+  scroll-padding-top: 5rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 @theme {
   /* Font — variabili CSS iniettate da next/font nel root layout */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;

@@ -15,7 +15,7 @@ export function BarCocktailPreview({ dishes }: BarCocktailPreviewProps) {
   if (dishes.length === 0) return null;
 
   return (
-    <Section tone="dark">
+    <Section tone="dark" id="cocktail">
       <p className="mb-8 font-sans text-[10px] tracking-widest uppercase text-muted-dark">
         Cocktail &amp; Bar
       </p>
