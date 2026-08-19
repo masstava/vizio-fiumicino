@@ -11,6 +11,7 @@ import { Newsletter } from "@/src/components/home/Newsletter";
 import { SiteHeader } from "@/src/components/home/SiteHeader";
 import { SocialProof } from "@/src/components/home/SocialProof";
 import { ThreePillars } from "@/src/components/home/ThreePillars";
+import { isApertoOra } from "@/src/lib/orari";
 
 export const dynamic = "force-dynamic";
 
@@ -56,10 +57,27 @@ export default async function Home() {
         .eq("disponibile", true)
     : { data: [] as FeaturedDish[] };
 
+  // Un solo badge per piatto (se presente), stesso pattern già usato
+  // per le anteprime menu/cocktail.
+  const { data: evidenzaBadgeLinks } = evidenzaIds.length
+    ? await supabase
+        .from("badge")
+        .select("piatto_id, testo")
+        .in("piatto_id", evidenzaIds)
+    : { data: [] as { piatto_id: string; testo: string }[] };
+
+  const evidenzaBadgeByPiatto = new Map<string, string>();
+  (evidenzaBadgeLinks ?? []).forEach((b) => {
+    if (!evidenzaBadgeByPiatto.has(b.piatto_id)) {
+      evidenzaBadgeByPiatto.set(b.piatto_id, b.testo);
+    }
+  });
+
   const piattoById = new Map((evidenzaPiatti ?? []).map((p) => [p.id, p]));
   const featuredDishes: FeaturedDish[] = (evidenzaLinks ?? [])
     .map((e) => piattoById.get(e.piatto_id))
-    .filter((p): p is FeaturedDish => p != null);
+    .filter((p): p is NonNullable<typeof p> => p != null)
+    .map((p) => ({ ...p, badge: evidenzaBadgeByPiatto.get(p.id) ?? null }));
 
   // Anteprima menu: prime N portate disponibili di "Da mangiare",
   // ordinate per categoria poi per piatto (l'ordine della categoria
@@ -213,6 +231,13 @@ export default async function Home() {
     return { nome, chiuso: fasce.length === 0, fasce };
   });
 
+  const apertoOra = isApertoOra(
+    Array.from(fasceByGiorno.entries()).map(([giorno_settimana, fasce]) => ({
+      giorno_settimana,
+      fasce,
+    })),
+  );
+
   return (
     <main>
       <SiteHeader />
@@ -224,7 +249,7 @@ export default async function Home() {
       <BarCocktailPreview dishes={cocktailDishes} />
       <ExperienceEventi />
       <Newsletter />
-      <Footer orari={orariSettimana} />
+      <Footer orari={orariSettimana} apertoOra={apertoOra} />
     </main>
   );
 }

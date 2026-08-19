@@ -11,6 +11,7 @@ export interface GiornoOrario {
 
 interface FooterProps {
   orari: GiornoOrario[];
+  apertoOra: boolean;
 }
 
 // Raggruppa i giorni consecutivi con le stesse fasce (o stesso stato
@@ -61,7 +62,7 @@ function groupOrari(rows: GiornoOrario[]): string[] {
 // <address> per l'indirizzo reale: struttura semantica già pronta
 // per lo schema markup Restaurant/LocalBusiness futuro, senza
 // doverla riscrivere in quello step.
-export function Footer({ orari }: FooterProps) {
+export function Footer({ orari, apertoOra }: FooterProps) {
   const orariLines = groupOrari(orari);
 
   return (
@@ -75,9 +76,22 @@ export function Footer({ orari }: FooterProps) {
         </div>
 
         <div>
-          <p className="mb-2 font-sans text-[10px] tracking-widest uppercase text-muted-dark">
-            Orari
-          </p>
+          <div className="mb-2 flex items-center gap-2">
+            <p className="font-sans text-[10px] tracking-widest uppercase text-muted-dark">
+              Orari
+            </p>
+            {/* Calcolato da questa stessa fonte dati (orari), non una
+                nuova tabella. Il pallino è decorativo: lo stato è
+                comunicato anche a parole per non dipendere dal solo
+                colore. */}
+            <span className="flex items-center gap-1.5 font-sans text-xs normal-case tracking-normal text-muted-dark">
+              <span
+                aria-hidden="true"
+                className={`h-1.5 w-1.5 rounded-full ${apertoOra ? "bg-emerald-400" : "bg-rose-400"}`}
+              />
+              {apertoOra ? "Aperto ora" : "Chiuso ora"}
+            </span>
+          </div>
           {orariLines.length > 0 ? (
             <ul className="space-y-1 font-sans text-sm leading-relaxed">
               {orariLines.map((line) => (

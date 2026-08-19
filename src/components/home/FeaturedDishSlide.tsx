@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Badge } from "@/src/components/ui/Badge";
 import { ImagePlaceholder } from "@/src/components/ui/ImagePlaceholder";
 
 export interface FeaturedDish {
@@ -7,6 +8,7 @@ export interface FeaturedDish {
   nome: string;
   descrizione: string | null;
   foto_url: string | null;
+  badge?: string | null;
 }
 
 // Presentazione condivisa tra il blocco fisso (1 piatto) e lo slider
@@ -33,6 +35,11 @@ export function FeaturedDishSlide({ dish }: { dish: FeaturedDish }) {
         <h3 className="mb-3 font-serif text-3xl font-medium text-cream-text">
           {dish.nome}
         </h3>
+        {dish.badge && (
+          <Badge variant="dark" className="mb-3">
+            {dish.badge}
+          </Badge>
+        )}
         {dish.descrizione && (
           <p className="mb-6 font-sans text-sm leading-relaxed text-muted-dark">
             {dish.descrizione}
