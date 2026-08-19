@@ -1,35 +1,38 @@
 import Link from "next/link";
 import { Section } from "@/src/components/ui/Section";
+import { CompactDishCard, type HybridDish } from "./CompactDishCard";
 import { EditorialDishCard } from "./EditorialDishCard";
-import type { FeaturedDish } from "./FeaturedDishSlide";
 
 interface BarCocktailPreviewProps {
-  dishes: FeaturedDish[];
+  dishes: HybridDish[];
 }
 
-// Tema scuro. Layout editoriale (foto + nome/descrizione, nessun
-// prezzo) — stessa logica del blocco "Piatti in evidenza", non più
-// un elenco compatto di righe. Contrasto: text-cream-text su bg-dark
-// ≈ 17.6:1, text-muted-dark su bg-dark ≈ 12.2:1 — oltre 4.5:1.
+// Tema scuro. Layout ibrido: il primo drink ha trattamento editoriale
+// (foto grande + testo); il resto va in una griglia compatta (foto
+// piccola, nome, un badge se presente) — stessa logica di MenuPreview.
+// Contrasto: text-cream-text su bg-dark ≈ 17.6:1, text-muted-dark su
+// bg-dark ≈ 12.2:1 — oltre 4.5:1.
 export function BarCocktailPreview({ dishes }: BarCocktailPreviewProps) {
   if (dishes.length === 0) return null;
+
+  const [hero, ...rest] = dishes;
 
   return (
     <Section tone="dark" id="cocktail">
       <p className="mb-8 font-sans text-[10px] tracking-widest uppercase text-muted-dark">
         Cocktail &amp; Bar
       </p>
-      <div className="space-y-14">
-        {dishes.map((dish, index) => (
-          <EditorialDishCard
-            key={dish.id}
-            dish={dish}
-            tone="dark"
-            reverse={index % 2 === 1}
-          />
-        ))}
+      <div className="space-y-10">
+        <EditorialDishCard dish={hero} tone="dark" />
+        {rest.length > 0 && (
+          <div className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2 md:grid-cols-3">
+            {rest.map((dish) => (
+              <CompactDishCard key={dish.id} dish={dish} tone="dark" />
+            ))}
+          </div>
+        )}
       </div>
-      <div className="mt-12">
+      <div className="mt-10">
         <Link
           href="/menu"
           className="font-sans text-sm font-medium text-gold underline underline-offset-4 hover:opacity-80"

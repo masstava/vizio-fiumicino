@@ -1,5 +1,6 @@
 import { createClient } from "@/src/lib/supabase/server";
 import { BarCocktailPreview } from "@/src/components/home/BarCocktailPreview";
+import type { HybridDish } from "@/src/components/home/CompactDishCard";
 import { ExperienceEventi } from "@/src/components/home/ExperienceEventi";
 import { FeaturedDishes } from "@/src/components/home/FeaturedDishes";
 import type { FeaturedDish } from "@/src/components/home/FeaturedDishSlide";
@@ -83,8 +84,9 @@ export default async function Home() {
   );
   const categoriaIds = (categorieDaMangiare ?? []).map((c) => c.id);
 
-  // Layout editoriale: bastano id/nome/descrizione/foto_url, nessun
-  // prezzo né allergeni/badge (non mostrati in questo blocco).
+  // Layout ibrido: bastano id/nome/descrizione/foto_url più un
+  // eventuale badge (letto sotto), nessun prezzo né allergeni (non
+  // mostrati in questo blocco).
   const { data: menuPreviewRows } = categoriaIds.length
     ? await supabase
         .from("piatti")
@@ -103,20 +105,40 @@ export default async function Home() {
         }[],
       };
 
-  const menuPreviewDishes: FeaturedDish[] = (menuPreviewRows ?? [])
+  const menuPreviewRowsSorted = (menuPreviewRows ?? [])
     .slice()
     .sort((a, b) => {
       const ca = categoriaOrdineById.get(a.categoria_id) ?? 0;
       const cb = categoriaOrdineById.get(b.categoria_id) ?? 0;
       return ca !== cb ? ca - cb : a.ordine - b.ordine;
     })
-    .slice(0, MENU_PREVIEW_LIMIT)
-    .map((p) => ({
-      id: p.id,
-      nome: p.nome,
-      descrizione: p.descrizione,
-      foto_url: p.foto_url,
-    }));
+    .slice(0, MENU_PREVIEW_LIMIT);
+
+  // Un solo badge per piatto (se presente) come richiesto per la
+  // griglia compatta — non ne inventiamo, leggiamo quelli già in
+  // "badge" e prendiamo il primo.
+  const menuPreviewIds = menuPreviewRowsSorted.map((p) => p.id);
+  const { data: menuPreviewBadgeLinks } = menuPreviewIds.length
+    ? await supabase
+        .from("badge")
+        .select("piatto_id, testo")
+        .in("piatto_id", menuPreviewIds)
+    : { data: [] as { piatto_id: string; testo: string }[] };
+
+  const menuPreviewBadgeByPiatto = new Map<string, string>();
+  (menuPreviewBadgeLinks ?? []).forEach((b) => {
+    if (!menuPreviewBadgeByPiatto.has(b.piatto_id)) {
+      menuPreviewBadgeByPiatto.set(b.piatto_id, b.testo);
+    }
+  });
+
+  const menuPreviewDishes: HybridDish[] = menuPreviewRowsSorted.map((p) => ({
+    id: p.id,
+    nome: p.nome,
+    descrizione: p.descrizione,
+    foto_url: p.foto_url,
+    badge: menuPreviewBadgeByPiatto.get(p.id) ?? null,
+  }));
 
   // Teaser Cocktail & Bar: singola categoria, quindi nessun sort a
   // due livelli necessario — si può limitare già in query.
@@ -135,7 +157,8 @@ export default async function Home() {
         .maybeSingle()
     : { data: null };
 
-  // Layout editoriale: nessun prezzo né allergeni/badge da leggere.
+  // Layout ibrido: nessun prezzo, ma un eventuale badge sì (letto
+  // sotto, stessa logica dell'anteprima menu).
   const { data: cocktailRows } = categoriaCocktail
     ? await supabase
         .from("piatti")
@@ -146,7 +169,28 @@ export default async function Home() {
         .limit(COCKTAIL_PREVIEW_LIMIT)
     : { data: [] as FeaturedDish[] };
 
-  const cocktailDishes: FeaturedDish[] = cocktailRows ?? [];
+  const cocktailIds = (cocktailRows ?? []).map((p) => p.id);
+  const { data: cocktailBadgeLinks } = cocktailIds.length
+    ? await supabase
+        .from("badge")
+        .select("piatto_id, testo")
+        .in("piatto_id", cocktailIds)
+    : { data: [] as { piatto_id: string; testo: string }[] };
+
+  const cocktailBadgeByPiatto = new Map<string, string>();
+  (cocktailBadgeLinks ?? []).forEach((b) => {
+    if (!cocktailBadgeByPiatto.has(b.piatto_id)) {
+      cocktailBadgeByPiatto.set(b.piatto_id, b.testo);
+    }
+  });
+
+  const cocktailDishes: HybridDish[] = (cocktailRows ?? []).map((p) => ({
+    id: p.id,
+    nome: p.nome,
+    descrizione: p.descrizione,
+    foto_url: p.foto_url,
+    badge: cocktailBadgeByPiatto.get(p.id) ?? null,
+  }));
 
   // Orari per il footer: stessa fonte unica usata in /gestione/orari
   // e nella route del PDF orari.
