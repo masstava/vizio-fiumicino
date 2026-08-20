@@ -1,3 +1,4 @@
+import { Logo } from "@/src/components/ui/Logo";
 import { SocialIcon } from "@/src/components/ui/SocialIcon";
 import { CONTATTI } from "@/src/lib/contatti";
 
@@ -74,7 +75,7 @@ export function Footer({ orari, apertoOra, notaOrari }: FooterProps) {
     <footer id="contatti" className="bg-dark px-6 py-12 text-cream-text md:px-12 lg:px-16">
       <div className="grid gap-10 md:grid-cols-3">
         <div>
-          <p className="font-serif text-xl font-medium">{CONTATTI.nome}</p>
+          <Logo className="h-8" />
           {/* L'indirizzo apre la scheda Google Maps: utile su mobile
               (avvia la navigazione) e coerente col NAP. */}
           <address className="mt-2 font-sans text-sm not-italic leading-relaxed text-muted-dark">

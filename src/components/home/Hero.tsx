@@ -1,5 +1,5 @@
 import { Button } from "@/src/components/ui/Button";
-import { FlameMark } from "@/src/components/ui/FlameMark";
+import { FlameAccent } from "@/src/components/ui/FlameAccent";
 import { ImagePlaceholder } from "@/src/components/ui/ImagePlaceholder";
 import { RECENSIONI } from "@/src/lib/contatti";
 
@@ -42,7 +42,7 @@ export function Hero({ headline }: { headline: string }) {
 
       <div className="relative z-10 max-w-3xl px-6 pb-16 pt-32 md:px-12 md:pb-24 lg:px-16">
         <p className="mb-4 flex items-center gap-2 font-sans text-xs tracking-[0.2em] uppercase text-muted-dark">
-          <FlameMark className="h-4 w-4 text-gold/80" />
+          <FlameAccent className="h-4" />
           Fiumicino
         </p>
         <h1 className="mb-8 font-serif text-4xl font-medium leading-[1.1] md:text-6xl">

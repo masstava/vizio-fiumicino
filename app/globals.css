@@ -27,4 +27,16 @@ html {
   --color-cream-text: #f5efe4;
   --color-muted: #5f5e5a;
   --color-muted-dark: #d8c7b0;
+
+  /* Oro del marchio, estratto dal vettoriale ufficiale
+     (public/brand/logo-completo.svg). Distinto da --color-gold, che è
+     l'oro caldo già in uso negli accenti: questo è più chiaro e serve
+     a restare coerenti col lettering del logo.
+     Uso: solo su fondi scuri, con la stessa parsimonia del bordeaux —
+     dettagli, bordi sottili, accenti tipografici. Mai come
+     riempimento o blocco di sfondo.
+     Contrasto misurato: 12,3:1 su --color-dark; su --color-cream
+     scende a 1,46:1, quindi su fondo chiaro NON è utilizzabile per
+     il testo. */
+  --color-gold-brand: #dfc98a;
 }

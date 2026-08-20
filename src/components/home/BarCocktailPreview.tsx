@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { DarkSectionAccent } from "@/src/components/ui/DarkSectionAccent";
-import { FlameMark } from "@/src/components/ui/FlameMark";
+import { FlameAccent } from "@/src/components/ui/FlameAccent";
 import { Section } from "@/src/components/ui/Section";
 import { CompactDishCard, type HybridDish } from "./CompactDishCard";
 import { EditorialDishCard } from "./EditorialDishCard";
@@ -28,7 +28,7 @@ export function BarCocktailPreview({ dishes }: BarCocktailPreviewProps) {
       <DarkSectionAccent />
       <div className="relative">
         <p className="mb-8 flex items-center gap-2 font-sans text-[10px] tracking-widest uppercase text-muted-dark">
-          <FlameMark className="h-3.5 w-3.5 text-gold/70" />
+          <FlameAccent className="h-3.5" />
           Cocktail &amp; Bar
         </p>
         <div className="space-y-10">

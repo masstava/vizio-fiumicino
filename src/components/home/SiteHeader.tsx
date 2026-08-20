@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/src/components/ui/Button";
+import { Logo } from "@/src/components/ui/Logo";
 
 const NAV_LINKS = [
   { href: "#menu", label: "Menu" },
@@ -29,9 +30,10 @@ export function SiteHeader() {
       <div className="flex items-center justify-between gap-4 px-6 py-3 md:px-12 lg:px-16">
         <Link
           href="/"
-          className="font-serif text-lg font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text"
+          aria-label="Vizio Bistrot — home"
+          className="flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text"
         >
-          Vizio Bistrot
+          <Logo priority className="h-7 md:h-8" />
         </Link>
 
         <nav
