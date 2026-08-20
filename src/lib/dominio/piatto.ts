@@ -34,3 +34,23 @@ export interface PiattoDettaglio extends PiattoAnteprima {
    */
   allergeni?: string[];
 }
+
+/**
+ * Riga di elenco completa: la forma usata sia dalla pagina menu
+ * pubblica sia dagli elenchi di dashboard.
+ *
+ * Gli allergeni sono i codici numerici della normativa UE, non i nomi
+ * per esteso: è la convenzione dei menu stampati (il numero accanto al
+ * piatto, la legenda una volta sola). I nomi estesi restano per la
+ * scheda di dettaglio, dove c'è spazio.
+ */
+export interface PiattoRiga {
+  id: string;
+  nome: string;
+  descrizione?: string | null;
+  prezzo?: number | null;
+  prezzo_variabile?: boolean;
+  foto_url?: string | null;
+  allergeni?: number[];
+  badges?: string[];
+}

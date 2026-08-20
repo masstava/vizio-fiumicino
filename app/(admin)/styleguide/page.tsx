@@ -5,9 +5,9 @@ import { PriceTag } from "@/src/components/ui/PriceTag";
 import { AllergenCodes } from "@/src/components/ui/AllergenCodes";
 import { DishRow } from "@/src/components/ui/DishRow";
 import { ImagePlaceholder } from "@/src/components/ui/ImagePlaceholder";
-import type { DishData } from "@/src/components/ui/DishRow";
+import type { PiattoRiga } from "@/src/lib/dominio";
 
-const DISHES_LIGHT: DishData[] = [
+const DISHES_LIGHT: PiattoRiga[] = [
   {
     id: "dish-001",
     nome: "Tagliata di Manzo",
@@ -42,7 +42,7 @@ const DISHES_LIGHT: DishData[] = [
   },
 ];
 
-const DISHES_DARK: DishData[] = [
+const DISHES_DARK: PiattoRiga[] = [
   {
     id: "dish-004",
     nome: "Negroni Sbagliato",

@@ -78,6 +78,14 @@ const it = {
     itBreve: "IT",
     enBreve: "EN",
   },
+  menu: {
+    titoloPagina: "Il menu",
+    descrizionePagina:
+      "Carne alla brace, cucina di stagione, cocktail e cantina. I prezzi sono per porzione; alcune voci variano secondo il pescato e il taglio del giorno.",
+    legendaTitolo: "Legenda allergeni",
+    legendaNota:
+      "I numeri accanto ai piatti corrispondono agli allergeni indicati qui sotto. Per intolleranze o allergie parlane con il personale di sala.",
+  },
   piatto: {
     chiudi: "Chiudi",
     apriDettaglio: (nome: string) => `Vedi i dettagli di ${nome}`,
@@ -162,6 +170,14 @@ const en: Dizionario = {
     en: "English",
     itBreve: "IT",
     enBreve: "EN",
+  },
+  menu: {
+    titoloPagina: "The menu",
+    descrizionePagina:
+      "Meat over embers, seasonal cooking, cocktails and cellar. Prices are per portion; some items vary with the day's catch and cut.",
+    legendaTitolo: "Allergen key",
+    legendaNota:
+      "The numbers next to each dish match the allergens listed below. For intolerances or allergies, please speak to a member of staff.",
   },
   piatto: {
     chiudi: "Close",

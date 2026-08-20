@@ -10,6 +10,7 @@ export type {
   PiattoAnteprima,
   PiattoConBadge,
   PiattoDettaglio,
+  PiattoRiga,
 } from "./piatto";
 export type { EventoInEvidenza } from "./evento";
 export type { FasciaOraria, GiornoOrario, FasceGiorno } from "./orario";
