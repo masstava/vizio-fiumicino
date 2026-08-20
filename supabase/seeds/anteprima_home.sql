@@ -79,44 +79,53 @@ limit 5
 on conflict (piatto_id) do nothing;
 
 -- -------------------------------------------------------------
--- 3) Cocktail & Bar: varietà di stile, non quattro spritz.
---    Un signature di casa, un classico, un analcolico, una birra.
---    Ogni blocco prende al massimo un elemento e salta i doppioni.
+-- 3) Cocktail & Bar: varietà di stile, non quattro drink uguali.
+--    Un signature alcolico, un classico, un analcolico, una birra.
+--
+--    ATTENZIONE al match sui nomi: "ilike '%gin%'" pesca anche
+--    "VIRgin Paloma". Qui si usano i confini di parola di Postgres
+--    (\y) e si classifica per categoria, non per sottostringa.
+--
+--    Ogni slot è ordinato per preferenza e non per uguaglianza
+--    esatta: se il drink ideale non c'è, ripiega invece di lasciare
+--    lo slot vuoto.
 -- -------------------------------------------------------------
 with bar as (
-  select p.id, p.nome, c.nome as cat, p.ordine
+  select
+    p.id, p.nome, p.ordine,
+    (c.nome ilike '%analcolic%' or p.nome ilike '%analcolic%'
+     or p.nome ~* '\yvirgin\y')            as analcolico,
+    (c.nome ilike '%birr%' or p.nome ilike '%birra%') as birra
   from public.piatti p
   join public.categorie c        on c.id = p.categoria_id
   join public.categorie_macro cm on cm.id = c.categoria_macro_id
   where p.disponibile and cm.nome = 'Bar & Cocktail'
 ),
+alcolici as (select * from bar where not analcolico and not birra),
 scelte as (
-  -- Signature della casa (nome che richiama il locale)
-  (select id, 10 as ord from bar
+  -- Signature della casa (alcolico)
+  (select id, 10 as ord from alcolici
     where nome ilike '%vizio%' order by ordine limit 1)
   union all
-  -- Un classico riconoscibile, ma NON uno spritz
-  (select id, 11 from bar
-    where nome not ilike '%spritz%'
-      and (nome ilike '%negroni%' or nome ilike '%americano%'
-        or nome ilike '%old fashioned%' or nome ilike '%margarita%'
-        or nome ilike '%moscow%' or nome ilike '%mojito%'
-        or nome ilike '%martini%' or nome ilike '%gin%')
-    order by ordine limit 1)
+  -- Un classico riconoscibile, mai uno spritz
+  (select id, 11 from alcolici
+    where nome not ilike '%vizio%'
+    order by
+      (nome ~* '\y(negroni|americano|old fashioned|manhattan|daiquiri|margarita|mojito|moscow mule|martini|gin)\y') desc,
+      (nome !~* '\yspritz\y') desc,
+      ordine
+    limit 1)
   union all
   -- Un analcolico
-  (select id, 12 from bar
-    where nome ilike '%analcolic%' or nome ilike '%vergine%'
-       or nome ilike '%virgin%' or cat ilike '%analcolic%'
-    order by ordine limit 1)
+  (select id, 12 from bar where analcolico order by ordine limit 1)
   union all
-  -- Una birra artigianale
-  (select id, 13 from bar
-    where cat ilike '%birr%' or nome ilike '%birra%'
-    order by ordine limit 1)
+  -- Una birra
+  (select id, 13 from bar where birra order by ordine limit 1)
 )
 insert into public.piatti_anteprima_home (piatto_id, ordine)
-select distinct on (id) id, ord::smallint from scelte
+select distinct on (id) id, ord::smallint
+from scelte
+order by id, ord
 on conflict (piatto_id) do nothing;
 
 commit;
