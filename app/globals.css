@@ -40,3 +40,108 @@ html {
      il testo. */
   --color-gold-brand: #dfc98a;
 }
+
+/* =============================================================
+   Ponte verso i componenti shadcn/ui
+   =============================================================
+   I componenti shadcn ragionano per ruoli (background, foreground,
+   primary, border...). Qui quei ruoli vengono mappati sui colori del
+   progetto, così i componenti prendono il nostro tema invece dei
+   default neutri di shadcn — nessun grigio estraneo alla palette.
+
+   Il tema ibrido chiaro/scuro del sito NON è un dark mode di sistema:
+   è una scelta per sezione (Section tone="dark" | "light"). Per
+   questo non c'è nessuna media query prefers-color-scheme: i valori
+   di base sono quelli chiari, e le sezioni scure ridefiniscono gli
+   stessi ruoli al proprio interno (blocco .tema-scuro più sotto).
+   ============================================================= */
+:root {
+  --background: var(--color-cream);
+  --foreground: var(--color-ink);
+
+  --card: var(--color-cream);
+  --card-foreground: var(--color-ink);
+  --popover: var(--color-cream);
+  --popover-foreground: var(--color-ink);
+
+  --primary: var(--color-bordeaux);
+  --primary-foreground: var(--color-cream-text);
+  --secondary: var(--color-gold);
+  --secondary-foreground: var(--color-ink);
+
+  --muted: color-mix(in srgb, var(--color-ink) 6%, var(--color-cream));
+  --muted-foreground: var(--color-muted);
+  --accent: color-mix(in srgb, var(--color-ink) 6%, var(--color-cream));
+  --accent-foreground: var(--color-ink);
+
+  --destructive: var(--color-bordeaux);
+  --destructive-foreground: var(--color-cream-text);
+
+  --border: color-mix(in srgb, var(--color-ink) 12%, transparent);
+  --input: color-mix(in srgb, var(--color-ink) 20%, transparent);
+  --ring: var(--color-bordeaux);
+
+  /* Il progetto usa angoli quasi vivi (rounded-[2px]) ovunque: i
+     componenti devono adeguarsi, non arrotondare a modo loro. */
+  --radius: 2px;
+}
+
+/* Sezioni scure: stessi ruoli, valori del tema scuro. Si applica con
+   la classe .tema-scuro, così un Dialog o un Popover aperto dentro
+   una sezione scura eredita i colori giusti senza props aggiuntive. */
+.tema-scuro {
+  --background: var(--color-dark);
+  --foreground: var(--color-cream-text);
+
+  --card: var(--color-dark);
+  --card-foreground: var(--color-cream-text);
+  --popover: var(--color-dark);
+  --popover-foreground: var(--color-cream-text);
+
+  --primary: var(--color-bordeaux);
+  --primary-foreground: var(--color-cream-text);
+  --secondary: var(--color-gold-brand);
+  --secondary-foreground: var(--color-dark);
+
+  --muted: color-mix(in srgb, var(--color-cream-text) 8%, var(--color-dark));
+  --muted-foreground: var(--color-muted-dark);
+  --accent: color-mix(in srgb, var(--color-cream-text) 8%, var(--color-dark));
+  --accent-foreground: var(--color-cream-text);
+
+  --border: color-mix(in srgb, var(--color-cream-text) 12%, transparent);
+  --input: color-mix(in srgb, var(--color-cream-text) 20%, transparent);
+  --ring: var(--color-gold-brand);
+}
+
+/* Espone i ruoli come utility Tailwind (bg-background, text-muted-foreground...)
+   che i componenti shadcn usano. "inline" perché i valori sono già
+   variabili CSS: Tailwind le referenzia senza ricalcolarle. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  /* Nota: NON si espone --color-muted come ruolo shadcn. Nel design
+     system del progetto "muted" è già un colore di TESTO
+     (text-muted, #5f5e5a), mentre per shadcn sarebbe uno sfondo.
+     Sovrascriverlo cambierebbe il colore del testo in mezzo sito. I
+     componenti qui usano bg-accent al posto di bg-muted. */
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: var(--radius);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius);
+}
