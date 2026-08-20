@@ -40,7 +40,12 @@ export function BarCocktailPreview({ dishes, locale }: BarCocktailPreviewProps) 
           {rest.length > 0 && (
             <div className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2 md:grid-cols-3">
               {rest.map((dish) => (
-                <CompactDishCard key={dish.id} dish={dish} tone="dark" />
+                <CompactDishCard
+                  key={dish.id}
+                  dish={dish}
+                  tone="dark"
+                  locale={locale}
+                />
               ))}
             </div>
           )}

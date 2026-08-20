@@ -33,7 +33,12 @@ export function MenuPreview({ dishes, locale }: MenuPreviewProps) {
         {rest.length > 0 && (
           <div className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2 md:grid-cols-3">
             {rest.map((dish) => (
-              <CompactDishCard key={dish.id} dish={dish} tone="light" />
+              <CompactDishCard
+                  key={dish.id}
+                  dish={dish}
+                  tone="light"
+                  locale={locale}
+                />
             ))}
           </div>
         )}

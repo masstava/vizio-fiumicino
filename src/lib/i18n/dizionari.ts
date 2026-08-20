@@ -78,6 +78,12 @@ const it = {
     itBreve: "IT",
     enBreve: "EN",
   },
+  piatto: {
+    chiudi: "Chiudi",
+    apriDettaglio: (nome: string) => `Vedi i dettagli di ${nome}`,
+    allergeni: "Allergeni",
+    nessunaDescrizione: "Descrizione in arrivo.",
+  },
 };
 
 // Niente "as const" sull'italiano: darebbe tipi letterali ("Prenota"
@@ -156,6 +162,12 @@ const en: Dizionario = {
     en: "English",
     itBreve: "IT",
     enBreve: "EN",
+  },
+  piatto: {
+    chiudi: "Close",
+    apriDettaglio: (nome: string) => `See details for ${nome}`,
+    allergeni: "Allergens",
+    nessunaDescrizione: "Description coming soon.",
   },
 };
 

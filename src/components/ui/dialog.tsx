@@ -61,10 +61,14 @@ const DialogContent = React.forwardRef<
       {children}
       {!hideClose && (
         <DialogPrimitive.Close
+          // Sfondo proprio: il pulsante può trovarsi sopra la foto del
+          // piatto, dove un colore di testo qualsiasi sparisce a
+          // seconda dell'immagine. Così resta leggibile su qualunque
+          // sfondo, senza dipendere dallo scatto.
           className={cn(
-            "absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-sm",
-            "text-muted-foreground transition-colors hover:text-foreground",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            "absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full",
+            "bg-dark/60 text-cream-text backdrop-blur-sm transition-colors hover:bg-dark/85",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text",
           )}
         >
           <svg
