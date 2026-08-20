@@ -12,6 +12,7 @@ export default async function NuovoPiattoPage() {
     { data: categorie },
     { data: allergeni },
     { count: evidenzaCount },
+    { count: anteprimaCount },
   ] = await Promise.all([
     supabase.from("categorie_macro").select("id, nome, ordine").order("ordine"),
     supabase
@@ -21,6 +22,9 @@ export default async function NuovoPiattoPage() {
     supabase.from("allergeni").select("id, nome_it").order("id"),
     supabase
       .from("piatti_in_evidenza")
+      .select("piatto_id", { count: "exact", head: true }),
+    supabase
+      .from("piatti_anteprima_home")
       .select("piatto_id", { count: "exact", head: true }),
   ]);
 
@@ -45,6 +49,7 @@ export default async function NuovoPiattoPage() {
         categorieGrouped={categorieGrouped}
         allergeniList={allergeni ?? []}
         otherEvidenzaCount={evidenzaCount ?? 0}
+        otherAnteprimaCount={anteprimaCount ?? 0}
       />
     </div>
   );

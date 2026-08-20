@@ -61,6 +61,13 @@ export default async function MenuPage() {
     badgeByPiatto.set(b.piatto_id, arr);
   });
 
+  // Selezione curata dell'anteprima home: serve solo per gli avvisi
+  // qui sotto (nessuno selezionato → la home ripiega su una scelta
+  // automatica; troppi → torna a essere un elenco).
+  const { count: anteprimaCount } = await supabase
+    .from("piatti_anteprima_home")
+    .select("piatto_id", { count: "exact", head: true });
+
   const categorieByMacro = new Map<string, NonNullable<typeof categorie>>();
   (categorie ?? []).forEach((c) => {
     const arr = categorieByMacro.get(c.categoria_macro_id) ?? [];
@@ -130,6 +137,21 @@ export default async function MenuPage() {
           Download menu PDF (EN)
         </a>
       </div>
+
+      {anteprimaCount === 0 && (
+        <p className="font-sans text-sm text-dark bg-gold/25 border border-gold rounded-[2px] px-3 py-2 mb-6 max-w-2xl">
+          Nessun piatto selezionato per l&apos;anteprima della home: al momento
+          la home mostra una scelta automatica (i primi piatti per ordine).
+          Apri un piatto e attiva &quot;Mostra nell&apos;anteprima home&quot; per
+          decidere tu cosa mostrare.
+        </p>
+      )}
+      {anteprimaCount != null && anteprimaCount > 8 && (
+        <p className="font-sans text-sm text-dark bg-gold/25 border border-gold rounded-[2px] px-3 py-2 mb-6 max-w-2xl">
+          Sono {anteprimaCount} i piatti selezionati per l&apos;anteprima della
+          home: oltre gli 8 diventa una lista invece di una selezione.
+        </p>
+      )}
 
       <MenuListClient groups={groups} />
     </div>

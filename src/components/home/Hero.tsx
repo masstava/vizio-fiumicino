@@ -19,7 +19,7 @@ const HERO_VIDEO_URL =
 // Contrasto verificato: cream-text (#f5efe4) su bg-dark (#0a0705) ≈
 // 17.6:1, muted-dark (#d8c7b0) su bg-dark ≈ 12.2:1 — entrambi ben
 // oltre la soglia minima 4.5:1 per testo normale.
-export function Hero() {
+export function Hero({ headline }: { headline: string }) {
   return (
     <section className="relative flex min-h-[85vh] items-end overflow-hidden bg-dark text-cream-text md:min-h-[92vh]">
       <ImagePlaceholder
@@ -46,8 +46,7 @@ export function Hero() {
           Fiumicino
         </p>
         <h1 className="mb-8 font-serif text-4xl font-medium leading-[1.1] md:text-6xl">
-          Carne alla brace, cocktail d&apos;autore, aperitivo fino a notte
-          fonda.
+          {headline}
         </h1>
         <Button type="button" variant="primary">
           Prenota un tavolo

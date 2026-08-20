@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Badge } from "@/src/components/ui/Badge";
 import { ImagePlaceholder } from "@/src/components/ui/ImagePlaceholder";
 import { cn } from "@/src/lib/utils";
 import type { FeaturedDish } from "./FeaturedDishSlide";
@@ -48,6 +49,13 @@ export function EditorialDishCard({
       >
         {dish.nome}
       </h3>
+      {/* Solo badge realmente presenti sul piatto: sono elementi di
+          credibilità e lavorazione, non si inventano. */}
+      {dish.badge && (
+        <Badge variant={tone === "dark" ? "dark" : "light"} className="mt-3">
+          {dish.badge}
+        </Badge>
+      )}
       {dish.descrizione && (
         <p
           className={cn(
@@ -62,7 +70,16 @@ export function EditorialDishCard({
   );
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 md:items-center md:gap-12">
+    // Riquadro leggero e spazio interno generoso attorno al piatto
+    // principale: lo stacca dalla griglia compatta sotto e alza la
+    // percezione di valore. Il bordo è tenue, non deve competere col
+    // contenuto.
+    <div
+      className={cn(
+        "grid gap-6 rounded-[2px] border p-5 md:grid-cols-2 md:items-center md:gap-12 md:p-10",
+        tone === "light" ? "border-ink/10" : "border-cream-text/10",
+      )}
+    >
       <div className={reverse ? "md:order-2" : undefined}>{photo}</div>
       <div className={reverse ? "md:order-1" : undefined}>{text}</div>
     </div>

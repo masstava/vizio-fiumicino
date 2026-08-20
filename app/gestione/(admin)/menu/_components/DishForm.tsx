@@ -29,6 +29,8 @@ interface DishFormInitialData {
   badges: BadgeInput[];
   in_evidenza: boolean;
   in_evidenza_ordine: number;
+  anteprima_home: boolean;
+  anteprima_home_ordine: number;
 }
 
 interface DishFormProps {
@@ -37,6 +39,8 @@ interface DishFormProps {
   categorieGrouped: CategoriaGroupOption[];
   allergeniList: AllergeneOption[];
   otherEvidenzaCount: number;
+  /** Quanti ALTRI piatti sono già selezionati per l'anteprima home. */
+  otherAnteprimaCount: number;
   initialData?: DishFormInitialData;
 }
 
@@ -51,6 +55,7 @@ export function DishForm({
   categorieGrouped,
   allergeniList,
   otherEvidenzaCount,
+  otherAnteprimaCount,
   initialData,
 }: DishFormProps) {
   const router = useRouter();
@@ -90,6 +95,12 @@ export function DishForm({
   );
   const [inEvidenzaOrdine, setInEvidenzaOrdine] = useState(
     initialData?.in_evidenza_ordine ?? 0,
+  );
+  const [anteprimaHome, setAnteprimaHome] = useState(
+    initialData?.anteprima_home ?? false,
+  );
+  const [anteprimaHomeOrdine, setAnteprimaHomeOrdine] = useState(
+    initialData?.anteprima_home_ordine ?? 0,
   );
   const [evidenzaBlockedMessage, setEvidenzaBlockedMessage] = useState<
     string | null
@@ -132,6 +143,12 @@ export function DishForm({
   };
 
   const showEvidenzaWarning = inEvidenza && otherEvidenzaCount >= 3;
+
+  // Oltre 8 l'anteprima smette di essere una selezione e ridiventa un
+  // elenco — che è il problema che il flag serviva a risolvere.
+  // Avviso soltanto: nessun blocco, la soglia non è una regola rigida.
+  const totaleAnteprima = otherAnteprimaCount + (anteprimaHome ? 1 : 0);
+  const showAnteprimaWarning = anteprimaHome && totaleAnteprima > 8;
 
   function handleToggleEvidenza(next: boolean) {
     if (next && otherEvidenzaCount >= 3) {
@@ -229,6 +246,8 @@ export function DishForm({
           .map((b) => ({ testo: b.testo.trim(), testo_en: b.testo_en.trim() })),
         in_evidenza: inEvidenza,
         in_evidenza_ordine: inEvidenza ? inEvidenzaOrdine : null,
+        anteprima_home: anteprimaHome,
+        anteprima_home_ordine: anteprimaHome ? anteprimaHomeOrdine : null,
       });
 
       router.push("/gestione/menu");
@@ -472,6 +491,41 @@ export function DishForm({
                 slider.
               </p>
             )}
+
+            <div className="pt-3 mt-1 border-t border-ink/10 space-y-2">
+              <Switch
+                checked={anteprimaHome}
+                onChange={setAnteprimaHome}
+                label="Mostra nell'anteprima home"
+              />
+              <p className="font-sans text-xs text-muted">
+                Diverso da &quot;in evidenza&quot;: questo decide quali piatti
+                compaiono nell&apos;anteprima del menu (o dei cocktail) in home.
+              </p>
+              {anteprimaHome && (
+                <div className="flex items-center gap-2 pl-1">
+                  <label className="font-sans text-xs text-muted">Ordine</label>
+                  <input
+                    type="number"
+                    min="0"
+                    className={cn(inputClass, "w-20")}
+                    value={anteprimaHomeOrdine}
+                    onChange={(e) =>
+                      setAnteprimaHomeOrdine(Number(e.target.value))
+                    }
+                  />
+                  <span className="font-sans text-xs text-muted">
+                    il primo della lista è il piatto grande in cima
+                  </span>
+                </div>
+              )}
+              {showAnteprimaWarning && (
+                <p className="font-sans text-xs text-dark bg-gold/25 border border-gold inline-block px-2.5 py-1 rounded-[2px]">
+                  Sono {totaleAnteprima} i piatti selezionati per l&apos;anteprima
+                  home: oltre gli 8 diventa una lista invece di una selezione.
+                </p>
+              )}
+            </div>
           </div>
         </Field>
 

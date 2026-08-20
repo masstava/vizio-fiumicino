@@ -22,6 +22,8 @@ export default async function ModificaPiattoPage({
     { data: badgeLinks },
     { data: evidenzaRow },
     { count: otherEvidenzaCount },
+    { data: anteprimaRow },
+    { count: otherAnteprimaCount },
   ] = await Promise.all([
     supabase.from("piatti").select("*").eq("id", id).maybeSingle(),
     supabase.from("categorie_macro").select("id, nome, ordine").order("ordine"),
@@ -39,6 +41,15 @@ export default async function ModificaPiattoPage({
       .maybeSingle(),
     supabase
       .from("piatti_in_evidenza")
+      .select("piatto_id", { count: "exact", head: true })
+      .neq("piatto_id", id),
+    supabase
+      .from("piatti_anteprima_home")
+      .select("ordine")
+      .eq("piatto_id", id)
+      .maybeSingle(),
+    supabase
+      .from("piatti_anteprima_home")
       .select("piatto_id", { count: "exact", head: true })
       .neq("piatto_id", id),
   ]);
@@ -67,6 +78,7 @@ export default async function ModificaPiattoPage({
         categorieGrouped={categorieGrouped}
         allergeniList={allergeni ?? []}
         otherEvidenzaCount={otherEvidenzaCount ?? 0}
+        otherAnteprimaCount={otherAnteprimaCount ?? 0}
         initialData={{
           categoria_id: piatto.categoria_id,
           nome: piatto.nome,
@@ -84,6 +96,8 @@ export default async function ModificaPiattoPage({
           })),
           in_evidenza: !!evidenzaRow,
           in_evidenza_ordine: evidenzaRow?.ordine ?? 0,
+          anteprima_home: !!anteprimaRow,
+          anteprima_home_ordine: anteprimaRow?.ordine ?? 0,
         }}
       />
     </div>

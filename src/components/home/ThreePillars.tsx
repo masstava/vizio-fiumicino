@@ -1,26 +1,18 @@
 import { Section } from "@/src/components/ui/Section";
-
-const PILLARS = [
-  {
-    title: "Carne alla brace",
-    description:
-      "Tagli selezionati, cotture lente sulla brace, contorni all'altezza. La sostanza al centro del piatto.",
-  },
-  {
-    title: "Cocktail d'autore",
-    description:
-      "Spritz classici, twist di casa, drink pensati per accompagnare ogni portata — o bastare da soli.",
-  },
-  {
-    title: "Da mezzogiorno a notte",
-    description:
-      "Aperitivo, cena, dopocena: lo stesso indirizzo cambia ritmo con l'orario, senza mai chiudere il servizio.",
-  },
-] as const;
+import type { ContenutiMap } from "@/src/lib/contenuti";
 
 // Tema chiaro. Contrasto: text-ink su bg-cream ≈ 15.6:1, text-muted
 // su bg-cream ≈ 5.8:1 — entrambi oltre la soglia 4.5:1.
-export function ThreePillars() {
+//
+// Titoli e testi sono editabili dalla dashboard; i valori di ricaduta
+// (usati se un campo è vuoto) stanno in src/lib/contenuti.ts, non
+// qui, così esiste un solo posto da guardare.
+export function ThreePillars({ testi }: { testi: ContenutiMap }) {
+  const PILLARS = [1, 2, 3].map((n) => ({
+    title: testi[`pilastro${n}.titolo`],
+    description: testi[`pilastro${n}.testo`],
+  }));
+
   return (
     <Section tone="light">
       <p className="mb-8 font-sans text-[10px] tracking-widest uppercase text-muted">

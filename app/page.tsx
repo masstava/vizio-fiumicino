@@ -1,6 +1,5 @@
 import { createClient } from "@/src/lib/supabase/server";
 import { BarCocktailPreview } from "@/src/components/home/BarCocktailPreview";
-import type { HybridDish } from "@/src/components/home/CompactDishCard";
 import { ExperienceEventi } from "@/src/components/home/ExperienceEventi";
 import { FeaturedDishes } from "@/src/components/home/FeaturedDishes";
 import type { FeaturedDish } from "@/src/components/home/FeaturedDishSlide";
@@ -11,21 +10,11 @@ import { Newsletter } from "@/src/components/home/Newsletter";
 import { SiteHeader } from "@/src/components/home/SiteHeader";
 import { SocialProof } from "@/src/components/home/SocialProof";
 import { ThreePillars } from "@/src/components/home/ThreePillars";
+import { getAnteprimaHome } from "@/src/lib/anteprima-home";
+import { risolviContenuti } from "@/src/lib/contenuti";
 import { isApertoOra } from "@/src/lib/orari";
 
 export const dynamic = "force-dynamic";
-
-// Numero di piatti mostrati nell'anteprima menu in home — il resto
-// del menu "Da mangiare" vive nella pagina menu completa (CTA "Vedi
-// il menu completo"). Cocktail/Bar hanno un proprio blocco separato.
-const MENU_PREVIEW_LIMIT = 6;
-const MENU_PREVIEW_MACRO = "Da mangiare";
-
-// Teaser più corto: solo la categoria "Cocktail" (non tutti gli
-// spirits/birre/bar della macro), a scopo di assaggio visivo.
-const COCKTAIL_PREVIEW_LIMIT = 4;
-const COCKTAIL_PREVIEW_MACRO = "Bar & Cocktail";
-const COCKTAIL_PREVIEW_CATEGORIA = "Cocktail";
 
 // giorno_settimana: 0 = Lunedì ... 6 = Domenica (stessa convenzione
 // già usata in /gestione/orari e nella route del PDF orari).
@@ -79,136 +68,13 @@ export default async function Home() {
     .filter((p): p is NonNullable<typeof p> => p != null)
     .map((p) => ({ ...p, badge: evidenzaBadgeByPiatto.get(p.id) ?? null }));
 
-  // Anteprima menu: prime N portate disponibili di "Da mangiare",
-  // ordinate per categoria poi per piatto (l'ordine della categoria
-  // riparte da 0 per ogni macro-categoria, quindi il sort a due
-  // livelli va fatto lato JS, come già nella route del PDF menu).
-  const { data: macroDaMangiare } = await supabase
-    .from("categorie_macro")
-    .select("id")
-    .eq("nome", MENU_PREVIEW_MACRO)
-    .maybeSingle();
-
-  const { data: categorieDaMangiare } = macroDaMangiare
-    ? await supabase
-        .from("categorie")
-        .select("id, ordine")
-        .eq("categoria_macro_id", macroDaMangiare.id)
-        .order("ordine")
-    : { data: [] as { id: string; ordine: number }[] };
-
-  const categoriaOrdineById = new Map(
-    (categorieDaMangiare ?? []).map((c) => [c.id, c.ordine]),
-  );
-  const categoriaIds = (categorieDaMangiare ?? []).map((c) => c.id);
-
-  // Layout ibrido: bastano id/nome/descrizione/foto_url più un
-  // eventuale badge (letto sotto), nessun prezzo né allergeni (non
-  // mostrati in questo blocco).
-  const { data: menuPreviewRows } = categoriaIds.length
-    ? await supabase
-        .from("piatti")
-        .select("id, categoria_id, nome, descrizione, foto_url, ordine")
-        .in("categoria_id", categoriaIds)
-        .eq("disponibile", true)
-        .order("ordine")
-    : {
-        data: [] as {
-          id: string;
-          categoria_id: string;
-          nome: string;
-          descrizione: string | null;
-          foto_url: string | null;
-          ordine: number;
-        }[],
-      };
-
-  const menuPreviewRowsSorted = (menuPreviewRows ?? [])
-    .slice()
-    .sort((a, b) => {
-      const ca = categoriaOrdineById.get(a.categoria_id) ?? 0;
-      const cb = categoriaOrdineById.get(b.categoria_id) ?? 0;
-      return ca !== cb ? ca - cb : a.ordine - b.ordine;
-    })
-    .slice(0, MENU_PREVIEW_LIMIT);
-
-  // Un solo badge per piatto (se presente) come richiesto per la
-  // griglia compatta — non ne inventiamo, leggiamo quelli già in
-  // "badge" e prendiamo il primo.
-  const menuPreviewIds = menuPreviewRowsSorted.map((p) => p.id);
-  const { data: menuPreviewBadgeLinks } = menuPreviewIds.length
-    ? await supabase
-        .from("badge")
-        .select("piatto_id, testo")
-        .in("piatto_id", menuPreviewIds)
-    : { data: [] as { piatto_id: string; testo: string }[] };
-
-  const menuPreviewBadgeByPiatto = new Map<string, string>();
-  (menuPreviewBadgeLinks ?? []).forEach((b) => {
-    if (!menuPreviewBadgeByPiatto.has(b.piatto_id)) {
-      menuPreviewBadgeByPiatto.set(b.piatto_id, b.testo);
-    }
-  });
-
-  const menuPreviewDishes: HybridDish[] = menuPreviewRowsSorted.map((p) => ({
-    id: p.id,
-    nome: p.nome,
-    descrizione: p.descrizione,
-    foto_url: p.foto_url,
-    badge: menuPreviewBadgeByPiatto.get(p.id) ?? null,
-  }));
-
-  // Teaser Cocktail & Bar: singola categoria, quindi nessun sort a
-  // due livelli necessario — si può limitare già in query.
-  const { data: macroBarCocktail } = await supabase
-    .from("categorie_macro")
-    .select("id")
-    .eq("nome", COCKTAIL_PREVIEW_MACRO)
-    .maybeSingle();
-
-  const { data: categoriaCocktail } = macroBarCocktail
-    ? await supabase
-        .from("categorie")
-        .select("id")
-        .eq("categoria_macro_id", macroBarCocktail.id)
-        .eq("nome", COCKTAIL_PREVIEW_CATEGORIA)
-        .maybeSingle()
-    : { data: null };
-
-  // Layout ibrido: nessun prezzo, ma un eventuale badge sì (letto
-  // sotto, stessa logica dell'anteprima menu).
-  const { data: cocktailRows } = categoriaCocktail
-    ? await supabase
-        .from("piatti")
-        .select("id, nome, descrizione, foto_url")
-        .eq("categoria_id", categoriaCocktail.id)
-        .eq("disponibile", true)
-        .order("ordine")
-        .limit(COCKTAIL_PREVIEW_LIMIT)
-    : { data: [] as FeaturedDish[] };
-
-  const cocktailIds = (cocktailRows ?? []).map((p) => p.id);
-  const { data: cocktailBadgeLinks } = cocktailIds.length
-    ? await supabase
-        .from("badge")
-        .select("piatto_id, testo")
-        .in("piatto_id", cocktailIds)
-    : { data: [] as { piatto_id: string; testo: string }[] };
-
-  const cocktailBadgeByPiatto = new Map<string, string>();
-  (cocktailBadgeLinks ?? []).forEach((b) => {
-    if (!cocktailBadgeByPiatto.has(b.piatto_id)) {
-      cocktailBadgeByPiatto.set(b.piatto_id, b.testo);
-    }
-  });
-
-  const cocktailDishes: HybridDish[] = (cocktailRows ?? []).map((p) => ({
-    id: p.id,
-    nome: p.nome,
-    descrizione: p.descrizione,
-    foto_url: p.foto_url,
-    badge: cocktailBadgeByPiatto.get(p.id) ?? null,
-  }));
+  // Anteprima menu e cocktail: selezione curata dalla dashboard
+  // (flag "Mostra nell'anteprima home"), nell'ordine impostato lì.
+  // Prima si pescavano i primi N piatti per ordine di inserimento,
+  // e la home finiva per mostrare solo aperitivi e taglieri.
+  const anteprima = await getAnteprimaHome(supabase);
+  const menuPreviewDishes = anteprima.menu;
+  const cocktailDishes = anteprima.cocktail;
 
   // Orari per il footer: stessa fonte unica usata in /gestione/orari
   // e nella route del PDF orari.
@@ -247,16 +113,47 @@ export default async function Home() {
     })),
   );
 
+  // Testi editabili dalla dashboard. Chiave vuota o assente → resta
+  // il testo scritto nel codice, così la home non mostra mai un
+  // vuoto (vedi src/lib/contenuti.ts).
+  const { data: contenutiRows } = await supabase
+    .from("contenuti_sito")
+    .select("chiave, valore");
+  const testi = risolviContenuti(contenutiRows);
+
+  // Prossimo evento datato: un appuntamento reale crea urgenza, il
+  // testo generico no. Solo eventi attivi con data da oggi in poi;
+  // se non ce ne sono, la sezione resta com'era.
+  const oggiRoma = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Rome",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+
+  const { data: prossimoEvento } = await supabase
+    .from("eventi")
+    .select("id, titolo, descrizione, data_evento")
+    .eq("attivo", true)
+    .not("data_evento", "is", null)
+    .gte("data_evento", oggiRoma)
+    .order("data_evento")
+    .limit(1)
+    .maybeSingle();
+
   return (
     <main>
       <SiteHeader />
-      <Hero />
-      <ThreePillars />
+      <Hero headline={testi["hero.headline"]} />
+      <ThreePillars testi={testi} />
       <FeaturedDishes dishes={featuredDishes} />
-      <SocialProof />
+      <SocialProof
+        citazione={testi["recensione.testo"]}
+        autore={testi["recensione.autore"]}
+      />
       <MenuPreview dishes={menuPreviewDishes} />
       <BarCocktailPreview dishes={cocktailDishes} />
-      <ExperienceEventi />
+      <ExperienceEventi evento={prossimoEvento ?? null} />
       <Newsletter />
       <Footer
         orari={orariSettimana}

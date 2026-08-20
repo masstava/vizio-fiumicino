@@ -37,8 +37,16 @@ function Stars({ rating }: { rating: number }) {
 // Nessun testo di recensione mostrato: finché non c'è una citazione
 // reale (editabile o importata da Google) è meglio mostrare solo i
 // numeri veri che un segnaposto scambiabile per contenuto autentico.
-export function SocialProof() {
+export function SocialProof({
+  citazione,
+  autore,
+}: {
+  /** Frase da una recensione reale, inserita in dashboard. Vuota → non si mostra nulla. */
+  citazione?: string;
+  autore?: string;
+}) {
   const ratingNumerico = Number(RECENSIONI.rating.replace(",", "."));
+  const testoCitazione = citazione?.trim();
 
   return (
     <Section tone="light">
@@ -47,12 +55,28 @@ export function SocialProof() {
       </p>
       <div className="max-w-2xl">
         <Stars rating={ratingNumerico} />
-        <p className="mt-4 font-serif text-3xl leading-snug text-ink md:text-4xl">
-          {RECENSIONI.rating} su 5
-        </p>
-        <p className="mt-2 font-sans text-sm text-muted">
-          Media di {RECENSIONI.totale} recensioni su Google
-        </p>
+
+        {testoCitazione ? (
+          <blockquote className="mt-4">
+            <p className="font-serif text-2xl leading-snug text-ink md:text-3xl">
+              «{testoCitazione}»
+            </p>
+            <footer className="mt-3 font-sans text-sm text-muted">
+              {autore?.trim() && <span>{autore.trim()} · </span>}
+              {RECENSIONI.rating} su 5, media di {RECENSIONI.totale} recensioni
+              su Google
+            </footer>
+          </blockquote>
+        ) : (
+          <>
+            <p className="mt-4 font-serif text-3xl leading-snug text-ink md:text-4xl">
+              {RECENSIONI.rating} su 5
+            </p>
+            <p className="mt-2 font-sans text-sm text-muted">
+              Media di {RECENSIONI.totale} recensioni su Google
+            </p>
+          </>
+        )}
         <a
           href={CONTATTI.google.recensione}
           target="_blank"

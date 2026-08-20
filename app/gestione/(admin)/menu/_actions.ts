@@ -60,6 +60,8 @@ export interface SavePiattoInput {
   badges: BadgeInput[];
   in_evidenza: boolean;
   in_evidenza_ordine: number | null;
+  anteprima_home: boolean;
+  anteprima_home_ordine: number | null;
 }
 
 export async function savePiatto(
@@ -82,10 +84,14 @@ export async function savePiatto(
     p_badges: input.badges,
     p_in_evidenza: input.in_evidenza,
     p_in_evidenza_ordine: input.in_evidenza_ordine,
+    p_anteprima_home: input.anteprima_home,
+    p_anteprima_home_ordine: input.anteprima_home_ordine,
   });
 
   if (error) throw new Error(error.message);
 
   revalidatePath("/gestione/menu");
+  // La home mostra la selezione curata: va rigenerata anche lei.
+  revalidatePath("/");
   return { id: data as string };
 }
