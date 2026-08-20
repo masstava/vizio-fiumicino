@@ -1,5 +1,7 @@
 import { Section } from "@/src/components/ui/Section";
 import { CONTATTI, RECENSIONI } from "@/src/lib/contatti";
+import type { Locale } from "@/src/lib/i18n/config";
+import { getDizionario } from "@/src/lib/i18n/dizionari";
 
 // Il rating è un dato reale (Google), le stelle lo rappresentano
 // visivamente: la quinta è parziale, riempita in proporzione al voto.
@@ -40,18 +42,21 @@ function Stars({ rating }: { rating: number }) {
 export function SocialProof({
   citazione,
   autore,
+  locale,
 }: {
   /** Frase da una recensione reale, inserita in dashboard. Vuota → non si mostra nulla. */
   citazione?: string;
   autore?: string;
+  locale: Locale;
 }) {
+  const t = getDizionario(locale);
   const ratingNumerico = Number(RECENSIONI.rating.replace(",", "."));
   const testoCitazione = citazione?.trim();
 
   return (
     <Section tone="light">
       <p className="mb-8 font-sans text-[10px] tracking-widest uppercase text-muted">
-        Cosa dicono di noi
+        {t.sezioni.cosaDicono}
       </p>
       <div className="max-w-2xl">
         <Stars rating={ratingNumerico} />
@@ -63,17 +68,16 @@ export function SocialProof({
             </p>
             <footer className="mt-3 font-sans text-sm text-muted">
               {autore?.trim() && <span>{autore.trim()} · </span>}
-              {RECENSIONI.rating} su 5, media di {RECENSIONI.totale} recensioni
-              su Google
+              {t.recensioni.mediaInline(RECENSIONI.rating, RECENSIONI.totale)}
             </footer>
           </blockquote>
         ) : (
           <>
             <p className="mt-4 font-serif text-3xl leading-snug text-ink md:text-4xl">
-              {RECENSIONI.rating} su 5
+              {RECENSIONI.rating} {t.recensioni.suCinque}
             </p>
             <p className="mt-2 font-sans text-sm text-muted">
-              Media di {RECENSIONI.totale} recensioni su Google
+              {t.recensioni.media(RECENSIONI.totale)}
             </p>
           </>
         )}
@@ -83,7 +87,7 @@ export function SocialProof({
           rel="noopener noreferrer"
           className="mt-8 inline-flex items-center justify-center rounded-[2px] bg-bordeaux px-6 py-2.5 font-sans text-sm font-medium tracking-wide text-cream-text transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux focus-visible:ring-offset-2"
         >
-          Lascia una recensione
+          {t.cta.lasciaRecensione}
         </a>
       </div>
     </Section>

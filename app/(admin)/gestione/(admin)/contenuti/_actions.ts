@@ -4,7 +4,10 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/src/lib/supabase/server";
 import { CHIAVI_CONTENUTI } from "@/src/lib/contenuti";
 
-export async function saveContenuti(valori: Record<string, string>) {
+export async function saveContenuti(
+  valori: Record<string, string>,
+  valoriEn: Record<string, string>,
+) {
   const supabase = await createClient();
 
   // Solo le chiavi dichiarate nel codice: un payload manomesso non
@@ -12,6 +15,7 @@ export async function saveContenuti(valori: Record<string, string>) {
   const righe = CHIAVI_CONTENUTI.map((chiave) => ({
     chiave,
     valore: (valori[chiave] ?? "").trim() || null,
+    valore_en: (valoriEn[chiave] ?? "").trim() || null,
   }));
 
   const { error } = await supabase

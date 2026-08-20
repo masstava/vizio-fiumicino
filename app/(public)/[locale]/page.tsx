@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { createClient } from "@/src/lib/supabase/server";
 import { BarCocktailPreview } from "@/src/components/home/BarCocktailPreview";
 import { ExperienceEventi } from "@/src/components/home/ExperienceEventi";
@@ -11,24 +12,33 @@ import { SiteHeader } from "@/src/components/home/SiteHeader";
 import { SocialProof } from "@/src/components/home/SocialProof";
 import { ThreePillars } from "@/src/components/home/ThreePillars";
 import { getAnteprimaHome } from "@/src/lib/anteprima-home";
+import { campoLocalizzato, campoLocalizzatoOpzionale } from "@/src/lib/i18n/campi";
+import { isLocale, type Locale } from "@/src/lib/i18n/config";
+import { getDizionario } from "@/src/lib/i18n/dizionari";
+import { alternatesPerPagina } from "@/src/lib/i18n/metadata";
 import { risolviContenuti } from "@/src/lib/contenuti";
 import { isApertoOra } from "@/src/lib/orari";
 
 export const dynamic = "force-dynamic";
 
-// giorno_settimana: 0 = Lunedì ... 6 = Domenica (stessa convenzione
-// già usata in /gestione/orari e nella route del PDF orari).
-const GIORNI_LABELS = [
-  "Lunedì",
-  "Martedì",
-  "Mercoledì",
-  "Giovedì",
-  "Venerdì",
-  "Sabato",
-  "Domenica",
-] as const;
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale: raw } = await params;
+  const locale: Locale = isLocale(raw) ? raw : "it";
+  return { alternates: alternatesPerPagina("/", locale) };
+}
 
-export default async function Home() {
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: raw } = await params;
+  const locale: Locale = isLocale(raw) ? raw : "it";
+  const t = getDizionario(locale);
   const supabase = await createClient();
 
   const { data: evidenzaLinks } = await supabase
@@ -41,10 +51,19 @@ export default async function Home() {
   const { data: evidenzaPiatti } = evidenzaIds.length
     ? await supabase
         .from("piatti")
-        .select("id, nome, descrizione, foto_url")
+        .select("id, nome, nome_en, descrizione, descrizione_en, foto_url")
         .in("id", evidenzaIds)
         .eq("disponibile", true)
-    : { data: [] as FeaturedDish[] };
+    : {
+        data: [] as {
+          id: string;
+          nome: string;
+          nome_en: string | null;
+          descrizione: string | null;
+          descrizione_en: string | null;
+          foto_url: string | null;
+        }[],
+      };
 
   // Un solo badge per piatto (se presente), stesso pattern già usato
   // per le anteprime menu/cocktail.
@@ -66,13 +85,23 @@ export default async function Home() {
   const featuredDishes: FeaturedDish[] = (evidenzaLinks ?? [])
     .map((e) => piattoById.get(e.piatto_id))
     .filter((p): p is NonNullable<typeof p> => p != null)
-    .map((p) => ({ ...p, badge: evidenzaBadgeByPiatto.get(p.id) ?? null }));
+    .map((p) => ({
+      id: p.id,
+      nome: campoLocalizzato(p.nome, p.nome_en, locale),
+      descrizione: campoLocalizzatoOpzionale(
+        p.descrizione,
+        p.descrizione_en,
+        locale,
+      ),
+      foto_url: p.foto_url,
+      badge: evidenzaBadgeByPiatto.get(p.id) ?? null,
+    }));
 
   // Anteprima menu e cocktail: selezione curata dalla dashboard
   // (flag "Mostra nell'anteprima home"), nell'ordine impostato lì.
   // Prima si pescavano i primi N piatti per ordine di inserimento,
   // e la home finiva per mostrare solo aperitivi e taglieri.
-  const anteprima = await getAnteprimaHome(supabase);
+  const anteprima = await getAnteprimaHome(supabase, locale);
   const menuPreviewDishes = anteprima.menu;
   const cocktailDishes = anteprima.cocktail;
 
@@ -92,7 +121,7 @@ export default async function Home() {
     fasceByGiorno.set(r.giorno_settimana, arr);
   });
 
-  const orariSettimana: GiornoOrario[] = GIORNI_LABELS.map((nome, giorno) => {
+  const orariSettimana: GiornoOrario[] = t.giorni.map((nome, giorno) => {
     const fasce = fasceByGiorno.get(giorno) ?? [];
     return { nome, chiuso: fasce.length === 0, fasce };
   });
@@ -118,8 +147,8 @@ export default async function Home() {
   // vuoto (vedi src/lib/contenuti.ts).
   const { data: contenutiRows } = await supabase
     .from("contenuti_sito")
-    .select("chiave, valore");
-  const testi = risolviContenuti(contenutiRows);
+    .select("chiave, valore, valore_en");
+  const testi = risolviContenuti(contenutiRows, locale);
 
   // Prossimo evento datato: un appuntamento reale crea urgenza, il
   // testo generico no. Solo eventi attivi con data da oggi in poi;
@@ -133,7 +162,7 @@ export default async function Home() {
 
   const { data: prossimoEvento } = await supabase
     .from("eventi")
-    .select("id, titolo, descrizione, data_evento")
+    .select("id, titolo, titolo_en, descrizione, descrizione_en, data_evento")
     .eq("attivo", true)
     .not("data_evento", "is", null)
     .gte("data_evento", oggiRoma)
@@ -143,22 +172,44 @@ export default async function Home() {
 
   return (
     <main>
-      <SiteHeader />
-      <Hero headline={testi["hero.headline"]} />
-      <ThreePillars testi={testi} />
-      <FeaturedDishes dishes={featuredDishes} />
+      <SiteHeader locale={locale} />
+      <Hero headline={testi["hero.headline"]} locale={locale} />
+      <ThreePillars testi={testi} locale={locale} />
+      <FeaturedDishes dishes={featuredDishes} locale={locale} />
       <SocialProof
         citazione={testi["recensione.testo"]}
         autore={testi["recensione.autore"]}
+        locale={locale}
       />
-      <MenuPreview dishes={menuPreviewDishes} />
-      <BarCocktailPreview dishes={cocktailDishes} />
-      <ExperienceEventi evento={prossimoEvento ?? null} />
-      <Newsletter />
+      <MenuPreview dishes={menuPreviewDishes} locale={locale} />
+      <BarCocktailPreview dishes={cocktailDishes} locale={locale} />
+      <ExperienceEventi
+        evento={
+          prossimoEvento
+            ? {
+                id: prossimoEvento.id,
+                titolo: campoLocalizzato(
+                  prossimoEvento.titolo,
+                  prossimoEvento.titolo_en,
+                  locale,
+                ),
+                descrizione: campoLocalizzatoOpzionale(
+                  prossimoEvento.descrizione,
+                  prossimoEvento.descrizione_en,
+                  locale,
+                ),
+                data_evento: prossimoEvento.data_evento,
+              }
+            : null
+        }
+        locale={locale}
+      />
+      <Newsletter locale={locale} />
       <Footer
         orari={orariSettimana}
         apertoOra={apertoOra}
         notaOrari={orariConfig?.nota ?? null}
+        locale={locale}
       />
     </main>
   );

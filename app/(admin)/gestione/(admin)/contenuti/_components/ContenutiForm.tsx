@@ -15,10 +15,13 @@ const inputClass =
 // parole, non l'impianto.
 export function ContenutiForm({
   initialValori,
+  initialValoriEn,
 }: {
   initialValori: Record<string, string>;
+  initialValoriEn: Record<string, string>;
 }) {
   const [valori, setValori] = useState<Record<string, string>>(initialValori);
+  const [valoriEn, setValoriEn] = useState<Record<string, string>>(initialValoriEn);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [justSaved, setJustSaved] = useState(false);
@@ -28,11 +31,16 @@ export function ContenutiForm({
     setValori((prev) => ({ ...prev, [chiave]: valore }));
   }
 
+  function updateEn(chiave: string, valore: string) {
+    setJustSaved(false);
+    setValoriEn((prev) => ({ ...prev, [chiave]: valore }));
+  }
+
   async function handleSave() {
     setSaving(true);
     setError(null);
     try {
-      await saveContenuti(valori);
+      await saveContenuti(valori, valoriEn);
       setJustSaved(true);
     } catch (err) {
       setError(
@@ -95,6 +103,37 @@ export function ContenutiForm({
                     Se lasci vuoto, il sito mostra il testo attuale.
                   </p>
                 )}
+
+                {/* Versione inglese, mostrata sotto quella italiana:
+                    il sito in EN la usa se compilata, altrimenti
+                    ricade sull'italiano qui sopra. Un campo può
+                    restare vuoto senza rompere nulla. */}
+                <div className="mt-1 flex items-start gap-2">
+                  <span className="mt-2 font-sans text-[10px] font-medium tracking-widest text-muted">
+                    EN
+                  </span>
+                  {campo.lungo ? (
+                    <textarea
+                      id={`${campo.chiave}-en`}
+                      aria-label={`${campo.etichetta} — inglese`}
+                      rows={2}
+                      value={valoriEn[campo.chiave] ?? ""}
+                      onChange={(e) => updateEn(campo.chiave, e.target.value)}
+                      placeholder={campo.fallbackEn || campo.fallback}
+                      className={cn(inputClass, "resize-y")}
+                    />
+                  ) : (
+                    <input
+                      id={`${campo.chiave}-en`}
+                      aria-label={`${campo.etichetta} — inglese`}
+                      type="text"
+                      value={valoriEn[campo.chiave] ?? ""}
+                      onChange={(e) => updateEn(campo.chiave, e.target.value)}
+                      placeholder={campo.fallbackEn || campo.fallback}
+                      className={inputClass}
+                    />
+                  )}
+                </div>
               </div>
             ))}
           </div>

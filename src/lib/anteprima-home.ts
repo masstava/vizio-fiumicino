@@ -1,5 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { HybridDish } from "@/src/components/home/CompactDishCard";
+import { campoLocalizzato, campoLocalizzatoOpzionale } from "./i18n/campi";
+import type { Locale } from "./i18n/config";
 
 // Selezione curata dell'anteprima home. Estratto da app/page.tsx
 // perché la logica (selezione + ricaduta + split per macro) è ormai
@@ -25,9 +27,14 @@ interface PiattoRow {
   id: string;
   categoria_id: string;
   nome: string;
+  nome_en: string | null;
   descrizione: string | null;
+  descrizione_en: string | null;
   foto_url: string | null;
 }
+
+const CAMPI_PIATTO =
+  "id, categoria_id, nome, nome_en, descrizione, descrizione_en, foto_url";
 
 // Un solo badge per piatto, come nella griglia compatta: se un piatto
 // ne ha più di uno si mostra il primo.
@@ -88,6 +95,7 @@ async function macroByCategoria(
 async function ricaduta(
   supabase: SupabaseClient,
   macroNome: string,
+  locale: Locale,
 ): Promise<HybridDish[]> {
   const { data: macro } = await supabase
     .from("categorie_macro")
@@ -111,7 +119,7 @@ async function ricaduta(
 
   const { data: righe } = await supabase
     .from("piatti")
-    .select("id, categoria_id, nome, descrizione, foto_url, ordine")
+    .select(`${CAMPI_PIATTO}, ordine`)
     .in("categoria_id", categoriaIds)
     .eq("disponibile", true)
     .order("ordine");
@@ -134,8 +142,8 @@ async function ricaduta(
 
   return scelti.map((p) => ({
     id: p.id,
-    nome: p.nome,
-    descrizione: p.descrizione,
+    nome: campoLocalizzato(p.nome, p.nome_en, locale),
+    descrizione: campoLocalizzatoOpzionale(p.descrizione, p.descrizione_en, locale),
     foto_url: p.foto_url,
     badge: badges.get(p.id) ?? null,
   }));
@@ -143,6 +151,7 @@ async function ricaduta(
 
 export async function getAnteprimaHome(
   supabase: SupabaseClient,
+  locale: Locale = "it",
 ): Promise<AnteprimaHome> {
   const { data: links } = await supabase
     .from("piatti_anteprima_home")
@@ -153,15 +162,15 @@ export async function getAnteprimaHome(
 
   if (ids.length === 0) {
     const [menu, cocktail] = await Promise.all([
-      ricaduta(supabase, MACRO_MANGIARE),
-      ricaduta(supabase, MACRO_BAR),
+      ricaduta(supabase, MACRO_MANGIARE, locale),
+      ricaduta(supabase, MACRO_BAR, locale),
     ]);
     return { menu, cocktail, ricadutaAutomatica: true };
   }
 
   const { data: piatti } = await supabase
     .from("piatti")
-    .select("id, categoria_id, nome, descrizione, foto_url")
+    .select(CAMPI_PIATTO)
     .in("id", ids)
     .eq("disponibile", true);
 
@@ -185,8 +194,12 @@ export async function getAnteprimaHome(
   ordinati.forEach((p) => {
     const dish: HybridDish = {
       id: p.id,
-      nome: p.nome,
-      descrizione: p.descrizione,
+      nome: campoLocalizzato(p.nome, p.nome_en, locale),
+      descrizione: campoLocalizzatoOpzionale(
+        p.descrizione,
+        p.descrizione_en,
+        locale,
+      ),
       foto_url: p.foto_url,
       badge: badges.get(p.id) ?? null,
     };

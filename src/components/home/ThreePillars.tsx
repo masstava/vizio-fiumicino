@@ -1,6 +1,8 @@
 import { FlameAccent } from "@/src/components/ui/FlameAccent";
 import { Section } from "@/src/components/ui/Section";
 import type { ContenutiMap } from "@/src/lib/contenuti";
+import type { Locale } from "@/src/lib/i18n/config";
+import { getDizionario } from "@/src/lib/i18n/dizionari";
 
 // Tema chiaro. Contrasto: text-ink su bg-cream ≈ 15.6:1, text-muted
 // su bg-cream ≈ 5.8:1 — entrambi oltre la soglia 4.5:1.
@@ -8,7 +10,14 @@ import type { ContenutiMap } from "@/src/lib/contenuti";
 // Titoli e testi sono editabili dalla dashboard; i valori di ricaduta
 // (usati se un campo è vuoto) stanno in src/lib/contenuti.ts, non
 // qui, così esiste un solo posto da guardare.
-export function ThreePillars({ testi }: { testi: ContenutiMap }) {
+export function ThreePillars({
+  testi,
+  locale,
+}: {
+  testi: ContenutiMap;
+  locale: Locale;
+}) {
+  const t = getDizionario(locale);
   const PILLARS = [1, 2, 3].map((n) => ({
     title: testi[`pilastro${n}.titolo`],
     description: testi[`pilastro${n}.testo`],
@@ -25,7 +34,7 @@ export function ThreePillars({ testi }: { testi: ContenutiMap }) {
         className="pointer-events-none absolute -right-10 -top-8 -z-10 h-64 opacity-[0.05] md:h-80"
       />
       <p className="mb-8 font-sans text-[10px] tracking-widest uppercase text-muted">
-        Cosa trovi da Vizio
+        {t.sezioni.cosaTrovi}
       </p>
       <div className="grid gap-10 md:grid-cols-3 md:gap-8">
         {PILLARS.map((pillar) => (

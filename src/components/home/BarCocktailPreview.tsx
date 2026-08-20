@@ -2,11 +2,14 @@ import Link from "next/link";
 import { DarkSectionAccent } from "@/src/components/ui/DarkSectionAccent";
 import { FlameAccent } from "@/src/components/ui/FlameAccent";
 import { Section } from "@/src/components/ui/Section";
+import { localizedPath, type Locale } from "@/src/lib/i18n/config";
+import { getDizionario } from "@/src/lib/i18n/dizionari";
 import { CompactDishCard, type HybridDish } from "./CompactDishCard";
 import { EditorialDishCard } from "./EditorialDishCard";
 
 interface BarCocktailPreviewProps {
   dishes: HybridDish[];
+  locale: Locale;
 }
 
 // Tema scuro. Layout ibrido: il primo drink ha trattamento editoriale
@@ -14,8 +17,9 @@ interface BarCocktailPreviewProps {
 // piccola, nome, un badge se presente) — stessa logica di MenuPreview.
 // Contrasto: text-cream-text su bg-dark ≈ 17.6:1, text-muted-dark su
 // bg-dark ≈ 12.2:1 — oltre 4.5:1.
-export function BarCocktailPreview({ dishes }: BarCocktailPreviewProps) {
+export function BarCocktailPreview({ dishes, locale }: BarCocktailPreviewProps) {
   if (dishes.length === 0) return null;
+  const t = getDizionario(locale);
 
   const [hero, ...rest] = dishes;
 
@@ -29,7 +33,7 @@ export function BarCocktailPreview({ dishes }: BarCocktailPreviewProps) {
       <div className="relative">
         <p className="mb-8 flex items-center gap-2 font-sans text-[10px] tracking-widest uppercase text-muted-dark">
           <FlameAccent className="h-3.5" />
-          Cocktail &amp; Bar
+          {t.sezioni.cocktailBar}
         </p>
         <div className="space-y-10">
           <EditorialDishCard dish={hero} tone="dark" />
@@ -43,10 +47,10 @@ export function BarCocktailPreview({ dishes }: BarCocktailPreviewProps) {
         </div>
         <div className="mt-10">
           <Link
-            href="/menu"
+            href={localizedPath("/menu", locale)}
             className="font-sans text-sm font-medium text-gold underline underline-offset-4 hover:opacity-80"
           >
-            Vedi il menu completo
+            {t.cta.menuCompleto}
           </Link>
         </div>
       </div>

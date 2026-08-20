@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { Section } from "@/src/components/ui/Section";
+import { localizedPath, type Locale } from "@/src/lib/i18n/config";
+import { getDizionario } from "@/src/lib/i18n/dizionari";
 import { CompactDishCard, type HybridDish } from "./CompactDishCard";
 import { EditorialDishCard } from "./EditorialDishCard";
 
 interface MenuPreviewProps {
   dishes: HybridDish[];
+  locale: Locale;
 }
 
 // Tema chiaro. Layout ibrido: il primo piatto ha trattamento
@@ -14,15 +17,16 @@ interface MenuPreviewProps {
 // dispersivo senza foto reali per tutti i piatti. Il prezzo resta
 // sempre visibile nella pagina menu completo raggiunta dalla CTA, che
 // qui non cambia.
-export function MenuPreview({ dishes }: MenuPreviewProps) {
+export function MenuPreview({ dishes, locale }: MenuPreviewProps) {
   if (dishes.length === 0) return null;
+  const t = getDizionario(locale);
 
   const [hero, ...rest] = dishes;
 
   return (
     <Section tone="light" id="menu">
       <p className="mb-8 font-sans text-[10px] tracking-widest uppercase text-muted">
-        Il menu
+        {t.sezioni.ilMenu}
       </p>
       <div className="space-y-10">
         <EditorialDishCard dish={hero} tone="light" />
@@ -36,10 +40,10 @@ export function MenuPreview({ dishes }: MenuPreviewProps) {
       </div>
       <div className="mt-10">
         <Link
-          href="/menu"
+          href={localizedPath("/menu", locale)}
           className="font-sans text-sm font-medium text-bordeaux underline underline-offset-4 hover:opacity-80"
         >
-          Vedi il menu completo
+          {t.cta.menuCompleto}
         </Link>
       </div>
     </Section>

@@ -1,6 +1,8 @@
 import { Logo } from "@/src/components/ui/Logo";
 import { SocialIcon } from "@/src/components/ui/SocialIcon";
 import { CONTATTI } from "@/src/lib/contatti";
+import type { Locale } from "@/src/lib/i18n/config";
+import { getDizionario } from "@/src/lib/i18n/dizionari";
 
 interface FasciaOraria {
   apertura: string;
@@ -18,6 +20,7 @@ interface FooterProps {
   apertoOra: boolean;
   /** Nota orari temporanei, se impostata in dashboard. */
   notaOrari?: string | null;
+  locale: Locale;
 }
 
 // Raggruppa i giorni consecutivi con le stesse fasce (o stesso stato
@@ -27,7 +30,7 @@ interface FooterProps {
 // gestione/orari, per non far dipendere una pagina pubblica dai
 // _components privati di un'altra feature) — stessa logica, nessun
 // wraparound Domenica→Lunedì.
-function groupOrari(rows: GiornoOrario[]): string[] {
+function groupOrari(rows: GiornoOrario[], etichettaChiuso: string): string[] {
   interface Group {
     start: number;
     end: number;
@@ -57,7 +60,7 @@ function groupOrari(rows: GiornoOrario[]): string[] {
         ? rows[g.start].nome
         : `${rows[g.start].nome}–${rows[g.end].nome}`;
 
-    if (g.chiuso) return `${dayLabel} — chiuso`;
+    if (g.chiuso) return `${dayLabel} — ${etichettaChiuso}`;
     const fasceLabel = g.fasce.map((f) => `${f.apertura}–${f.chiusura}`).join(", ");
     return `${dayLabel} ${fasceLabel}`;
   });
@@ -68,8 +71,9 @@ function groupOrari(rows: GiornoOrario[]): string[] {
 // <address> per l'indirizzo reale: struttura semantica già pronta
 // per lo schema markup Restaurant/LocalBusiness futuro, senza
 // doverla riscrivere in quello step.
-export function Footer({ orari, apertoOra, notaOrari }: FooterProps) {
-  const orariLines = groupOrari(orari);
+export function Footer({ orari, apertoOra, notaOrari, locale }: FooterProps) {
+  const t = getDizionario(locale);
+  const orariLines = groupOrari(orari, t.footer.chiuso);
 
   return (
     <footer id="contatti" className="bg-dark px-6 py-12 text-cream-text md:px-12 lg:px-16">
@@ -93,7 +97,7 @@ export function Footer({ orari, apertoOra, notaOrari }: FooterProps) {
         <div>
           <div className="mb-2 flex items-center gap-2">
             <p className="font-sans text-[10px] tracking-widest uppercase text-muted-dark">
-              Orari
+              {t.footer.orari}
             </p>
             {/* Calcolato da questa stessa fonte dati (orari), non una
                 nuova tabella. Il pallino è decorativo: lo stato è
@@ -104,7 +108,7 @@ export function Footer({ orari, apertoOra, notaOrari }: FooterProps) {
                 aria-hidden="true"
                 className={`h-1.5 w-1.5 rounded-full ${apertoOra ? "bg-emerald-400" : "bg-rose-400"}`}
               />
-              {apertoOra ? "Aperto ora" : "Chiuso ora"}
+              {apertoOra ? t.footer.apertoOra : t.footer.chiusoOra}
             </span>
           </div>
           {orariLines.length > 0 ? (
@@ -114,7 +118,7 @@ export function Footer({ orari, apertoOra, notaOrari }: FooterProps) {
               ))}
             </ul>
           ) : (
-            <p className="font-sans text-sm text-muted-dark">Orari da definire</p>
+            <p className="font-sans text-sm text-muted-dark">{t.footer.orariDaDefinire}</p>
           )}
           {/* Nota orari temporanei, se impostata in dashboard: evita
               che un orario stagionale passi per definitivo. */}
@@ -127,7 +131,7 @@ export function Footer({ orari, apertoOra, notaOrari }: FooterProps) {
 
         <div>
           <p className="mb-2 font-sans text-[10px] tracking-widest uppercase text-muted-dark">
-            Contatti
+            {t.footer.contatti}
           </p>
           <ul className="space-y-1 font-sans text-sm leading-relaxed">
             <li>

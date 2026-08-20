@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/src/components/ui/Badge";
 import { ImagePlaceholder } from "@/src/components/ui/ImagePlaceholder";
+import { localizedPath, type Locale } from "@/src/lib/i18n/config";
+import { getDizionario } from "@/src/lib/i18n/dizionari";
 
 export interface FeaturedDish {
   id: string;
@@ -15,7 +17,14 @@ export interface FeaturedDish {
 // (2-3 piatti) — nessun prezzo mostrato di proposito: questo blocco è
 // una leva di desiderio, non un punto di ordinazione. Il prezzo
 // compare sempre nella pagina menu completo, verso cui punta la CTA.
-export function FeaturedDishSlide({ dish }: { dish: FeaturedDish }) {
+export function FeaturedDishSlide({
+  dish,
+  locale,
+}: {
+  dish: FeaturedDish;
+  locale: Locale;
+}) {
+  const t = getDizionario(locale);
   return (
     <div className="grid gap-6 md:grid-cols-2 md:items-center md:gap-12">
       <div className="aspect-[4/3] overflow-hidden rounded-[2px]">
@@ -46,10 +55,10 @@ export function FeaturedDishSlide({ dish }: { dish: FeaturedDish }) {
           </p>
         )}
         <Link
-          href="/menu"
+          href={localizedPath("/menu", locale)}
           className="font-sans text-sm font-medium text-gold underline underline-offset-4 hover:opacity-80"
         >
-          Vedi il menu completo
+          {t.cta.menuCompleto}
         </Link>
       </div>
     </div>

@@ -2,6 +2,8 @@ import { Button } from "@/src/components/ui/Button";
 import { FlameAccent } from "@/src/components/ui/FlameAccent";
 import { ImagePlaceholder } from "@/src/components/ui/ImagePlaceholder";
 import { RECENSIONI } from "@/src/lib/contatti";
+import type { Locale } from "@/src/lib/i18n/config";
+import { getDizionario } from "@/src/lib/i18n/dizionari";
 
 // Video reale del locale, ospitato su Supabase Storage (bucket
 // pubblico "sito-media", non è un piatto quindi non passa dalla
@@ -19,7 +21,14 @@ const HERO_VIDEO_URL =
 // Contrasto verificato: cream-text (#f5efe4) su bg-dark (#0a0705) ≈
 // 17.6:1, muted-dark (#d8c7b0) su bg-dark ≈ 12.2:1 — entrambi ben
 // oltre la soglia minima 4.5:1 per testo normale.
-export function Hero({ headline }: { headline: string }) {
+export function Hero({
+  headline,
+  locale,
+}: {
+  headline: string;
+  locale: Locale;
+}) {
+  const t = getDizionario(locale);
   return (
     <section className="relative flex min-h-[85vh] items-end overflow-hidden bg-dark text-cream-text md:min-h-[92vh]">
       <ImagePlaceholder
@@ -49,7 +58,7 @@ export function Hero({ headline }: { headline: string }) {
           {headline}
         </h1>
         <Button type="button" variant="primary">
-          Prenota un tavolo
+          {t.cta.prenotaTavolo}
         </Button>
 
         {/* Valori statici letti dalla fonte unica: diventeranno un
@@ -61,7 +70,7 @@ export function Hero({ headline }: { headline: string }) {
           {RECENSIONI.rating}
           <span className="text-gold" aria-hidden="true">★</span>
           {" · "}
-          {RECENSIONI.totale} recensioni Google
+          {RECENSIONI.totale} {locale === "en" ? "Google reviews" : "recensioni Google"}
         </p>
       </div>
     </section>

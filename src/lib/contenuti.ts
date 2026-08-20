@@ -13,6 +13,9 @@
 // di gestione si aggiorna da sola, non va toccata.
 // =============================================================
 
+import { campoLocalizzato } from "./i18n/campi";
+import type { Locale } from "./i18n/config";
+
 export interface CampoContenuto {
   chiave: string;
   etichetta: string;
@@ -21,6 +24,8 @@ export interface CampoContenuto {
   lungo?: boolean;
   /** Usato quando il valore salvato è assente o vuoto. */
   fallback: string;
+  /** Ricaduta inglese. Se manca si usa quella italiana. */
+  fallbackEn?: string;
 }
 
 export interface GruppoContenuti {
@@ -42,6 +47,8 @@ export const GRUPPI_CONTENUTI: GruppoContenuti[] = [
         lungo: true,
         fallback:
           "Carne alla brace, cocktail d'autore, aperitivo fino a notte fonda.",
+        fallbackEn:
+          "Grilled meat, signature cocktails, aperitivo until late.",
       },
     ],
   },
@@ -54,6 +61,7 @@ export const GRUPPI_CONTENUTI: GruppoContenuti[] = [
         chiave: "pilastro1.titolo",
         etichetta: "Primo punto — titolo",
         fallback: "Carne alla brace",
+        fallbackEn: "Grilled over embers",
       },
       {
         chiave: "pilastro1.testo",
@@ -61,11 +69,14 @@ export const GRUPPI_CONTENUTI: GruppoContenuti[] = [
         lungo: true,
         fallback:
           "Tagli selezionati, cotture lente sulla brace, contorni all'altezza. La sostanza al centro del piatto.",
+        fallbackEn:
+          "Selected cuts, slow cooking over embers, sides that keep up. Substance at the centre of the plate.",
       },
       {
         chiave: "pilastro2.titolo",
         etichetta: "Secondo punto — titolo",
         fallback: "Cocktail d'autore",
+        fallbackEn: "Signature cocktails",
       },
       {
         chiave: "pilastro2.testo",
@@ -73,11 +84,14 @@ export const GRUPPI_CONTENUTI: GruppoContenuti[] = [
         lungo: true,
         fallback:
           "Spritz classici, twist di casa, drink pensati per accompagnare ogni portata — o bastare da soli.",
+        fallbackEn:
+          "Classic spritzes, house twists, drinks made to go with any course — or to stand on their own.",
       },
       {
         chiave: "pilastro3.titolo",
         etichetta: "Terzo punto — titolo",
         fallback: "Da mezzogiorno a notte",
+        fallbackEn: "From noon until late",
       },
       {
         chiave: "pilastro3.testo",
@@ -85,6 +99,8 @@ export const GRUPPI_CONTENUTI: GruppoContenuti[] = [
         lungo: true,
         fallback:
           "Aperitivo, cena, dopocena: lo stesso indirizzo cambia ritmo con l'orario, senza mai chiudere il servizio.",
+        fallbackEn:
+          "Aperitivo, dinner, after dinner: one address that changes pace with the hour, never closing the kitchen.",
       },
     ],
   },
@@ -116,7 +132,10 @@ export const CHIAVI_CONTENUTI = GRUPPI_CONTENUTI.flatMap((g) =>
 );
 
 const FALLBACK_BY_CHIAVE = new Map(
-  GRUPPI_CONTENUTI.flatMap((g) => g.campi).map((c) => [c.chiave, c.fallback]),
+  GRUPPI_CONTENUTI.flatMap((g) => g.campi).map((c) => [
+    c.chiave,
+    { it: c.fallback, en: c.fallbackEn || c.fallback },
+  ]),
 );
 
 export type ContenutiMap = Record<string, string>;
@@ -126,15 +145,24 @@ export type ContenutiMap = Record<string, string>;
 // sopra. Le chiavi salvate che non esistono più nel codice vengono
 // ignorate (nessun testo orfano finisce in pagina).
 export function risolviContenuti(
-  righe: { chiave: string; valore: string | null }[] | null,
+  righe:
+    | { chiave: string; valore: string | null; valore_en?: string | null }[]
+    | null,
+  locale: Locale = "it",
 ): ContenutiMap {
+  // In inglese si usa valore_en; se è vuoto si ricade sull'italiano
+  // salvato, e solo dopo sul testo scritto nel codice. Così una
+  // traduzione mancante non lascia mai un buco in pagina.
   const salvati = new Map(
-    (righe ?? []).map((r) => [r.chiave, (r.valore ?? "").trim()]),
+    (righe ?? []).map((r) => [
+      r.chiave,
+      campoLocalizzato(r.valore, r.valore_en, locale),
+    ]),
   );
 
   const out: ContenutiMap = {};
   FALLBACK_BY_CHIAVE.forEach((fallback, chiave) => {
-    out[chiave] = salvati.get(chiave) || fallback;
+    out[chiave] = salvati.get(chiave) || fallback[locale];
   });
   return out;
 }

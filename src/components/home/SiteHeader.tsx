@@ -4,13 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/src/components/ui/Button";
 import { Logo } from "@/src/components/ui/Logo";
-
-const NAV_LINKS = [
-  { href: "#menu", label: "Menu" },
-  { href: "#piatti-in-evidenza", label: "La carne" },
-  { href: "#cocktail", label: "Cocktail" },
-  { href: "#contatti", label: "Contatti" },
-];
+import { localizedPath, type Locale } from "@/src/lib/i18n/config";
+import { getDizionario } from "@/src/lib/i18n/dizionari";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 // Header unico, sticky per tutto lo scroll (anche sopra l'hero
 // scuro), sostituisce sia la vecchia barra prenotazione mobile sia la
@@ -22,22 +18,33 @@ const NAV_LINKS = [
 // Il pulsante "Prenota" resta un placeholder inerte, stessa nota
 // della vecchia StickyReservationBar: l'integrazione di prenotazione
 // (TheFork o equivalente) arriva in uno step dedicato successivo.
-export function SiteHeader() {
+export function SiteHeader({ locale }: { locale: Locale }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const t = getDizionario(locale);
+
+  // Ancore in-pagina: l'href deve portare il prefisso di lingua,
+  // altrimenti da /en il clic rimanda alla home italiana.
+  const base = localizedPath("/", locale);
+  const NAV_LINKS = [
+    { href: `${base}#menu`, label: t.nav.menu },
+    { href: `${base}#piatti-in-evidenza`, label: t.nav.carne },
+    { href: `${base}#cocktail`, label: t.nav.cocktail },
+    { href: `${base}#contatti`, label: t.nav.contatti },
+  ];
 
   return (
     <header className="sticky top-0 z-50 bg-dark/95 text-cream-text backdrop-blur">
       <div className="flex items-center justify-between gap-4 px-6 py-3 md:px-12 lg:px-16">
         <Link
-          href="/"
-          aria-label="Vizio Bistrot — home"
+          href={localizedPath("/", locale)}
+          aria-label={t.nav.home}
           className="flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text"
         >
           <Logo priority className="h-7 md:h-8" />
         </Link>
 
         <nav
-          aria-label="Principale"
+          aria-label={t.nav.principale}
           className="hidden items-center gap-8 md:flex"
         >
           {NAV_LINKS.map((link) => (
@@ -52,13 +59,14 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <LanguageSwitcher locale={locale} />
           <Button type="button" variant="primary" className="px-4 md:px-6">
-            Prenota
+            {t.cta.prenota}
           </Button>
 
           <button
             type="button"
-            aria-label={menuOpen ? "Chiudi il menu" : "Apri il menu"}
+            aria-label={menuOpen ? t.nav.chiudiMenu : t.nav.apriMenu}
             aria-expanded={menuOpen}
             aria-controls="site-header-mobile-nav"
             onClick={() => setMenuOpen((open) => !open)}
@@ -78,7 +86,7 @@ export function SiteHeader() {
       {menuOpen && (
         <nav
           id="site-header-mobile-nav"
-          aria-label="Principale (mobile)"
+          aria-label={t.nav.principale}
           className="flex flex-col gap-1 border-t border-cream-text/10 px-6 pb-4 pt-2 md:hidden"
         >
           {NAV_LINKS.map((link) => (
