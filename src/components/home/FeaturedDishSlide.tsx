@@ -4,14 +4,7 @@ import { Badge } from "@/src/components/ui/Badge";
 import { ImagePlaceholder } from "@/src/components/ui/ImagePlaceholder";
 import { localizedPath, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
-
-export interface FeaturedDish {
-  id: string;
-  nome: string;
-  descrizione: string | null;
-  foto_url: string | null;
-  badge?: string | null;
-}
+import type { PiattoAnteprima } from "@/src/lib/dominio";
 
 // Presentazione condivisa tra il blocco fisso (1 piatto) e lo slider
 // (2-3 piatti) — nessun prezzo mostrato di proposito: questo blocco è
@@ -21,7 +14,7 @@ export function FeaturedDishSlide({
   dish,
   locale,
 }: {
-  dish: FeaturedDish;
+  dish: PiattoAnteprima;
   locale: Locale;
 }) {
   const t = getDizionario(locale);

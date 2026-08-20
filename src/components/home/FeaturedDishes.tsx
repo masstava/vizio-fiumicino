@@ -3,11 +3,12 @@ import { FlameAccent } from "@/src/components/ui/FlameAccent";
 import { Section } from "@/src/components/ui/Section";
 import type { Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
-import { FeaturedDishSlide, type FeaturedDish } from "./FeaturedDishSlide";
+import type { PiattoAnteprima } from "@/src/lib/dominio";
+import { FeaturedDishSlide } from "./FeaturedDishSlide";
 import { FeaturedDishesSlider } from "./FeaturedDishesSlider";
 
 interface FeaturedDishesProps {
-  dishes: FeaturedDish[];
+  dishes: PiattoAnteprima[];
   locale: Locale;
 }
 

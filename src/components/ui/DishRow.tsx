@@ -5,6 +5,13 @@ import { PriceTag } from "./PriceTag";
 import { AllergenCodes } from "./AllergenCodes";
 import { ImagePlaceholder } from "./ImagePlaceholder";
 
+// NOTA: questo tipo resta qui di proposito, e non in src/lib/dominio.
+// DishRow è usato solo dalla dashboard, dove descrive la riga di un
+// elenco redazionale (prezzo, allergeni come codici numerici, badge
+// multipli) — una forma diversa da quella che serve al sito pubblico.
+// Andrà spostato quando la pagina menu completo dirà se la riusa:
+// consolidarlo adesso, senza sapere che forma le servirà, vorrebbe
+// dire indovinare.
 export interface DishData {
   id: string;
   nome: string;

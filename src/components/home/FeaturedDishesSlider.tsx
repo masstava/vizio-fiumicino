@@ -4,7 +4,8 @@ import { useState } from "react";
 import { AnimatePresence, m, useReducedMotion } from "motion/react";
 import { cn } from "@/src/lib/utils";
 import type { Locale } from "@/src/lib/i18n/config";
-import { FeaturedDishSlide, type FeaturedDish } from "./FeaturedDishSlide";
+import type { PiattoAnteprima } from "@/src/lib/dominio";
+import { FeaturedDishSlide } from "./FeaturedDishSlide";
 
 // Slider con puntini per 2-3 piatti in evidenza. Nessuna libreria di
 // carosello: con al massimo 3 elementi basta mostrare/nascondere la
@@ -19,7 +20,7 @@ export function FeaturedDishesSlider({
   dishes,
   locale,
 }: {
-  dishes: FeaturedDish[];
+  dishes: PiattoAnteprima[];
   locale: Locale;
 }) {
   const [index, setIndex] = useState(0);

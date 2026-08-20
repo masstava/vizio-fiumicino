@@ -2,10 +2,10 @@ import Image from "next/image";
 import { Badge } from "@/src/components/ui/Badge";
 import { ImagePlaceholder } from "@/src/components/ui/ImagePlaceholder";
 import { cn } from "@/src/lib/utils";
-import type { FeaturedDish } from "./FeaturedDishSlide";
+import type { PiattoAnteprima } from "@/src/lib/dominio";
 
 interface EditorialDishCardProps {
-  dish: FeaturedDish;
+  dish: PiattoAnteprima;
   tone?: "light" | "dark";
   // Alterna il lato della foto per un ritmo da "articolo di rivista"
   // quando ci sono più card in sequenza — ignorato su mobile, dove
@@ -16,7 +16,7 @@ interface EditorialDishCardProps {
 // Layout editoriale (foto grande + nome/descrizione breve), stessa
 // logica visiva di FeaturedDishSlide ma parametrizzata per tono e
 // senza CTA propria — qui la CTA "Vedi il menu completo" è unica a
-// fine sezione, non ripetuta per ogni piatto. Nessun prezzo: FeaturedDish
+// fine sezione, non ripetuta per ogni piatto. Nessun prezzo: PiattoAnteprima
 // non ha nemmeno il campo, quindi non può comparire per errore.
 export function EditorialDishCard({
   dish,

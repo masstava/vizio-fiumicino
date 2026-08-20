@@ -3,8 +3,8 @@ import { createClient } from "@/src/lib/supabase/server";
 import { BarCocktailPreview } from "@/src/components/home/BarCocktailPreview";
 import { ExperienceEventi } from "@/src/components/home/ExperienceEventi";
 import { FeaturedDishes } from "@/src/components/home/FeaturedDishes";
-import type { FeaturedDish } from "@/src/components/home/FeaturedDishSlide";
-import { Footer, type GiornoOrario } from "@/src/components/home/Footer";
+import type { GiornoOrario, PiattoAnteprima } from "@/src/lib/dominio";
+import { Footer } from "@/src/components/home/Footer";
 import { Hero } from "@/src/components/home/Hero";
 import { MenuPreview } from "@/src/components/home/MenuPreview";
 import { Newsletter } from "@/src/components/home/Newsletter";
@@ -83,7 +83,7 @@ export default async function Home({
   });
 
   const piattoById = new Map((evidenzaPiatti ?? []).map((p) => [p.id, p]));
-  const featuredDishes: FeaturedDish[] = (evidenzaLinks ?? [])
+  const featuredDishes: PiattoAnteprima[] = (evidenzaLinks ?? [])
     .map((e) => piattoById.get(e.piatto_id))
     .filter((p): p is NonNullable<typeof p> => p != null)
     .map((p) => ({

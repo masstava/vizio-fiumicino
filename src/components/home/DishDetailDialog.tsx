@@ -14,6 +14,7 @@ import { Badge } from "@/src/components/ui/Badge";
 import { ImagePlaceholder } from "@/src/components/ui/ImagePlaceholder";
 import type { Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
+import type { PiattoDettaglio } from "@/src/lib/dominio";
 
 // Caricato solo quando un piatto ha davvero degli allergeni: porta
 // dentro Floating UI, che pesa più del resto della pagina. In home
@@ -22,17 +23,6 @@ const AllergeniPopover = dynamic(
   () => import("./AllergeniPopover").then((m) => m.AllergeniPopover),
   { ssr: false },
 );
-
-export interface DishDetail {
-  id: string;
-  nome: string;
-  descrizione: string | null;
-  foto_url: string | null;
-  badge?: string | null;
-  /** Allergeni per esteso, già tradotti. Assenti in home: l'anteprima
-   *  non li legge di proposito. Li passerà la pagina menu completo. */
-  allergeni?: string[];
-}
 
 // Scheda di dettaglio del piatto: foto grande, descrizione estesa e,
 // dove i dati ci sono, gli allergeni per esteso.
@@ -48,7 +38,7 @@ export function DishDetailDialog({
   locale,
   children,
 }: {
-  dish: DishDetail;
+  dish: PiattoDettaglio;
   locale: Locale;
   children: React.ReactNode;
 }) {

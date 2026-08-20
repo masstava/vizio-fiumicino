@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { HybridDish } from "@/src/components/home/CompactDishCard";
+import type { PiattoConBadge } from "@/src/lib/dominio";
 import { campoLocalizzato, campoLocalizzatoOpzionale } from "./i18n/campi";
 import type { Locale } from "./i18n/config";
 
@@ -17,8 +17,8 @@ export const MACRO_BAR = "Bar & Cocktail";
 const RICADUTA_LIMITE = 6;
 
 export interface AnteprimaHome {
-  menu: HybridDish[];
-  cocktail: HybridDish[];
+  menu: PiattoConBadge[];
+  cocktail: PiattoConBadge[];
   /** Nessun piatto selezionato: si sta mostrando la ricaduta automatica. */
   ricadutaAutomatica: boolean;
 }
@@ -96,7 +96,7 @@ async function ricaduta(
   supabase: SupabaseClient,
   macroNome: string,
   locale: Locale,
-): Promise<HybridDish[]> {
+): Promise<PiattoConBadge[]> {
   const { data: macro } = await supabase
     .from("categorie_macro")
     .select("id")
@@ -188,11 +188,11 @@ export async function getAnteprimaHome(
     .map((l) => piattoById.get(l.piatto_id))
     .filter((p): p is PiattoRow => p != null);
 
-  const menu: HybridDish[] = [];
-  const cocktail: HybridDish[] = [];
+  const menu: PiattoConBadge[] = [];
+  const cocktail: PiattoConBadge[] = [];
 
   ordinati.forEach((p) => {
-    const dish: HybridDish = {
+    const dish: PiattoConBadge = {
       id: p.id,
       nome: campoLocalizzato(p.nome, p.nome_en, locale),
       descrizione: campoLocalizzatoOpzionale(

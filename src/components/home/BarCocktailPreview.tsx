@@ -4,11 +4,12 @@ import { FlameAccent } from "@/src/components/ui/FlameAccent";
 import { Section } from "@/src/components/ui/Section";
 import { localizedPath, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
-import { CompactDishCard, type HybridDish } from "./CompactDishCard";
+import type { PiattoConBadge } from "@/src/lib/dominio";
+import { CompactDishCard } from "./CompactDishCard";
 import { EditorialDishCard } from "./EditorialDishCard";
 
 interface BarCocktailPreviewProps {
-  dishes: HybridDish[];
+  dishes: PiattoConBadge[];
   locale: Locale;
 }
 

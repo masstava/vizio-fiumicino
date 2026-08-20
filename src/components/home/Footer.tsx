@@ -1,19 +1,9 @@
 import { Logo } from "@/src/components/ui/Logo";
 import { SocialIcon } from "@/src/components/ui/SocialIcon";
 import { CONTATTI } from "@/src/lib/contatti";
+import type { FasciaOraria, GiornoOrario } from "@/src/lib/dominio";
 import type { Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
-
-interface FasciaOraria {
-  apertura: string;
-  chiusura: string;
-}
-
-export interface GiornoOrario {
-  nome: string;
-  chiuso: boolean;
-  fasce: FasciaOraria[];
-}
 
 interface FooterProps {
   orari: GiornoOrario[];

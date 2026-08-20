@@ -20,10 +20,35 @@ function toDisplayTime(value: string | null | undefined): string | null {
   return value ? value.slice(0, 5) : null;
 }
 
+// Il cartello ha spazio per una riga di titolo e una di sottotitolo:
+// oltre queste lunghezze il testo non ci starebbe comunque.
+//
+// Il taglio però serve soprattutto a un'altra cosa: questa route è
+// pubblica e non autenticata, e generare un PDF costa CPU. Senza un
+// limite, una querystring da decine di migliaia di caratteri farebbe
+// comporre a react-pdf un documento enorme a ogni richiesta — un modo
+// facile per bruciare tempo di esecuzione.
+const MAX_TITOLO = 120;
+const MAX_SOTTOTITOLO = 200;
+
+function parametroTesto(
+  valore: string | null,
+  maxLunghezza: number,
+): string | undefined {
+  const pulito = valore?.trim();
+  if (!pulito) return undefined;
+  return pulito.slice(0, maxLunghezza);
+}
+
 export async function GET(request: NextRequest) {
-  const titolo = request.nextUrl.searchParams.get("titolo")?.trim() || undefined;
-  const sottotitolo =
-    request.nextUrl.searchParams.get("sottotitolo")?.trim() || undefined;
+  const titolo = parametroTesto(
+    request.nextUrl.searchParams.get("titolo"),
+    MAX_TITOLO,
+  );
+  const sottotitolo = parametroTesto(
+    request.nextUrl.searchParams.get("sottotitolo"),
+    MAX_SOTTOTITOLO,
+  );
 
   const supabase = await createClient();
 

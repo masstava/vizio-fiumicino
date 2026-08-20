@@ -2,15 +2,7 @@ import { Button } from "@/src/components/ui/Button";
 import { Section } from "@/src/components/ui/Section";
 import type { Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
-
-// titolo/descrizione arrivano già risolti nella lingua attiva dalla
-// pagina, con ricaduta sull'italiano se manca la traduzione.
-export interface EventoHome {
-  id: string;
-  titolo: string;
-  descrizione: string | null;
-  data_evento: string | null;
-}
+import type { EventoInEvidenza } from "@/src/lib/dominio";
 
 // "2026-09-12" → "sabato 12 settembre". Formattato sul fuso di Roma
 // per non slittare di un giorno quando il server gira in UTC.
@@ -33,7 +25,7 @@ export function ExperienceEventi({
   evento,
   locale,
 }: {
-  evento?: EventoHome | null;
+  evento?: EventoInEvidenza | null;
   locale: Locale;
 }) {
   const t = getDizionario(locale);

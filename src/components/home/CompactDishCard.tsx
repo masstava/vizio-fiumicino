@@ -2,17 +2,13 @@ import Image from "next/image";
 import { Badge } from "@/src/components/ui/Badge";
 import { ImagePlaceholder } from "@/src/components/ui/ImagePlaceholder";
 import { cn } from "@/src/lib/utils";
+import type { PiattoConBadge } from "@/src/lib/dominio";
 import type { Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
 import { DishDetailDialog } from "./DishDetailDialog";
-import type { FeaturedDish } from "./FeaturedDishSlide";
-
-export interface HybridDish extends FeaturedDish {
-  badge: string | null;
-}
 
 interface CompactDishCardProps {
-  dish: HybridDish;
+  dish: PiattoConBadge;
   tone?: "light" | "dark";
   locale: Locale;
 }

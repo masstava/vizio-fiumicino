@@ -1,12 +1,4 @@
-export interface FasciaOraria {
-  apertura: string; // "HH:MM", confrontabile lessicograficamente
-  chiusura: string;
-}
-
-export interface OrarioGiorno {
-  giorno_settimana: number; // 0 = Lunedì ... 6 = Domenica
-  fasce: FasciaOraria[];
-}
+import type { FasceGiorno, FasciaOraria } from "./dominio";
 
 const GIORNO_INDEX_BY_ROME_WEEKDAY: Record<string, number> = {
   Mon: 0,
@@ -81,7 +73,7 @@ export function isScaduta(
 }
 
 export function isApertoOra(
-  giorni: OrarioGiorno[],
+  giorni: FasceGiorno[],
   now: Date = new Date(),
 ): boolean {
   const { giorno, time } = romeNow(now);
