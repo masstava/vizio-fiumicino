@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import "../../globals.css";
+import { MotionProvider } from "@/src/components/motion/MotionProvider";
 import { fontVariables } from "@/src/lib/fonts";
 import { LOCALES, isLocale, type Locale } from "@/src/lib/i18n/config";
 import { SITE_URL } from "@/src/lib/site-url";
@@ -72,7 +73,17 @@ export default async function PublicRootLayout({
 
   return (
     <html lang={locale} className={fontVariables}>
-      <body className="bg-cream text-ink font-sans antialiased">{children}</body>
+      <head>
+        {/* Le sezioni in comparsa partono a opacità 0 e vengono
+            mostrate da Motion. Senza JavaScript resterebbero
+            invisibili: questa regola le riporta a vista. */}
+        <noscript>
+          <style>{`[data-reveal]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
+      </head>
+      <body className="bg-cream text-ink font-sans antialiased">
+        <MotionProvider>{children}</MotionProvider>
+      </body>
     </html>
   );
 }

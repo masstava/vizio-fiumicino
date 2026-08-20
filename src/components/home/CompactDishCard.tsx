@@ -37,9 +37,17 @@ export function CompactDishCard({
       <button
         type="button"
         aria-label={t.piatto.apriDettaglio(dish.nome)}
+        // Sollevamento all'hover in CSS e non con Motion: è uno stato
+        // puramente visivo, il browser lo compone sulla GPU senza
+        // passare dal thread principale. Farlo in JavaScript
+        // aggiungerebbe lavoro a ogni movimento del puntatore, che è
+        // esattamente ciò che peggiora l'INP.
+        // Solo transform e opacity: nessun ricalcolo di layout.
         className={cn(
           "flex w-full items-center gap-3 rounded-sm text-left",
-          "transition-opacity hover:opacity-80",
+          "transition-[transform,opacity] duration-200 ease-out will-change-transform",
+          "hover:-translate-y-0.5 hover:opacity-90",
+          "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         )}
       >

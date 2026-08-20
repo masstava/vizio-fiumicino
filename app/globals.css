@@ -13,6 +13,20 @@ html {
   }
 }
 
+/* Comparsa delle sezioni: chi ha ridotto il movimento vede il
+   contenuto già al suo posto.
+   Gestito in CSS e non in JavaScript perché agisce fin dal primo
+   paint: il server non può sapere quale preferenza abbia l'utente,
+   quindi qualunque scelta fatta lato JS arriverebbe solo dopo
+   l'idratazione, lasciando il contenuto invisibile nel frattempo —
+   proprio a chi quella preferenza l'ha attivata. */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
 @theme {
   /* Font — variabili CSS iniettate da next/font nel root layout */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -144,4 +158,51 @@ html {
   --radius-sm: var(--radius);
   --radius-md: var(--radius);
   --radius-lg: var(--radius);
+}
+
+/* =============================================================
+   Animazioni del Dialog
+   =============================================================
+   In CSS e non con Motion: apertura e chiusura non hanno bisogno di
+   JavaScript, e Radix attende da solo la fine dell'animazione prima
+   di smontare il nodo. Tenere il Dialog senza stato controllato lo
+   lascia anche identico alla forma standard di shadcn, così un
+   futuro "shadcn add dialog" non va in conflitto.
+
+   Si animano solo opacity e transform: nessun salto di layout.
+
+   Tutto è dentro prefers-reduced-motion: no-preference — chi ha
+   ridotto il movimento vede il dialogo comparire e sparire senza
+   transizioni, non con un'animazione più lenta.
+   ============================================================= */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes dialogo-overlay-entra {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes dialogo-overlay-esce {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+  }
+  @keyframes dialogo-contenuto-entra {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.97); }
+    to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+  @keyframes dialogo-contenuto-esce {
+    from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    to   { opacity: 0; transform: translate(-50%, -50%) scale(0.97); }
+  }
+
+  .dialogo-overlay[data-state="open"] {
+    animation: dialogo-overlay-entra 180ms ease-out;
+  }
+  .dialogo-overlay[data-state="closed"] {
+    animation: dialogo-overlay-esce 150ms ease-in;
+  }
+  .dialogo-contenuto[data-state="open"] {
+    animation: dialogo-contenuto-entra 200ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .dialogo-contenuto[data-state="closed"] {
+    animation: dialogo-contenuto-esce 150ms ease-in;
+  }
 }

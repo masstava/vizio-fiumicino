@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import {
   Dialog,
@@ -11,9 +12,16 @@ import {
 } from "@/src/components/ui/dialog";
 import { Badge } from "@/src/components/ui/Badge";
 import { ImagePlaceholder } from "@/src/components/ui/ImagePlaceholder";
-import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/popover";
 import type { Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
+
+// Caricato solo quando un piatto ha davvero degli allergeni: porta
+// dentro Floating UI, che pesa più del resto della pagina. In home
+// non si attiva mai.
+const AllergeniPopover = dynamic(
+  () => import("./AllergeniPopover").then((m) => m.AllergeniPopover),
+  { ssr: false },
+);
 
 export interface DishDetail {
   id: string;
@@ -80,21 +88,10 @@ export function DishDetailDialog({
 
           {dish.allergeni && dish.allergeni.length > 0 && (
             <div className="mt-5 border-t border-border pt-4">
-              <Popover>
-                <PopoverTrigger className="font-sans text-xs tracking-widest uppercase text-muted-foreground underline underline-offset-4 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                  {t.piatto.allergeni}
-                </PopoverTrigger>
-                {/* Popover e non tooltip: l'elenco allergeni deve
-                    restare leggibile anche da telefono, dove l'hover
-                    non esiste. */}
-                <PopoverContent align="start">
-                  <ul className="space-y-1 font-sans text-xs leading-relaxed">
-                    {dish.allergeni.map((a) => (
-                      <li key={a}>{a}</li>
-                    ))}
-                  </ul>
-                </PopoverContent>
-              </Popover>
+              <AllergeniPopover
+                etichetta={t.piatto.allergeni}
+                allergeni={dish.allergeni}
+              />
             </div>
           )}
         </div>

@@ -8,6 +8,7 @@ import { Footer, type GiornoOrario } from "@/src/components/home/Footer";
 import { Hero } from "@/src/components/home/Hero";
 import { MenuPreview } from "@/src/components/home/MenuPreview";
 import { Newsletter } from "@/src/components/home/Newsletter";
+import { Reveal } from "@/src/components/motion/Reveal";
 import { SiteHeader } from "@/src/components/home/SiteHeader";
 import { SocialProof } from "@/src/components/home/SocialProof";
 import { ThreePillars } from "@/src/components/home/ThreePillars";
@@ -172,39 +173,57 @@ export default async function Home({
 
   return (
     <main>
+      {/* Header ed hero non sono avvolti in Reveal di proposito: sono
+          sopra la piega, e farli partire invisibili sposterebbe l'LCP. */}
       <SiteHeader locale={locale} />
       <Hero headline={testi["hero.headline"]} locale={locale} />
-      <ThreePillars testi={testi} locale={locale} />
-      <FeaturedDishes dishes={featuredDishes} locale={locale} />
-      <SocialProof
-        citazione={testi["recensione.testo"]}
-        autore={testi["recensione.autore"]}
-        locale={locale}
-      />
-      <MenuPreview dishes={menuPreviewDishes} locale={locale} />
-      <BarCocktailPreview dishes={cocktailDishes} locale={locale} />
-      <ExperienceEventi
-        evento={
-          prossimoEvento
-            ? {
-                id: prossimoEvento.id,
-                titolo: campoLocalizzato(
-                  prossimoEvento.titolo,
-                  prossimoEvento.titolo_en,
-                  locale,
-                ),
-                descrizione: campoLocalizzatoOpzionale(
-                  prossimoEvento.descrizione,
-                  prossimoEvento.descrizione_en,
-                  locale,
-                ),
-                data_evento: prossimoEvento.data_evento,
-              }
-            : null
-        }
-        locale={locale}
-      />
-      <Newsletter locale={locale} />
+
+      <Reveal>
+        <ThreePillars testi={testi} locale={locale} />
+      </Reveal>
+      <Reveal>
+        <FeaturedDishes dishes={featuredDishes} locale={locale} />
+      </Reveal>
+      <Reveal>
+        <SocialProof
+          citazione={testi["recensione.testo"]}
+          autore={testi["recensione.autore"]}
+          locale={locale}
+        />
+      </Reveal>
+      <Reveal>
+        <MenuPreview dishes={menuPreviewDishes} locale={locale} />
+      </Reveal>
+      <Reveal>
+        <BarCocktailPreview dishes={cocktailDishes} locale={locale} />
+      </Reveal>
+      <Reveal>
+        <ExperienceEventi
+          evento={
+            prossimoEvento
+              ? {
+                  id: prossimoEvento.id,
+                  titolo: campoLocalizzato(
+                    prossimoEvento.titolo,
+                    prossimoEvento.titolo_en,
+                    locale,
+                  ),
+                  descrizione: campoLocalizzatoOpzionale(
+                    prossimoEvento.descrizione,
+                    prossimoEvento.descrizione_en,
+                    locale,
+                  ),
+                  data_evento: prossimoEvento.data_evento,
+                }
+              : null
+          }
+          locale={locale}
+        />
+      </Reveal>
+      <Reveal>
+        <Newsletter locale={locale} />
+      </Reveal>
+
       <Footer
         orari={orariSettimana}
         apertoOra={apertoOra}

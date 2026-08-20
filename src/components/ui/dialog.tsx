@@ -25,7 +25,10 @@ const DialogOverlay = React.forwardRef<
     ref={ref}
     className={cn(
       "fixed inset-0 z-50 bg-dark/70 backdrop-blur-sm",
-      "data-[state=open]:animate-in data-[state=closed]:animate-out",
+      // Animazioni in CSS (vedi app/globals.css): l'apertura e la
+      // chiusura non hanno bisogno di JavaScript, e Radix aspetta da
+      // solo la fine dell'animazione prima di smontare il nodo.
+      "dialogo-overlay",
       className,
     )}
     {...props}
@@ -53,6 +56,7 @@ const DialogContent = React.forwardRef<
         "fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2",
         "max-h-[calc(100dvh-2rem)] overflow-y-auto",
         "border border-border bg-background text-foreground shadow-xl rounded-sm",
+        "dialogo-contenuto",
         "focus:outline-none",
         className,
       )}
