@@ -106,6 +106,24 @@ const it = {
     allergeni: "Allergeni",
     nessunaDescrizione: "Descrizione in arrivo.",
   },
+  pagine: {
+    laCarne: {
+      titolo: "La carne",
+      descrizione:
+        "Brace accesa tutte le sere a Fiumicino: tagli alla griglia e il Filetto alla Rossini, in un territorio di pesce.",
+    },
+    cocktailBar: {
+      titolo: "Cocktail & Bar",
+      descrizione:
+        "Bancone aperto dall'aperitivo al dopocena: signature della casa, classici eseguiti bene, analcolici veri.",
+    },
+  },
+  // Etichetta del riquadro che segnala un testo ancora da approvare.
+  // Deve restare visibile: serve proprio a non farlo pubblicare per
+  // distrazione.
+  bozza: {
+    etichetta: "Nota di redazione — da confermare prima della pubblicazione",
+  },
 };
 
 // Niente "as const" sull'italiano: darebbe tipi letterali ("Prenota"
@@ -211,6 +229,21 @@ const en: Dizionario = {
     apriDettaglio: (nome: string) => `See details for ${nome}`,
     allergeni: "Allergens",
     nessunaDescrizione: "Description coming soon.",
+  },
+  pagine: {
+    laCarne: {
+      titolo: "The meat",
+      descrizione:
+        "Embers lit every night in Fiumicino: cuts over the grill and the Fillet Rossini, in a town built on fish.",
+    },
+    cocktailBar: {
+      titolo: "Cocktails & Bar",
+      descrizione:
+        "The bar is open from aperitivo to the last drink: house signatures, classics done properly, real alcohol-free drinks.",
+    },
+  },
+  bozza: {
+    etichetta: "Editorial note — to be confirmed before publication",
   },
 };
 
