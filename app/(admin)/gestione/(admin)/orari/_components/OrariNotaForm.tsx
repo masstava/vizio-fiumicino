@@ -6,7 +6,7 @@ import { Button } from "@/src/components/ui/Button";
 import { saveOrariConfig } from "../_actions";
 
 const inputClass =
-  "bg-cream border border-ink/20 rounded-[2px] px-3 py-1.5 font-sans text-sm text-ink focus:outline-none focus:border-bordeaux/50 transition-colors";
+  "min-h-11 sm:min-h-0 bg-cream border border-ink/20 rounded-[2px] px-3 py-1.5 font-sans text-sm text-ink transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 focus-visible:border-bordeaux/50";
 
 interface OrariNotaFormProps {
   initialNota: string | null;

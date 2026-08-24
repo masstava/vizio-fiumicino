@@ -45,8 +45,12 @@ function buildInitialDays(initialOrari: OrarioGiornoRow[]): DayState[] {
   });
 }
 
+// min-h-11 solo sotto sm: su telefono i campi vanno centrati col
+// dito. Da sm in su la densità del prospetto settimanale resta quella
+// di prima — qui si guardano sette giorni insieme, e allargare le
+// righe renderebbe l'insieme meno leggibile.
 const inputClass =
-  "bg-cream border border-ink/20 rounded-[2px] px-3 py-1.5 font-sans text-sm text-ink focus:outline-none focus:border-bordeaux/50 transition-colors disabled:opacity-40";
+  "min-h-11 sm:min-h-0 bg-cream border border-ink/20 rounded-[2px] px-3 py-1.5 font-sans text-sm text-ink transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 focus-visible:border-bordeaux/50 disabled:opacity-40";
 
 export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] }) {
   const [days, setDays] = useState<DayState[]>(() => buildInitialDays(initialOrari));
@@ -200,7 +204,7 @@ export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] })
               <button
                 type="button"
                 onClick={() => applyToAllDays(dayIndex)}
-                className="font-sans text-xs text-muted hover:text-bordeaux transition-colors"
+                className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-xs text-muted transition-colors hover:text-bordeaux focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 sm:min-h-0"
               >
                 Applica a tutti i giorni
               </button>
@@ -209,49 +213,75 @@ export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] })
             {!day.chiuso && (
               <div className="mt-3 sm:pl-28 space-y-2">
                 {day.fasce.map((fascia, fasciaIndex) => (
-                  <div key={fascia.key} className="flex items-center gap-2">
-                    <label className="font-sans text-xs text-muted">
-                      Apertura
-                    </label>
-                    <input
-                      type="time"
-                      value={fascia.apertura}
-                      onChange={(e) =>
-                        updateFascia(dayIndex, fasciaIndex, {
-                          apertura: e.target.value,
-                        })
-                      }
-                      className={cn(inputClass, "w-28")}
-                    />
-                    <label className="font-sans text-xs text-muted">
-                      Chiusura
-                    </label>
-                    <input
-                      type="time"
-                      value={fascia.chiusura}
-                      onChange={(e) =>
-                        updateFascia(dayIndex, fasciaIndex, {
-                          chiusura: e.target.value,
-                        })
-                      }
-                      className={cn(inputClass, "w-28")}
-                    />
-                    {day.fasce.length > 1 && (
+                  // Su mobile "Apertura [ora] Chiusura [ora] ×" in
+                  // una riga sola non ci sta: i 332px disponibili non
+                  // bastano e la × finiva fuori dallo schermo. Qui
+                  // diventa una griglia a due colonne con le etichette
+                  // sopra i campi; da sm torna la riga inline.
+                  <div
+                    key={fascia.key}
+                    className="grid grid-cols-[1fr_1fr_auto] items-end gap-2 sm:flex sm:items-center"
+                  >
+                    <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
+                      <label
+                        htmlFor={`${fascia.key}-apertura`}
+                        className="font-sans text-xs text-muted"
+                      >
+                        Apertura
+                      </label>
+                      <input
+                        id={`${fascia.key}-apertura`}
+                        type="time"
+                        value={fascia.apertura}
+                        onChange={(e) =>
+                          updateFascia(dayIndex, fasciaIndex, {
+                            apertura: e.target.value,
+                          })
+                        }
+                        className={cn(inputClass, "w-full sm:w-28")}
+                      />
+                    </div>
+                    <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
+                      <label
+                        htmlFor={`${fascia.key}-chiusura`}
+                        className="font-sans text-xs text-muted"
+                      >
+                        Chiusura
+                      </label>
+                      <input
+                        id={`${fascia.key}-chiusura`}
+                        type="time"
+                        value={fascia.chiusura}
+                        onChange={(e) =>
+                          updateFascia(dayIndex, fasciaIndex, {
+                            chiusura: e.target.value,
+                          })
+                        }
+                        className={cn(inputClass, "w-full sm:w-28")}
+                      />
+                    </div>
+                    {day.fasce.length > 1 ? (
                       <button
                         type="button"
                         onClick={() => removeFascia(dayIndex, fasciaIndex)}
-                        className="font-sans text-lg leading-none text-muted hover:text-bordeaux px-1"
+                        className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[2px] font-sans text-lg leading-none text-muted hover:text-bordeaux focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 sm:min-h-0 sm:min-w-0 sm:px-1"
                         aria-label="Rimuovi fascia oraria"
                       >
                         ×
                       </button>
+                    ) : (
+                      // Segnaposto: senza, con una sola fascia le due
+                      // colonne dei campi si allargherebbero, e le
+                      // righe di uno stesso giorno non sarebbero
+                      // allineate fra loro.
+                      <span aria-hidden="true" className="w-11 sm:hidden" />
                     )}
                   </div>
                 ))}
                 <button
                   type="button"
                   onClick={() => addFascia(dayIndex)}
-                  className="font-sans text-xs text-bordeaux hover:opacity-70"
+                  className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-xs text-bordeaux hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 sm:min-h-0"
                 >
                   + Aggiungi fascia oraria
                 </button>
