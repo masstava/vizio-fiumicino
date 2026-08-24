@@ -3,12 +3,15 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/src/lib/supabase/server";
 
-export interface FasciaInput {
+// Alias e non interface: serve l'index signature implicito per
+// risultare assegnabile a Json, il tipo del parametro jsonb di
+// save_orari (vedi BadgeInput per la spiegazione estesa).
+export type FasciaInput = {
   giorno_settimana: number;
   ordine: number;
   apertura: string | null;
   chiusura: string | null;
-}
+};
 
 export interface OrariConfigInput {
   nota: string | null;

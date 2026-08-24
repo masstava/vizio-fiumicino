@@ -25,25 +25,45 @@ non esistono.
 | `OrarioFascia`, `OrarioGiorno` | `src/lib/pdf/OrariDocument.tsx` | Forma attesa dal generatore di PDF. |
 | `DishData` | `src/components/ui/DishRow.tsx` | Riga di elenco della dashboard: prezzo, allergeni come codici numerici, badge multipli. Da rivalutare quando la pagina menu completo dirà se riusa `DishRow`. |
 
-## Prossimo passo: tipi generati dal database
+## Tipi generati dal database
 
-Restano due punti in cui il codice afferma una forma che il compilatore
-non può verificare:
+`src/lib/database.types.ts` è nel repo, generato dallo schema. I client
+sono parametrizzati con `Database` (`src/lib/supabase/client.ts` e
+`server.ts`), quindi `select()` è verificato end-to-end: se una colonna
+sparisce dallo schema, o se la si chiede senza che esista, l'errore esce
+in compilazione e non a runtime.
 
-- `src/lib/anteprima-home.ts` → `(piatti ?? []) as PiattoRow[]`
-- `app/(admin)/.../menu/_actions.ts` → `data as string` (UUID dalla RPC)
+I due cast che stavano qui elencati sono chiusi:
 
-Sono veri finché la stringa passata a `select()` e l'interfaccia
-restano allineate, ma nulla lo garantisce: togliendo una colonna dal
-select il tipo continuerebbe a mentire e l'errore uscirebbe a runtime.
+- `src/lib/anteprima-home.ts` → il client è `SupabaseClient<Database>` e
+  la forma della riga la deduce la `select()`. L'interfaccia `PiattoRow`
+  scritta a mano non esiste più.
+- `app/(admin)/.../menu/_actions.ts` → `save_piatto` dichiara
+  `Returns: string`, quindi l'uuid torna già tipizzato.
 
-Si chiudono generando i tipi dallo schema:
+Da rigenerare dopo ogni migration.
 
-```bash
-supabase login
-supabase link --project-ref efqytltwyruxmszxilca
-supabase gen types typescript --linked > src/lib/database.types.ts
-```
+### L'unico cast che resta, e perché
 
-Da rigenerare dopo ogni migration. Una volta presente il file, `select()`
-diventa verificato end-to-end e quei due cast si possono togliere.
+`app/(admin)/.../menu/_actions.ts` passa gli argomenti di `save_piatto`
+attraverso `ArgomentiRpc` (`src/lib/supabase/rpc.ts`) e poi li castra
+alla firma stretta. Il generatore di Supabase emette gli argomenti delle
+funzioni **sempre non-nullable**: non modella la nullabilità dei
+parametri PL/pgSQL. Nelle nostre funzioni il NULL è invece parte del
+contratto — `save_piatto` si dirama su `p_id is null` per distinguere
+inserimento da aggiornamento, e descrizione, prezzo o foto possono
+mancare.
+
+Il cast è quindi una limitazione dello strumento, non del codice, e non
+si chiude rigenerando i tipi. Resta comunque stretto: l'oggetto è
+tipizzato con `ArgomentiRpc<"save_piatto">`, quindi nomi delle chiavi e
+tipi dei valori restano controllati dai tipi generati; l'unica cosa
+asserita al passaggio è che il NULL è ammesso.
+
+### Nota: interface vs type per i parametri jsonb
+
+`BadgeInput`, `FasciaInput` e `OrdinePiatto` sono alias di tipo e non
+`interface`. Le interface in TypeScript non ricevono un index signature
+implicito e quindi non risultano assegnabili a `Json`, il tipo dei
+parametri `jsonb` delle RPC. Gli alias sì. Stessa forma, nessuna
+differenza a runtime.

@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/src/lib/database.types";
 import type { PiattoConBadge } from "@/src/lib/dominio";
 import { campoLocalizzato, campoLocalizzatoOpzionale } from "./i18n/campi";
 import type { Locale } from "./i18n/config";
@@ -23,23 +24,16 @@ export interface AnteprimaHome {
   ricadutaAutomatica: boolean;
 }
 
-interface PiattoRow {
-  id: string;
-  categoria_id: string;
-  nome: string;
-  nome_en: string | null;
-  descrizione: string | null;
-  descrizione_en: string | null;
-  foto_url: string | null;
-}
-
+// "as const": senza, il tipo sarebbe string e PostgREST non potrebbe
+// dedurre la forma della riga dalla select. Con il letterale, il tipo
+// del risultato lo calcola il client dai tipi generati dal database.
 const CAMPI_PIATTO =
-  "id, categoria_id, nome, nome_en, descrizione, descrizione_en, foto_url";
+  "id, categoria_id, nome, nome_en, descrizione, descrizione_en, foto_url" as const;
 
 // Un solo badge per piatto, come nella griglia compatta: se un piatto
 // ne ha più di uno si mostra il primo.
 async function badgeByPiatto(
-  supabase: SupabaseClient,
+  supabase: SupabaseClient<Database>,
   ids: string[],
 ): Promise<Map<string, string>> {
   const out = new Map<string, string>();
@@ -59,7 +53,7 @@ async function badgeByPiatto(
 // categoria_id → nome della macro-categoria, per separare i piatti
 // del menu da quelli del bar.
 async function macroByCategoria(
-  supabase: SupabaseClient,
+  supabase: SupabaseClient<Database>,
   categoriaIds: string[],
 ): Promise<Map<string, string>> {
   const out = new Map<string, string>();
@@ -93,7 +87,7 @@ async function macroByCategoria(
 // flag — serve solo a non far sparire una sezione dalla home quando
 // la selezione non è ancora stata fatta. La dashboard lo segnala.
 async function ricaduta(
-  supabase: SupabaseClient,
+  supabase: SupabaseClient<Database>,
   macroNome: string,
   locale: Locale,
 ): Promise<PiattoConBadge[]> {
@@ -150,7 +144,7 @@ async function ricaduta(
 }
 
 export async function getAnteprimaHome(
-  supabase: SupabaseClient,
+  supabase: SupabaseClient<Database>,
   locale: Locale = "it",
 ): Promise<AnteprimaHome> {
   const { data: links } = await supabase
@@ -174,7 +168,7 @@ export async function getAnteprimaHome(
     .in("id", ids)
     .eq("disponibile", true);
 
-  const righe = (piatti ?? []) as PiattoRow[];
+  const righe = piatti ?? [];
   const [badges, macroByCat] = await Promise.all([
     badgeByPiatto(supabase, righe.map((p) => p.id)),
     macroByCategoria(supabase, [...new Set(righe.map((p) => p.categoria_id))]),
@@ -186,7 +180,7 @@ export async function getAnteprimaHome(
   // posizione sono le più viste, quindi non si riordina per altro.
   const ordinati = (links ?? [])
     .map((l) => piattoById.get(l.piatto_id))
-    .filter((p): p is PiattoRow => p != null);
+    .filter((p) => p != null);
 
   const menu: PiattoConBadge[] = [];
   const cocktail: PiattoConBadge[] = [];

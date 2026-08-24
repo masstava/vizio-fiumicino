@@ -39,7 +39,11 @@ export interface AllergeneOption {
   nome_it: string;
 }
 
-export interface BadgeInput {
+// Alias di tipo e non interface: le interface in TypeScript non
+// ricevono un index signature implicito, quindi non risultano
+// assegnabili a Json — che è il tipo dell'argomento jsonb della RPC.
+// Gli alias sì. Stessa forma, nessuna differenza a runtime.
+export type BadgeInput = {
   testo: string;
   testo_en: string;
-}
+};

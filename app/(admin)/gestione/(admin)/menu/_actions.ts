@@ -2,6 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/src/lib/supabase/server";
+import type {
+  ArgomentiRpc,
+  ArgomentiRpcStretti,
+} from "@/src/lib/supabase/rpc";
 import type { BadgeInput } from "./_components/types";
 
 export async function toggleDisponibile(id: string, disponibile: boolean) {
@@ -23,10 +27,12 @@ export async function deletePiatto(id: string) {
   revalidatePath("/gestione/menu");
 }
 
-export interface OrdinePiatto {
+// Alias e non interface: serve l'index signature implicito per
+// risultare assegnabile a Json, il tipo del parametro jsonb della RPC.
+export type OrdinePiatto = {
   id: string;
   ordine: number;
-}
+};
 
 export async function reorderPiatti(
   categoriaId: string,
@@ -69,7 +75,13 @@ export async function savePiatto(
 ): Promise<{ id: string }> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase.rpc("save_piatto", {
+  // Tipizzati con ArgomentiRpc: nomi delle chiavi e tipi dei valori
+  // restano controllati dai tipi generati dal database. Il cast alla
+  // firma stretta serve solo perché il generatore emette i parametri
+  // come non-nullable, mentre nella funzione Postgres il NULL è parte
+  // del contratto — p_id nullo è proprio il modo in cui si distingue
+  // un inserimento da un aggiornamento.
+  const argomenti: ArgomentiRpc<"save_piatto"> = {
     p_id: input.id,
     p_categoria_id: input.categoria_id,
     p_nome: input.nome,
@@ -86,12 +98,19 @@ export async function savePiatto(
     p_in_evidenza_ordine: input.in_evidenza_ordine,
     p_anteprima_home: input.anteprima_home,
     p_anteprima_home_ordine: input.anteprima_home_ordine,
-  });
+  };
+
+  const { data, error } = await supabase.rpc(
+    "save_piatto",
+    argomenti as ArgomentiRpcStretti<"save_piatto">,
+  );
 
   if (error) throw new Error(error.message);
 
   revalidatePath("/gestione/menu");
   // La home mostra la selezione curata: va rigenerata anche lei.
   revalidatePath("/");
-  return { id: data as string };
+  // Nessun cast: i tipi generati dichiarano che save_piatto ritorna
+  // l'uuid del piatto.
+  return { id: data };
 }
