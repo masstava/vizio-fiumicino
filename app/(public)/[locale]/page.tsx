@@ -32,6 +32,43 @@ export async function generateMetadata({
   return { alternates: alternatesPerPagina("/", locale) };
 }
 
+type ClientSupabase = Awaited<ReturnType<typeof createClient>>;
+
+// Piatti in evidenza: tre letture, di cui due dipendono dalla prima.
+//
+// Sta in una funzione a parte, e non in fila nel corpo della pagina,
+// perché Promise.all è una BARRIERA: mettere le due dipendenti in un
+// secondo Promise.all dopo il primo le farebbe aspettare anche la più
+// lenta delle query indipendenti (la catena dell'anteprima home, che
+// è profonda 4). Misurato: partivano a 170ms invece che a 40ms.
+//
+// Così invece l'intero ramo evidenza è UNA voce del Promise.all di
+// primo livello e scorre in parallelo agli altri: la pagina paga la
+// catena più lunga, non la somma.
+async function leggiInEvidenza(supabase: ClientSupabase) {
+  const { data: links } = await supabase
+    .from("piatti_in_evidenza")
+    .select("piatto_id, ordine")
+    .order("ordine");
+
+  const ids = (links ?? []).map((e) => e.piatto_id);
+  if (ids.length === 0) return { links: [], piatti: [], badge: [] };
+
+  // Dipendono entrambe dagli id, ma non l'una dall'altra.
+  const [{ data: piatti }, { data: badge }] = await Promise.all([
+    supabase
+      .from("piatti")
+      .select("id, nome, nome_en, descrizione, descrizione_en, foto_url")
+      .in("id", ids)
+      .eq("disponibile", true),
+    // Un solo badge per piatto (se presente), stesso pattern già usato
+    // per le anteprime menu/cocktail.
+    supabase.from("badge").select("piatto_id, testo").in("piatto_id", ids),
+  ]);
+
+  return { links: links ?? [], piatti: piatti ?? [], badge: badge ?? [] };
+}
+
 export default async function Home({
   params,
 }: {
@@ -42,48 +79,78 @@ export default async function Home({
   const t = getDizionario(locale);
   const supabase = await createClient();
 
-  const { data: evidenzaLinks } = await supabase
-    .from("piatti_in_evidenza")
-    .select("piatto_id, ordine")
-    .order("ordine");
+  // Data di oggi a Roma, per il filtro sul prossimo evento. Calcolata
+  // prima delle query perché serve a costruirne una.
+  const oggiRoma = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Rome",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
 
-  const evidenzaIds = (evidenzaLinks ?? []).map((e) => e.piatto_id);
+  // Primo livello: sei letture che non dipendono l'una dall'altra,
+  // quindi partono insieme. Prima erano sei await in fila e la pagina
+  // pagava la somma delle latenze invece della più lenta: undici
+  // andate e ritorno in sequenza contando anche le dipendenti sotto.
+  // La home è force-dynamic, quindi succedeva a ogni richiesta.
+  const [
+    evidenza,
+    anteprima,
+    { data: orariRows },
+    { data: orariConfig },
+    { data: contenutiRows },
+    { data: prossimoEvento },
+  ] = await Promise.all([
+    // Ramo completo (tre letture, profondità 2): vedi leggiInEvidenza.
+    leggiInEvidenza(supabase),
 
-  const { data: evidenzaPiatti } = evidenzaIds.length
-    ? await supabase
-        .from("piatti")
-        .select("id, nome, nome_en, descrizione, descrizione_en, foto_url")
-        .in("id", evidenzaIds)
-        .eq("disponibile", true)
-    : {
-        data: [] as {
-          id: string;
-          nome: string;
-          nome_en: string | null;
-          descrizione: string | null;
-          descrizione_en: string | null;
-          foto_url: string | null;
-        }[],
-      };
+    // Anteprima menu e cocktail: selezione curata dalla dashboard
+    // (flag "Mostra nell'anteprima home"), nell'ordine impostato lì.
+    // Prima si pescavano i primi N piatti per ordine di inserimento,
+    // e la home finiva per mostrare solo aperitivi e taglieri.
+    getAnteprimaHome(supabase, locale),
 
-  // Un solo badge per piatto (se presente), stesso pattern già usato
-  // per le anteprime menu/cocktail.
-  const { data: evidenzaBadgeLinks } = evidenzaIds.length
-    ? await supabase
-        .from("badge")
-        .select("piatto_id, testo")
-        .in("piatto_id", evidenzaIds)
-    : { data: [] as { piatto_id: string; testo: string }[] };
+    // Orari per il footer: stessa fonte unica usata in
+    // /gestione/orari e nella route del PDF orari.
+    supabase
+      .from("orari")
+      .select("giorno_settimana, apertura, chiusura")
+      .order("giorno_settimana")
+      .order("ordine"),
+
+    // Nota orari temporanei (es. orario estivo): mostrata accanto agli
+    // orari, così un orario stagionale non passa per definitivo. La
+    // data di validità è solo un promemoria per la dashboard.
+    supabase.from("orari_config").select("nota").maybeSingle(),
+
+    // Testi editabili dalla dashboard. Chiave vuota o assente → resta
+    // il testo scritto nel codice, così la home non mostra mai un
+    // vuoto (vedi src/lib/contenuti.ts).
+    supabase.from("contenuti_sito").select("chiave, valore, valore_en"),
+
+    // Prossimo evento datato: un appuntamento reale crea urgenza, il
+    // testo generico no. Solo eventi attivi con data da oggi in poi;
+    // se non ce ne sono, la sezione resta com'era.
+    supabase
+      .from("eventi")
+      .select("id, titolo, titolo_en, descrizione, descrizione_en, data_evento")
+      .eq("attivo", true)
+      .not("data_evento", "is", null)
+      .gte("data_evento", oggiRoma)
+      .order("data_evento")
+      .limit(1)
+      .maybeSingle(),
+  ]);
 
   const evidenzaBadgeByPiatto = new Map<string, string>();
-  (evidenzaBadgeLinks ?? []).forEach((b) => {
+  evidenza.badge.forEach((b) => {
     if (!evidenzaBadgeByPiatto.has(b.piatto_id)) {
       evidenzaBadgeByPiatto.set(b.piatto_id, b.testo);
     }
   });
 
-  const piattoById = new Map((evidenzaPiatti ?? []).map((p) => [p.id, p]));
-  const featuredDishes: PiattoAnteprima[] = (evidenzaLinks ?? [])
+  const piattoById = new Map(evidenza.piatti.map((p) => [p.id, p]));
+  const featuredDishes: PiattoAnteprima[] = evidenza.links
     .map((e) => piattoById.get(e.piatto_id))
     .filter((p): p is NonNullable<typeof p> => p != null)
     .map((p) => ({
@@ -98,22 +165,11 @@ export default async function Home({
       badge: evidenzaBadgeByPiatto.get(p.id) ?? null,
     }));
 
-  // Anteprima menu e cocktail: selezione curata dalla dashboard
-  // (flag "Mostra nell'anteprima home"), nell'ordine impostato lì.
-  // Prima si pescavano i primi N piatti per ordine di inserimento,
-  // e la home finiva per mostrare solo aperitivi e taglieri.
-  const anteprima = await getAnteprimaHome(supabase, locale);
   const menuPreviewDishes = anteprima.menu;
   const cocktailDishes = anteprima.cocktail;
 
-  // Orari per il footer: stessa fonte unica usata in /gestione/orari
-  // e nella route del PDF orari.
-  const { data: orariRows } = await supabase
-    .from("orari")
-    .select("giorno_settimana, apertura, chiusura")
-    .order("giorno_settimana")
-    .order("ordine");
-
+  // Da qui in giù solo calcoli sui dati già letti: nessuna altra
+  // andata e ritorno verso il database.
   const fasceByGiorno = new Map<number, { apertura: string; chiusura: string }[]>();
   (orariRows ?? []).forEach((r) => {
     if (!r.apertura || !r.chiusura) return;
@@ -127,15 +183,6 @@ export default async function Home({
     return { nome, chiuso: fasce.length === 0, fasce };
   });
 
-  // Nota orari temporanei (es. orario estivo): mostrata sul sito
-  // accanto agli orari, così un orario stagionale non passa per
-  // definitivo. La data di validità è solo un promemoria per la
-  // dashboard, qui non serve.
-  const { data: orariConfig } = await supabase
-    .from("orari_config")
-    .select("nota")
-    .maybeSingle();
-
   const apertoOra = isApertoOra(
     Array.from(fasceByGiorno.entries()).map(([giorno_settimana, fasce]) => ({
       giorno_settimana,
@@ -143,33 +190,7 @@ export default async function Home({
     })),
   );
 
-  // Testi editabili dalla dashboard. Chiave vuota o assente → resta
-  // il testo scritto nel codice, così la home non mostra mai un
-  // vuoto (vedi src/lib/contenuti.ts).
-  const { data: contenutiRows } = await supabase
-    .from("contenuti_sito")
-    .select("chiave, valore, valore_en");
   const testi = risolviContenuti(contenutiRows, locale);
-
-  // Prossimo evento datato: un appuntamento reale crea urgenza, il
-  // testo generico no. Solo eventi attivi con data da oggi in poi;
-  // se non ce ne sono, la sezione resta com'era.
-  const oggiRoma = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Europe/Rome",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date());
-
-  const { data: prossimoEvento } = await supabase
-    .from("eventi")
-    .select("id, titolo, titolo_en, descrizione, descrizione_en, data_evento")
-    .eq("attivo", true)
-    .not("data_evento", "is", null)
-    .gte("data_evento", oggiRoma)
-    .order("data_evento")
-    .limit(1)
-    .maybeSingle();
 
   return (
     <main>

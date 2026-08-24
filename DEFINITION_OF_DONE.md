@@ -11,4 +11,8 @@ Prima di considerare chiuso qualsiasi lavoro su UI (pubblico o dashboard):
 - [ ] Build e tsc puliti — verificati, non assunti
 - [ ] Desktop invariato se non era in scope
 
+## Dati e fetching
+
+- [ ] Query indipendenti raggruppate in Promise.all; sequenziare solo le dipendenze genuine (una query ha davvero bisogno dell'id/risultato dell'altra)
+
 Questo si applica per default a ogni nuovo componente o pagina, non solo quando esplicitamente richiesto nel prompt.
