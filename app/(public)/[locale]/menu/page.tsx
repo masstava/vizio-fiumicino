@@ -48,16 +48,9 @@ export default async function MenuPage({
     { data: piattiRows },
     { data: allergeniRows },
   ] = await Promise.all([
-    // Niente nome_en qui: la colonna esiste su "categorie" ma NON su
-    // "categorie_macro" — la migration delle traduzioni copriva solo
-    // le categorie di secondo livello. Chiederla faceva fallire la
-    // query con un 400 di PostgREST, e siccome l'errore non veniva
-    // letto il risultato era null: l'intera pagina menu si svuotava.
-    // I titoli delle macro restano quindi in italiano anche in EN
-    // finché la colonna non c'è (vedi supabase/migrations).
     supabase
       .from("categorie_macro")
-      .select("id, nome, ordine")
+      .select("id, nome, nome_en, ordine")
       .order("ordine"),
     supabase
       .from("categorie")
@@ -139,7 +132,7 @@ export default async function MenuPage({
   const macro: MacroMenu[] = (macroRows ?? [])
     .map((m) => ({
       id: m.id,
-      nome: m.nome,
+      nome: campoLocalizzato(m.nome, m.nome_en, locale),
       categorie: (categorieRows ?? [])
         .filter((c) => c.categoria_macro_id === m.id)
         .map((c) => ({

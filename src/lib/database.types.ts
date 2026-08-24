@@ -122,16 +122,19 @@ export type Database = {
         Row: {
           id: string
           nome: string
+          nome_en: string | null
           ordine: number
         }
         Insert: {
           id?: string
           nome: string
+          nome_en?: string | null
           ordine?: number
         }
         Update: {
           id?: string
           nome?: string
+          nome_en?: string | null
           ordine?: number
         }
         Relationships: []
