@@ -86,10 +86,15 @@ function EventoRow({
 
   const dataLabel = formatDataEvento(evento.data_evento);
 
+  // Sotto sm la riga diventa una scheda impilata: titolo su tutta la
+  // larghezza, azioni sotto. In riga unica a 380px il titolo si
+  // riduceva a un'ottantina di pixel e veniva troncato quasi sempre —
+  // anche quelli corti — quindi non si capiva quale evento si stesse
+  // per modificare o eliminare. Da sm in su resta la riga di prima.
   return (
-    <div className="flex items-center justify-between gap-4 py-4 border-b border-ink/10">
+    <div className="flex flex-col gap-3 py-4 border-b border-ink/10 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
       <div className="min-w-0">
-        <p className="font-serif text-lg font-medium text-ink truncate">
+        <p className="font-serif text-lg font-medium text-ink sm:truncate">
           {evento.titolo}
         </p>
         <p className="font-sans text-sm text-muted mt-0.5">
@@ -105,14 +110,14 @@ function EventoRow({
         />
         <Link
           href={`/gestione/eventi/${evento.id}`}
-          className="font-sans text-sm text-bordeaux hover:opacity-70 transition-opacity"
+          className="inline-flex min-h-11 items-center font-sans text-sm text-bordeaux hover:opacity-70 transition-opacity md:min-h-0"
         >
           Modifica
         </Link>
         <button
           type="button"
           onClick={onDelete}
-          className="font-sans text-sm text-muted hover:text-bordeaux transition-colors"
+          className="inline-flex min-h-11 items-center font-sans text-sm text-muted hover:text-bordeaux transition-colors md:min-h-0"
         >
           Elimina
         </button>

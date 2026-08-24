@@ -22,7 +22,7 @@ interface EventFormProps {
 }
 
 const inputClass =
-  "w-full bg-cream border border-ink/20 rounded-[2px] px-3 py-2 font-sans text-sm text-ink placeholder:text-muted/60 focus:outline-none focus:border-bordeaux/50 transition-colors";
+  "w-full min-h-11 md:min-h-0 bg-cream border border-ink/20 rounded-[2px] px-3 py-2 font-sans text-sm text-ink placeholder:text-muted/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 focus-visible:border-bordeaux/50";
 
 export function EventForm({ mode, eventoId, initialData }: EventFormProps) {
   const router = useRouter();
@@ -146,7 +146,7 @@ export function EventForm({ mode, eventoId, initialData }: EventFormProps) {
         <button
           type="button"
           onClick={() => router.push("/gestione/eventi")}
-          className="font-sans text-sm text-muted hover:text-ink transition-colors"
+          className="inline-flex min-h-11 items-center px-1 font-sans text-sm text-muted hover:text-ink transition-colors md:min-h-0 md:px-0"
         >
           Annulla
         </button>

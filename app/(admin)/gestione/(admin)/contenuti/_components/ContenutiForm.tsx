@@ -7,7 +7,7 @@ import { GRUPPI_CONTENUTI } from "@/src/lib/contenuti";
 import { saveContenuti } from "../_actions";
 
 const inputClass =
-  "w-full bg-cream border border-ink/20 rounded-[2px] px-3 py-2 font-sans text-sm text-ink placeholder:text-muted/60 focus:outline-none focus:border-bordeaux/50 transition-colors";
+  "w-full min-h-11 md:min-h-0 bg-cream border border-ink/20 rounded-[2px] px-3 py-2 font-sans text-sm text-ink placeholder:text-muted/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 focus-visible:border-bordeaux/50";
 
 // Solo campi di testo etichettati in italiano: nessuna chiave
 // tecnica a schermo, nessun editor di layout, nessun drag-and-drop.

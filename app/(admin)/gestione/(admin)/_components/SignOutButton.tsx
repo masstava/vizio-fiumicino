@@ -16,7 +16,7 @@ export function SignOutButton() {
   return (
     <button
       onClick={handleSignOut}
-      className="font-sans text-sm text-muted-dark hover:text-cream-text transition-colors w-full text-left"
+      className="flex min-h-11 w-full items-center font-sans text-sm text-muted-dark hover:text-cream-text transition-colors text-left md:min-h-0"
     >
       Esci
     </button>
