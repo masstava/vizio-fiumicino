@@ -37,7 +37,10 @@ export function SortableDishRow({ dish, onDelete }: SortableDishRowProps) {
         {...listeners}
         aria-label={`Riordina ${dish.nome}`}
         className={cn(
-          "flex-shrink-0 flex items-center px-2 text-muted hover:text-ink",
+          // Sotto md la maniglia arriva a 44px di larghezza: è già
+          // alta quanto la riga, ma a 30px il dito la mancava e il
+          // riordino su telefono era di fatto impossibile.
+          "flex-shrink-0 flex items-center justify-center min-w-11 px-2 text-muted hover:text-ink md:min-w-0 md:justify-start",
           "cursor-grab active:cursor-grabbing touch-none",
           "focus-visible:outline-none focus-visible:text-bordeaux",
         )}

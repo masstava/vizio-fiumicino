@@ -27,7 +27,9 @@ export function AccordionSection({
         type="button"
         onClick={onToggle}
         aria-expanded={open}
-        className={`flex w-full items-center justify-between gap-2 text-left cursor-pointer ${headerClassName ?? ""}`}
+        // min-h-11 sotto md: le intestazioni sono l'unico modo per
+        // aprire una categoria, e a 380px erano alte 15px.
+        className={`flex min-h-11 w-full items-center justify-between gap-2 text-left cursor-pointer md:min-h-0 ${headerClassName ?? ""}`}
       >
         {header}
         <svg

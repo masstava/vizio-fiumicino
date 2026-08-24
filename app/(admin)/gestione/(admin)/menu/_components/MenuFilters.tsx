@@ -11,7 +11,7 @@ interface MenuFiltersProps {
 }
 
 const fieldClass =
-  "bg-cream border border-ink/20 rounded-[2px] px-3 py-2 font-sans text-sm text-ink focus:outline-none focus:border-bordeaux/50 transition-colors";
+  "min-h-11 md:min-h-0 bg-cream border border-ink/20 rounded-[2px] px-3 py-2 font-sans text-sm text-ink transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 focus-visible:border-bordeaux/50";
 
 export function MenuFilters({ groups, search, onSearchChange }: MenuFiltersProps) {
   const router = useRouter();

@@ -31,7 +31,12 @@ export function AdminDishRow({ dish, onDelete }: AdminDishRowProps) {
   return (
     <div className="border-b border-ink/10">
       <DishRow dish={dish} tone="light" className="border-b-0 pb-3" />
-      <div className="flex items-center justify-between gap-4 pb-4 pl-24">
+      {/* pl-24 allinea le azioni sotto la colonna di testo della
+          DishRow (miniatura 80px + gap). A 380px però quei 96px
+          spingevano "Elimina" oltre il bordo destro, rendendolo
+          intoccabile: sotto sm l'allineamento salta e il gruppo va a
+          capo se serve. */}
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 pb-4 sm:flex-nowrap sm:pl-24">
         <Switch
           checked={disponibile}
           onChange={handleToggle}
@@ -41,14 +46,14 @@ export function AdminDishRow({ dish, onDelete }: AdminDishRowProps) {
         <div className="flex items-center gap-4">
           <Link
             href={`/gestione/menu/${dish.id}`}
-            className="font-sans text-sm text-bordeaux hover:opacity-70 transition-opacity"
+            className="inline-flex min-h-11 items-center font-sans text-sm text-bordeaux hover:opacity-70 transition-opacity md:min-h-0"
           >
             Modifica
           </Link>
           <button
             type="button"
             onClick={onDelete}
-            className="font-sans text-sm text-muted hover:text-bordeaux transition-colors"
+            className="inline-flex min-h-11 items-center font-sans text-sm text-muted hover:text-bordeaux transition-colors md:min-h-0"
           >
             Elimina
           </button>
