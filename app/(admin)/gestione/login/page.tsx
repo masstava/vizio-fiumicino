@@ -61,7 +61,7 @@ export default function LoginPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-transparent border border-cream-text/20 rounded-[2px] px-3 py-2.5 font-sans text-sm text-cream-text placeholder:text-muted-dark focus:outline-none focus:border-cream-text/50 transition-colors"
+              className="w-full min-h-11 bg-transparent border border-cream-text/20 rounded-[2px] px-3 py-2.5 font-sans text-sm text-cream-text placeholder:text-muted-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cream-text focus-visible:ring-offset-2 focus-visible:ring-offset-dark focus-visible:border-cream-text/50"
             />
           </div>
 
@@ -79,7 +79,7 @@ export default function LoginPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-transparent border border-cream-text/20 rounded-[2px] px-3 py-2.5 font-sans text-sm text-cream-text placeholder:text-muted-dark focus:outline-none focus:border-cream-text/50 transition-colors"
+              className="w-full min-h-11 bg-transparent border border-cream-text/20 rounded-[2px] px-3 py-2.5 font-sans text-sm text-cream-text placeholder:text-muted-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cream-text focus-visible:ring-offset-2 focus-visible:ring-offset-dark focus-visible:border-cream-text/50"
             />
           </div>
 

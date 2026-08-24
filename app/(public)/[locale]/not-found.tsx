@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import Link from "next/link";
 import { FlameAccent } from "@/src/components/ui/FlameAccent";
+import { ImpostaLingua } from "@/src/components/ui/ImpostaLingua";
 import { Logo } from "@/src/components/ui/Logo";
 import { HEADER_LINGUA } from "@/middleware";
 import { isLocale, localizedPath, type Locale } from "@/src/lib/i18n/config";
@@ -26,6 +27,10 @@ export default async function NonTrovata() {
     // Fondo scuro: è una delle superfici dove il marchio con lettering
     // si può usare (su crema l'oro darebbe 1,46:1).
     <main className="flex min-h-dvh flex-col items-center justify-center bg-dark px-6 text-center text-cream-text">
+      {/* Next rende la 404 in un guscio proprio, senza il layout:
+          l'attributo lang va rimesso dal client. */}
+      <ImpostaLingua locale={locale} />
+
       <Logo className="mb-10 h-9" />
 
       <p

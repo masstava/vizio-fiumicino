@@ -16,7 +16,10 @@ export function Button({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center px-6 py-2.5",
+        // min-h-11: 44px di area di tocco, la soglia sotto la quale il
+        // dito manca il bersaglio. Non cambia l'aspetto sui pulsanti
+        // che erano già alti abbastanza.
+        "inline-flex min-h-11 items-center justify-center px-6 py-2.5",
         "font-sans text-sm font-medium tracking-wide",
         "rounded-[2px] transition-opacity duration-150",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
