@@ -206,3 +206,22 @@ html {
     animation: dialogo-contenuto-esce 150ms ease-in;
   }
 }
+
+/* Area di tocco degli interruttori: l'elemento visibile resta 36x20,
+   ma sotto md diventa sensibile su 44x44 — la soglia sotto la quale
+   il dito manca il bersaglio. Solo su mobile: col puntatore la
+   precisione non è un problema e il layout resta quello verificato. */
+@media (max-width: 767px) {
+  [data-tocco-esteso] {
+    position: relative;
+  }
+  [data-tocco-esteso]::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+}

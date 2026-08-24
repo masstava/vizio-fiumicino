@@ -30,6 +30,11 @@ export function Switch({
         role="switch"
         aria-checked={checked}
         disabled={disabled}
+        // L'interruttore visibile è 36x20: troppo piccolo per il dito.
+        // Lo pseudo-elemento estende l'area sensibile a 44x44 senza
+        // cambiare l'aspetto. Ingrandire la <label> non servirebbe:
+        // una label che avvolge un <button> non gli inoltra il clic.
+        data-tocco-esteso
         onClick={() => onChange(!checked)}
         className={cn(
           "relative w-9 h-5 flex-shrink-0 rounded-[2px] border transition-colors duration-150",

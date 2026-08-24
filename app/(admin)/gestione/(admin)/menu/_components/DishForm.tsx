@@ -46,8 +46,11 @@ interface DishFormProps {
 
 const DARK_MACRO_NAMES = new Set(["Bar & Cocktail", "Experience"]);
 
+// min-h-11 solo sotto md: su telefono i campi devono essere alti
+// almeno 44px per essere centrati col dito. Da md in su restano come
+// prima, per non alterare la densità del form su desktop.
 const inputClass =
-  "w-full bg-cream border border-ink/20 rounded-[2px] px-3 py-2 font-sans text-sm text-ink placeholder:text-muted/60 focus:outline-none focus:border-bordeaux/50 transition-colors";
+  "w-full min-h-11 md:min-h-0 bg-cream border border-ink/20 rounded-[2px] px-3 py-2 font-sans text-sm text-ink placeholder:text-muted/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 focus-visible:border-bordeaux/50";
 
 export function DishForm({
   mode,
@@ -340,7 +343,7 @@ export function DishForm({
               onChange={(e) => setPrezzo(e.target.value)}
             />
           </Field>
-          <label className="flex items-center gap-2 pb-2.5 font-sans text-sm text-ink whitespace-nowrap">
+          <label className="flex min-h-11 items-center gap-2 pb-2.5 font-sans text-sm text-ink whitespace-nowrap md:min-h-0">
             <input
               type="checkbox"
               checked={prezzoVariabile}
@@ -375,13 +378,13 @@ export function DishForm({
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
-                className="font-sans text-xs text-muted"
+                className="min-h-11 font-sans text-xs text-muted file:mr-3 file:min-h-11 file:rounded-[2px] file:border file:border-ink/20 file:bg-cream file:px-3 file:font-sans file:text-xs file:text-ink md:min-h-0 md:file:min-h-0 md:file:py-1"
               />
               {(fotoUrl || fotoFile) && (
                 <button
                   type="button"
                   onClick={removeFoto}
-                  className="font-sans text-xs text-bordeaux text-left hover:opacity-70"
+                  className="inline-flex min-h-11 items-center rounded-[2px] text-left font-sans text-xs text-bordeaux hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 md:min-h-0"
                 >
                   Rimuovi foto
                 </button>
@@ -396,7 +399,7 @@ export function DishForm({
             {allergeniList.map((a) => (
               <label
                 key={a.id}
-                className="flex items-center gap-2 font-sans text-sm text-ink"
+                className="flex min-h-11 items-center gap-2 font-sans text-sm text-ink md:min-h-0"
               >
                 <input
                   type="checkbox"
@@ -416,7 +419,15 @@ export function DishForm({
         <Field label="Badge">
           <div className="space-y-2">
             {badges.map((badge, index) => (
-              <div key={index} className="flex items-center gap-2">
+              // Impilati su mobile: due campi affiancati a 380px
+                // lascerebbero 144px ciascuno. Il bordo a sinistra
+                // raggruppa la coppia IT/EN col suo pulsante di
+                // rimozione: con più badge, senza, si vedrebbe una
+                // sequenza indistinta di campi e "×".
+                <div
+                key={index}
+                className="flex flex-col gap-2 border-l-2 border-ink/10 pl-3 sm:flex-row sm:items-center sm:border-l-0 sm:pl-0"
+              >
                 <input
                   className={inputClass}
                   placeholder="Testo (IT)"
@@ -434,7 +445,7 @@ export function DishForm({
                 <button
                   type="button"
                   onClick={() => removeBadge(index)}
-                  className="font-sans text-lg leading-none text-muted hover:text-bordeaux px-2 flex-shrink-0"
+                  className="inline-flex min-h-11 min-w-11 flex-shrink-0 items-center justify-center self-end rounded-[2px] font-sans text-lg leading-none text-muted hover:text-bordeaux focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 sm:min-h-0 sm:self-auto"
                   aria-label="Rimuovi badge"
                 >
                   ×
@@ -444,7 +455,7 @@ export function DishForm({
             <button
               type="button"
               onClick={addBadge}
-              className="font-sans text-sm text-bordeaux hover:opacity-70"
+              className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-sm text-bordeaux hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 md:min-h-0"
             >
               + Aggiungi badge
             </button>
@@ -542,7 +553,7 @@ export function DishForm({
           <button
             type="button"
             onClick={() => router.push("/gestione/menu")}
-            className="font-sans text-sm text-muted hover:text-ink transition-colors"
+            className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-sm text-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 md:min-h-0"
           >
             Annulla
           </button>
