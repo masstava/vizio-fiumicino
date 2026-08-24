@@ -22,13 +22,26 @@ export function LanguageSwitcher({ locale }: { locale: Locale }) {
   const base = stripLocale(pathname);
 
   return (
-    <div className="flex items-center gap-1" aria-label={t.lingua.etichetta}>
+    // Sotto md ogni sigla diventa un riquadro di 44x44 con il testo
+    // centrato. NON si usa qui il pseudo-elemento di
+    // data-tocco-esteso, come per gli interruttori: le due sigle
+    // distano una trentina di pixel, quindi due aree da 44px centrate
+    // su ciascuna si sovrapporrebbero e un tocco al centro
+    // finirebbe sulla lingua sbagliata. Meglio due bersagli veri e
+    // separati. Da md in su resta la coppia compatta di prima.
+    <div
+      className="flex items-center gap-0 md:gap-1"
+      aria-label={t.lingua.etichetta}
+    >
       {(["it", "en"] as const).map((l, i) => {
         const attiva = l === locale;
         return (
           <span key={l} className="flex items-center">
             {i > 0 && (
-              <span aria-hidden="true" className="mx-1 text-cream-text/25">
+              <span
+                aria-hidden="true"
+                className="hidden text-cream-text/25 md:mx-1 md:inline"
+              >
                 /
               </span>
             )}
@@ -38,6 +51,8 @@ export function LanguageSwitcher({ locale }: { locale: Locale }) {
               lang={l}
               aria-current={attiva ? "true" : undefined}
               className={cn(
+                "inline-flex min-h-11 min-w-11 items-center justify-center",
+                "md:min-h-0 md:min-w-0",
                 "font-sans text-xs tracking-wide transition-colors",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text",
                 attiva

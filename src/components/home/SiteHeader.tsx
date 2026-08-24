@@ -22,14 +22,20 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const t = getDizionario(locale);
 
-  // Ancore in-pagina: l'href deve portare il prefisso di lingua,
-  // altrimenti da /en il clic rimanda alla home italiana.
+  // Il prefisso di lingua va messo su TUTTI gli href, ancore comprese:
+  // senza, da /en il clic rimanda alla home italiana.
+  //
+  // "La carne" e "Cocktail" puntavano ad ancore della home perché le
+  // pagine dedicate non esistevano ancora. Ora esistono, e vincono
+  // sull'anteprima in home. Le ancore #piatti-in-evidenza e #cocktail
+  // restano al loro posto nella home: chi ci arriva da un link
+  // esterno o salvato continua a trovarle.
   const base = localizedPath("/", locale);
   const NAV_LINKS = [
-    { href: `${base}#menu`, label: t.nav.menu },
-    { href: `${base}#piatti-in-evidenza`, label: t.nav.carne },
-    { href: `${base}#cocktail`, label: t.nav.cocktail },
-    { href: `${base}#contatti`, label: t.nav.contatti },
+    { href: `${base}#menu`, label: t.nav.menu, ancora: true },
+    { href: localizedPath("/la-carne", locale), label: t.nav.carne, ancora: false },
+    { href: localizedPath("/cocktail-bar", locale), label: t.nav.cocktail, ancora: false },
+    { href: `${base}#contatti`, label: t.nav.contatti, ancora: true },
   ];
 
   return (
@@ -38,7 +44,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
         <Link
           href={localizedPath("/", locale)}
           aria-label={t.nav.home}
-          className="flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text"
+          className="flex min-h-11 items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text md:min-h-0"
         >
           <Logo priority className="h-7 md:h-8" />
         </Link>
@@ -47,15 +53,22 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           aria-label={t.nav.principale}
           className="hidden items-center gap-8 md:flex"
         >
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="font-sans text-sm text-muted-dark transition-colors hover:text-cream-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text"
-            >
-              {link.label}
-            </a>
-          ))}
+          {NAV_LINKS.map((link) => {
+            // Le pagine passano da Link (navigazione client e
+            // prefetch); le ancore restano <a>, perché Link non
+            // aggiunge nulla a uno scroll nella stessa pagina.
+            const classe =
+              "font-sans text-sm text-muted-dark transition-colors hover:text-cream-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text";
+            return link.ancora ? (
+              <a key={link.href} href={link.href} className={classe}>
+                {link.label}
+              </a>
+            ) : (
+              <Link key={link.href} href={link.href} className={classe}>
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-3">
@@ -70,7 +83,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             aria-expanded={menuOpen}
             aria-controls="site-header-mobile-nav"
             onClick={() => setMenuOpen((open) => !open)}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-[2px] text-cream-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text md:hidden"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-[2px] text-cream-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text md:hidden"
           >
             <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
               {menuOpen ? (
@@ -89,16 +102,20 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           aria-label={t.nav.principale}
           className="flex flex-col gap-1 border-t border-cream-text/10 px-6 pb-4 pt-2 md:hidden"
         >
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={() => setMenuOpen(false)}
-              className="rounded-[2px] px-2 py-2.5 font-sans text-sm text-muted-dark transition-colors hover:text-cream-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text"
-            >
-              {link.label}
-            </a>
-          ))}
+          {NAV_LINKS.map((link) => {
+            const classe =
+              "flex min-h-11 items-center rounded-[2px] px-2 font-sans text-sm text-muted-dark transition-colors hover:text-cream-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text";
+            const chiudi = () => setMenuOpen(false);
+            return link.ancora ? (
+              <a key={link.href} href={link.href} onClick={chiudi} className={classe}>
+                {link.label}
+              </a>
+            ) : (
+              <Link key={link.href} href={link.href} onClick={chiudi} className={classe}>
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
       )}
     </header>

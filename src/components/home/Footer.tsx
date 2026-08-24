@@ -77,7 +77,7 @@ export function Footer({ orari, apertoOra, notaOrari, locale }: FooterProps) {
               href={CONTATTI.google.scheda}
               target="_blank"
               rel="noopener noreferrer"
-              className="underline underline-offset-4 transition-colors hover:text-cream-text"
+              className="inline-flex min-h-11 items-center underline underline-offset-4 transition-colors hover:text-cream-text md:min-h-0"
             >
               {CONTATTI.indirizzo.completo}
             </a>
@@ -127,7 +127,7 @@ export function Footer({ orari, apertoOra, notaOrari, locale }: FooterProps) {
             <li>
               <a
                 href={CONTATTI.telefono.href}
-                className="underline underline-offset-4 transition-colors hover:text-cream-text"
+                className="inline-flex min-h-11 items-center underline underline-offset-4 transition-colors hover:text-cream-text md:min-h-0"
               >
                 {CONTATTI.telefono.display}
               </a>
@@ -137,14 +137,22 @@ export function Footer({ orari, apertoOra, notaOrari, locale }: FooterProps) {
                 href={CONTATTI.whatsapp.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline underline-offset-4 transition-colors hover:text-cream-text"
+                className="inline-flex min-h-11 items-center underline underline-offset-4 transition-colors hover:text-cream-text md:min-h-0"
               >
                 WhatsApp {CONTATTI.whatsapp.display}
               </a>
             </li>
           </ul>
 
-          <ul className="mt-4 flex items-center gap-4">
+          {/* Sotto md ogni icona sta dentro un riquadro di 44x44 e la
+              distanza fra le icone si riduce, perché la spaziatura la
+              danno ormai i riquadri stessi. Non si usa il
+              pseudo-elemento di data-tocco-esteso: con quattro icone a
+              36px di distanza fra i centri, quattro aree da 44px
+              centrate si sovrapporrebbero e il tocco finirebbe
+              sull'icona accanto. L'icona resta 20x20: cambia lo spazio
+              attorno, non il disegno. */}
+          <ul className="mt-4 flex items-center gap-1 md:gap-4">
             {CONTATTI.social.map((s) => (
               <li key={s.nome}>
                 <a
@@ -152,7 +160,7 @@ export function Footer({ orari, apertoOra, notaOrari, locale }: FooterProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={s.nome}
-                  className="inline-flex text-muted-dark transition-colors hover:text-cream-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-[2px] text-muted-dark transition-colors hover:text-cream-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text md:h-auto md:w-auto"
                 >
                   <SocialIcon nome={s.nome} className="h-5 w-5" />
                 </a>
