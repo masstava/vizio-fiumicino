@@ -10,7 +10,6 @@ const NAV_ITEMS = [
   { label: "Testi della home", href: "/gestione/contenuti" },
   { label: "Orari", href: "/gestione/orari" },
   { label: "Eventi", href: "/gestione/eventi" },
-  { label: "Badge", href: "/gestione/badge" },
 ] as const;
 
 export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
