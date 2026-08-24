@@ -86,6 +86,20 @@ const it = {
     legendaNota:
       "I numeri accanto ai piatti corrispondono agli allergeni indicati qui sotto. Per intolleranze o allergie parlane con il personale di sala.",
   },
+  whatsapp: {
+    etichetta: "Domande sul menu?",
+    etichettaAccessibile: "Scrivici su WhatsApp per domande sul menu",
+    messaggio:
+      "Ciao! Avrei una domanda sul menu di Vizio Bistrot.",
+  },
+  nonTrovata: {
+    codice: "404",
+    titolo: "Questa pagina non è nel menu.",
+    testo:
+      "Il collegamento che hai seguito non porta da nessuna parte, o la pagina è stata spostata. Il resto del locale è ancora tutto qui.",
+    tornaHome: "Torna alla home",
+    vaiAlMenu: "Vai al menu",
+  },
   piatto: {
     chiudi: "Chiudi",
     apriDettaglio: (nome: string) => `Vedi i dettagli di ${nome}`,
@@ -178,6 +192,19 @@ const en: Dizionario = {
     legendaTitolo: "Allergen key",
     legendaNota:
       "The numbers next to each dish match the allergens listed below. For intolerances or allergies, please speak to a member of staff.",
+  },
+  whatsapp: {
+    etichetta: "Questions about the menu?",
+    etichettaAccessibile: "Message us on WhatsApp with questions about the menu",
+    messaggio: "Hi! I have a question about the Vizio Bistrot menu.",
+  },
+  nonTrovata: {
+    codice: "404",
+    titolo: "This page isn't on the menu.",
+    testo:
+      "The link you followed doesn't lead anywhere, or the page has moved. The rest of the place is still right here.",
+    tornaHome: "Back to the home page",
+    vaiAlMenu: "Go to the menu",
   },
   piatto: {
     chiudi: "Close",

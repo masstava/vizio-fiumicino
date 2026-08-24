@@ -7,16 +7,25 @@ import { getDizionario } from "@/src/lib/i18n/dizionari";
 
 // Video reale del locale, ospitato su Supabase Storage (bucket
 // pubblico "sito-media", non è un piatto quindi non passa dalla
-// tabella piatti/foto_url). Mostrato solo da md in su: su mobile,
-// dove la banda 4G è il vincolo, resta solo l'ImagePlaceholder così
-// non si scarica il video.
+// tabella piatti/foto_url).
+//
+// Mostrato su TUTTE le dimensioni, mobile compreso: inizialmente era
+// limitato al desktop per non far scaricare un file pesante su 4G, ma
+// il file è stato compresso a sufficienza e su mobile restava un
+// gradiente segnaposto al posto del locale vero — che è il contenuto
+// che più conta nel primo schermo.
+//
+// preload="metadata" scarica solo l'intestazione del file, non il
+// video intero: la riproduzione parte quando il browser decide, senza
+// contendere banda al primo contenuto utile.
 const HERO_VIDEO_URL =
   "https://efqytltwyruxmszxilca.supabase.co/storage/v1/object/public/sito-media/video-home.mp4";
 
-// Tema scuro, come da wireframe. L'ImagePlaceholder resta sempre come
-// livello di base (mobile e fallback finché il video non è pronto);
-// il video si sovrappone solo da md in su, stessa struttura (overlay
-// + contenuto sovrapposto).
+// Tema scuro, come da wireframe. L'ImagePlaceholder resta come livello
+// di base sotto al video: copre l'attesa prima che il primo fotogramma
+// sia pronto, e resta visibile se il video non parte (dati risparmiati,
+// rete assente, formato non supportato). Senza, ci sarebbe un rettangolo
+// nero.
 //
 // Contrasto verificato: cream-text (#f5efe4) su bg-dark (#0a0705) ≈
 // 17.6:1, muted-dark (#d8c7b0) su bg-dark ≈ 12.2:1 — entrambi ben
@@ -37,7 +46,7 @@ export function Hero({
         className="absolute inset-0 h-full w-full"
       />
       <video
-        className="absolute inset-0 hidden h-full w-full object-cover md:block"
+        className="absolute inset-0 h-full w-full object-cover"
         autoPlay
         muted
         loop

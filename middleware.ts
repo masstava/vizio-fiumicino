@@ -1,6 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+/** Header con cui il middleware comunica la lingua alle pagine che non ricevono params. */
+export const HEADER_LINGUA = "x-vizio-locale";
+
 // Rotte pubbliche e dashboard hanno due esigenze diverse:
 //   /gestione*  → controllo sessione Supabase (invariato)
 //   tutto il resto → instradamento per lingua, senza chiamate di rete
@@ -21,7 +24,7 @@ function instradaLingua(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname === "/en" || pathname.startsWith("/en/")) {
-    return NextResponse.next();
+    return NextResponse.next({ request: conHeaderLingua(request, "en") });
   }
 
   // "/it/..." non deve esistere come URL pubblico: sarebbe un
@@ -35,7 +38,16 @@ function instradaLingua(request: NextRequest) {
 
   const url = request.nextUrl.clone();
   url.pathname = pathname === "/" ? "/it" : `/it${pathname}`;
-  return NextResponse.rewrite(url);
+  return NextResponse.rewrite(url, { request: conHeaderLingua(request, "it") });
+}
+
+// La pagina 404 è un file speciale di Next e non riceve i parametri di
+// rotta: senza questo header non saprebbe in che lingua rispondere.
+// Il middleware conosce già la lingua perché è lui a instradarla.
+function conHeaderLingua(request: NextRequest, locale: string) {
+  const headers = new Headers(request.headers);
+  headers.set(HEADER_LINGUA, locale);
+  return { headers };
 }
 
 async function gestioneAuth(request: NextRequest) {

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import "../../globals.css";
+import { WhatsAppFab } from "@/src/components/home/WhatsAppFab";
 import { MotionProvider } from "@/src/components/motion/MotionProvider";
+import { OverlayProvider } from "@/src/components/overlay/OverlayContext";
 import { fontVariables } from "@/src/lib/fonts";
 import { LOCALES, isLocale, type Locale } from "@/src/lib/i18n/config";
 import { SITE_URL } from "@/src/lib/site-url";
@@ -82,7 +84,14 @@ export default async function PublicRootLayout({
         </noscript>
       </head>
       <body className="bg-cream text-ink font-sans antialiased">
-        <MotionProvider>{children}</MotionProvider>
+        {/* Provider e bottone stanno nel layout e non nelle singole
+            pagine: il contatto rapido deve essere disponibile ovunque,
+            e il registro degli overlay deve sopravvivere alla
+            navigazione fra pagine. */}
+        <OverlayProvider>
+          <MotionProvider>{children}</MotionProvider>
+          <WhatsAppFab locale={locale} />
+        </OverlayProvider>
       </body>
     </html>
   );
