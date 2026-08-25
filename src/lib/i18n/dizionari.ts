@@ -125,6 +125,9 @@ const it = {
   },
   paginaContatti: {
     mappaTitolo: "Mappa: Vizio Bistrot, Via delle Ombrine 25, Fiumicino",
+    caricaMappa: "Carica la mappa",
+    notaMappa:
+      "La mappa è fornita da Google. Caricandola, Google riceve la tua richiesta e può impostare cookie sul tuo dispositivo.",
     indicazioni: "Ottieni indicazioni",
     parcheggio: "Parcheggio",
     telefono: "Telefono",
@@ -263,6 +266,9 @@ const en: Dizionario = {
   },
   paginaContatti: {
     mappaTitolo: "Map: Vizio Bistrot, Via delle Ombrine 25, Fiumicino",
+    caricaMappa: "Load the map",
+    notaMappa:
+      "The map is provided by Google. Loading it means Google receives your request and may set cookies on your device.",
     indicazioni: "Get directions",
     parcheggio: "Parking",
     telefono: "Phone",
