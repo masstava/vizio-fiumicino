@@ -194,6 +194,8 @@ const it = {
   paginaContatti: {
     mappaTitolo: "Mappa: Vizio Bistrot, Via delle Ombrine 25, Fiumicino",
     caricaMappa: "Carica la mappa",
+    mappaSempre:
+      "Per caricarla senza doverlo chiedere ogni volta, attiva i cookie funzionali:",
     notaMappa:
       "La mappa è fornita da Google. Caricandola, Google riceve la tua richiesta e può impostare cookie sul tuo dispositivo.",
     indicazioni: "Ottieni indicazioni",
@@ -397,6 +399,8 @@ const en: Dizionario = {
   paginaContatti: {
     mappaTitolo: "Map: Vizio Bistrot, Via delle Ombrine 25, Fiumicino",
     caricaMappa: "Load the map",
+    mappaSempre:
+      "To have it load without asking each time, turn on functional cookies:",
     notaMappa:
       "The map is provided by Google. Loading it means Google receives your request and may set cookies on your device.",
     indicazioni: "Get directions",

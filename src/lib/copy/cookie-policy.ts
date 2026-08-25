@@ -24,10 +24,12 @@ import type { Locale } from "@/src/lib/i18n/config";
 // cookie policy sarebbe una lacuna sostanziale, non una differenza
 // di struttura.
 //
-// NOTA DI COERENZA: qui la terza categoria si chiama "Analitici",
-// come da specifica, mentre il pannello del consenso la chiama
-// "Statistiche". Vanno allineati — la decisione su quale nome tenere
-// è del committente.
+// I nomi delle categorie sono quelli del pannello del consenso, non
+// quelli della specifica: §14.4 diceva "Analitici", il CMP già in
+// linea dice "Statistiche". Un utente che prova a far combaciare
+// l'informativa con gli interruttori deve trovare le stesse parole,
+// quindi vince ciò che l'utente vede. In inglese entrambi dicevano
+// già "Analytics".
 // =============================================================
 
 const it: Informativa = {
@@ -88,7 +90,7 @@ const it: Informativa = {
               durata: "Definita dal fornitore del contenuto",
             },
             {
-              categoria: "Analitici",
+              categoria: "Statistiche",
               finalita:
                 "Capire, in forma aggregata, quali pagine vengono lette e da dove arrivano le visite.",
               base: "Consenso, salvo strumenti anonimi (vedi §3)",
@@ -166,7 +168,7 @@ const it: Informativa = {
             {
               tipo: "p",
               testo:
-                "Se e quando verrà attivato, richiederà il tuo consenso alla categoria «Analitici». Non è al momento integrato: il sito è predisposto con il Consent Mode di Google, il cui stato di partenza è «negato» per tutte le finalità che richiedono consenso. Nomi e durate dei relativi cookie saranno elencati qui una volta attivo.",
+                "Se e quando verrà attivato, richiederà il tuo consenso alla categoria «Statistiche». Non è al momento integrato: il sito è predisposto con il Consent Mode di Google, il cui stato di partenza è «negato» per tutte le finalità che richiedono consenso. Nomi e durate dei relativi cookie saranno elencati qui una volta attivo.",
             },
           ],
         },
