@@ -1,4 +1,5 @@
 import { Button } from "@/src/components/ui/Button";
+import { DialogPrenota } from "./DialogPrenota";
 import { FlameAccent } from "@/src/components/ui/FlameAccent";
 import { ImagePlaceholder } from "@/src/components/ui/ImagePlaceholder";
 import { RECENSIONI } from "@/src/lib/contatti";
@@ -66,9 +67,12 @@ export function Hero({
         <h1 className="mb-8 font-serif text-4xl font-medium leading-[1.1] md:text-6xl">
           {headline}
         </h1>
-        <Button type="button" variant="primary">
-          {t.cta.prenotaTavolo}
-        </Button>
+        {/* TEMPORANEO come nell'header: vedi DialogPrenota.tsx. */}
+        <DialogPrenota locale={locale}>
+          <Button type="button" variant="primary">
+            {t.cta.prenotaTavolo}
+          </Button>
+        </DialogPrenota>
 
         {/* Valori statici letti dalla fonte unica: diventeranno un
             fetch reale quando arriverà l'integrazione con l'API

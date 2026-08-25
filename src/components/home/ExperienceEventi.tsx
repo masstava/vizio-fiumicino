@@ -1,4 +1,5 @@
 import { Button } from "@/src/components/ui/Button";
+import { DialogPrenota } from "./DialogPrenota";
 import { Section } from "@/src/components/ui/Section";
 import type { Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
@@ -20,7 +21,8 @@ function formatData(iso: string, locale: Locale): string {
 // flusso di prenotazione sala. Se in dashboard c'è un evento futuro
 // con data lo si mostra — un appuntamento reale e datato crea
 // urgenza, il testo generico no; altrimenti resta il testo generico.
-// Il pulsante è un placeholder inerte come le altre CTA di contatto.
+// Il pulsante apre il dialogo di contatto temporaneo, come quello
+// dell'header: vedi DialogPrenota.tsx.
 export function ExperienceEventi({
   evento,
   locale,
@@ -54,9 +56,12 @@ export function ExperienceEventi({
                 {evento.descrizione}
               </p>
             )}
-            <Button type="button" variant="primary">
-              {t.cta.prenotaPosto}
-            </Button>
+            {/* TEMPORANEO come nell'header: vedi DialogPrenota.tsx. */}
+            <DialogPrenota locale={locale}>
+              <Button type="button" variant="primary">
+                {t.cta.prenotaPosto}
+              </Button>
+            </DialogPrenota>
           </>
         ) : (
           <>
@@ -66,9 +71,11 @@ export function ExperienceEventi({
             <p className="mb-6 font-sans text-sm leading-relaxed text-muted">
               {t.experience.testoGenerico}
             </p>
-            <Button type="button" variant="primary">
-              {t.cta.contattaci}
-            </Button>
+            <DialogPrenota locale={locale}>
+              <Button type="button" variant="primary">
+                {t.cta.contattaci}
+              </Button>
+            </DialogPrenota>
           </>
         )}
       </div>
