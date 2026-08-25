@@ -36,9 +36,9 @@ function Stars({ rating }: { rating: number }) {
 // Tema chiaro. Contrasto: text-ink su bg-cream ≈ 15.6:1, text-muted
 // su bg-cream ≈ 5.8:1 — entrambi oltre la soglia 4.5:1.
 //
-// Nessun testo di recensione mostrato: finché non c'è una citazione
-// reale (editabile o importata da Google) è meglio mostrare solo i
-// numeri veri che un segnaposto scambiabile per contenuto autentico.
+// Senza una citazione reale (inserita in dashboard) si mostrano solo
+// i numeri: un segnaposto scambiabile per contenuto autentico sarebbe
+// peggio del silenzio.
 export function SocialProof({
   citazione,
   autore,
@@ -63,7 +63,12 @@ export function SocialProof({
 
         {testoCitazione ? (
           <blockquote className="mt-4">
-            <p className="font-serif text-2xl leading-snug text-ink md:text-3xl">
+            {/* Corsivo sulla sola citazione, non sull'attribuzione:
+                distingue a colpo d'occhio le parole di chi ha scritto
+                la recensione dai dati che ci mettiamo noi. Fraunces
+                carica un corsivo vero (vedi src/lib/fonts.ts), quindi
+                non è l'obliquo sintetico del browser. */}
+            <p className="font-serif text-2xl italic leading-snug text-ink md:text-3xl">
               «{testoCitazione}»
             </p>
             <footer className="mt-3 font-sans text-sm text-muted">
