@@ -117,6 +117,20 @@ const it = {
       descrizione:
         "Bancone aperto dall'aperitivo al dopocena: signature della casa, classici eseguiti bene, analcolici veri.",
     },
+    contatti: {
+      titolo: "Contatti",
+      descrizione:
+        "Vizio Bistrot, Via delle Ombrine 25, Fiumicino (RM). Telefono, WhatsApp, orari e indicazioni stradali.",
+    },
+  },
+  paginaContatti: {
+    mappaTitolo: "Mappa: Vizio Bistrot, Via delle Ombrine 25, Fiumicino",
+    indicazioni: "Ottieni indicazioni",
+    parcheggio: "Parcheggio",
+    telefono: "Telefono",
+    whatsapp: "WhatsApp",
+    seguici: "Seguici",
+    apriSu: (rete: string) => `Apri il profilo ${rete} in una nuova scheda`,
   },
   // Etichetta del riquadro che segnala un testo ancora da approvare.
   // Deve restare visibile: serve proprio a non farlo pubblicare per
@@ -241,6 +255,20 @@ const en: Dizionario = {
       descrizione:
         "The bar is open from aperitivo to the last drink: house signatures, classics done properly, real alcohol-free drinks.",
     },
+    contatti: {
+      titolo: "Contact",
+      descrizione:
+        "Vizio Bistrot, Via delle Ombrine 25, Fiumicino (RM). Phone, WhatsApp, opening hours and directions.",
+    },
+  },
+  paginaContatti: {
+    mappaTitolo: "Map: Vizio Bistrot, Via delle Ombrine 25, Fiumicino",
+    indicazioni: "Get directions",
+    parcheggio: "Parking",
+    telefono: "Phone",
+    whatsapp: "WhatsApp",
+    seguici: "Follow us",
+    apriSu: (rete: string) => `Open the ${rete} profile in a new tab`,
   },
   bozza: {
     etichetta: "Editorial note — to be confirmed before publication",
