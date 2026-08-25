@@ -70,7 +70,11 @@ const DialogContent = React.forwardRef<
           // seconda dell'immagine. Così resta leggibile su qualunque
           // sfondo, senza dipendere dallo scatto.
           className={cn(
-            "absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full",
+            // 44x44 sotto md: è il pulsante di chiusura, e su un
+            // modale di consenso è anche il modo con cui si esce senza
+            // scegliere — mancarlo col dito è particolarmente
+            // fastidioso. Da md in su resta 32x32 come prima.
+            "absolute right-3 top-3 inline-flex h-11 w-11 items-center justify-center rounded-full md:h-8 md:w-8",
             "bg-dark/60 text-cream-text backdrop-blur-sm transition-colors hover:bg-dark/85",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text",
           )}

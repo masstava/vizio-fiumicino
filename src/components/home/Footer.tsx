@@ -1,3 +1,4 @@
+import { GestisciCookie } from "@/src/components/consenso/GestisciCookie";
 import { Logo } from "@/src/components/ui/Logo";
 import { SocialIcon } from "@/src/components/ui/SocialIcon";
 import { CONTATTI } from "@/src/lib/contatti";
@@ -170,7 +171,11 @@ export function Footer({ orari, apertoOra, notaOrari, locale }: FooterProps) {
         </div>
       </div>
 
-      <p className="mt-10 font-sans text-xs text-muted-dark">
+      <div className="mt-8">
+        <GestisciCookie locale={locale} />
+      </div>
+
+      <p className="mt-4 font-sans text-xs text-muted-dark">
         © {new Date().getFullYear()} {CONTATTI.nome}
       </p>
     </footer>

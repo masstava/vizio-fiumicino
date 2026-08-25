@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import "../../globals.css";
+import { BannerConsenso } from "@/src/components/consenso/BannerConsenso";
+import { ConsensoProvider } from "@/src/components/consenso/ConsensoContext";
+import { ModalePreferenze } from "@/src/components/consenso/ModalePreferenze";
+import { ScriptConsentMode } from "@/src/components/consenso/ScriptConsentMode";
 import { WhatsAppFab } from "@/src/components/home/WhatsAppFab";
 import { MotionProvider } from "@/src/components/motion/MotionProvider";
 import { OverlayProvider } from "@/src/components/overlay/OverlayContext";
@@ -76,6 +80,11 @@ export default async function PublicRootLayout({
   return (
     <html lang={locale} className={fontVariables}>
       <head>
+        {/* PRIMO in <head>, prima di qualunque altro tag: Consent Mode
+            deve avere lo stato di default dichiarato prima che un
+            eventuale tag Google si carichi. */}
+        <ScriptConsentMode />
+
         {/* Le sezioni in comparsa partono a opacità 0 e vengono
             mostrate da Motion. Senza JavaScript resterebbero
             invisibili: questa regola le riporta a vista. */}
@@ -89,8 +98,15 @@ export default async function PublicRootLayout({
             e il registro degli overlay deve sopravvivere alla
             navigazione fra pagine. */}
         <OverlayProvider>
-          <MotionProvider>{children}</MotionProvider>
-          <WhatsAppFab locale={locale} />
+          {/* Il provider del consenso avvolge il contenuto perché il
+              pulsante "Gestisci cookie" nel footer deve poter riaprire
+              il modale, e il modale vive qui fuori. */}
+          <ConsensoProvider>
+            <MotionProvider>{children}</MotionProvider>
+            <WhatsAppFab locale={locale} />
+            <BannerConsenso locale={locale} />
+            <ModalePreferenze locale={locale} />
+          </ConsensoProvider>
         </OverlayProvider>
       </body>
     </html>

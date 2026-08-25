@@ -7,6 +7,14 @@ interface SwitchProps {
   onChange: (checked: boolean) => void;
   disabled?: boolean;
   label?: string;
+  /**
+   * Mostra l'etichetta solo ai lettori di schermo. Serve dove il nome
+   * della voce è già scritto accanto all'interruttore (una riga con
+   * titolo e descrizione a sinistra): ripeterlo a schermo sarebbe
+   * rumore, ma senza, il <button role="switch"> resterebbe privo di
+   * nome accessibile.
+   */
+  labelNascosta?: boolean;
   className?: string;
 }
 
@@ -15,6 +23,7 @@ export function Switch({
   onChange,
   disabled = false,
   label,
+  labelNascosta = false,
   className,
 }: SwitchProps) {
   return (
@@ -48,7 +57,15 @@ export function Switch({
           )}
         />
       </button>
-      {label && <span className="font-sans text-sm text-ink">{label}</span>}
+      {label && (
+        <span
+          className={
+            labelNascosta ? "sr-only" : "font-sans text-sm text-ink"
+          }
+        >
+          {label}
+        </span>
+      )}
     </label>
   );
 }
