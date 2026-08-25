@@ -4,7 +4,6 @@ import { SiteHeader } from "@/src/components/home/SiteHeader";
 import { Reveal } from "@/src/components/motion/Reveal";
 import { IndicatoreApertura } from "@/src/components/pagine/IndicatoreApertura";
 import { MappaLocale } from "@/src/components/pagine/MappaLocale";
-import { NotaBozza } from "@/src/components/pagine/NotaBozza";
 import { PaginaHero } from "@/src/components/pagine/PaginaHero";
 import { DarkSectionAccent } from "@/src/components/ui/DarkSectionAccent";
 import { Section } from "@/src/components/ui/Section";
@@ -95,11 +94,12 @@ export default async function ContattiPage({
             <MappaLocale locale={locale} />
           </div>
 
-          {/* Parcheggio: nessun dato reale disponibile. */}
           <h3 className="mt-10 font-sans text-[10px] uppercase tracking-widest text-muted">
             {t.paginaContatti.parcheggio}
           </h3>
-          <NotaBozza testo={copy.parcheggio} locale={locale} />
+          <p className="mt-2 max-w-2xl font-sans text-base leading-relaxed text-muted">
+            {copy.parcheggio}
+          </p>
         </Section>
       </Reveal>
 

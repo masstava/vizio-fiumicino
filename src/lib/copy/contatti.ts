@@ -9,9 +9,10 @@ import type { Locale } from "@/src/lib/i18n/config";
 // dovesse comparire in questo file sarebbe un errore: significherebbe
 // averlo duplicato.
 //
-// Il parcheggio è l'unica informazione richiesta dalla §16 che non
-// esiste né nella specifica né nel database: resta un segnaposto
-// esplicito, non un'invenzione plausibile.
+// Il parcheggio era rimasto un segnaposto perché il dato non c'era:
+// ora è stato confermato dal committente ed è testo normale. Nessun
+// riquadro di redazione, che serve solo a ciò che è ancora da
+// verificare.
 // =============================================================
 
 const it = {
@@ -26,9 +27,7 @@ const it = {
     testo:
       "Siamo nel centro di Fiumicino, in una traversa a pochi passi dal lungomare. Se arrivi in auto, la mappa qui sotto apre le indicazioni direttamente sul telefono.",
   },
-  // Segnaposto: nessun dato reale su parcheggio o accessibilità.
-  parcheggio:
-    "[DA CONFERMARE: informazioni sul parcheggio — posti riservati, parcheggio libero in zona, distanza a piedi. Da compilare con i dati reali del locale prima della pubblicazione]",
+  parcheggio: "Parcheggio libero su Via delle Ombrine.",
   quando: {
     titolo: "Quando siamo aperti",
     testo:
@@ -55,8 +54,7 @@ const en: CopyContatti = {
     testo:
       "We're in the centre of Fiumicino, on a side street a short walk from the seafront. If you're driving, the map below opens directions straight on your phone.",
   },
-  parcheggio:
-    "[TO BE CONFIRMED: parking information — reserved spaces, free parking nearby, walking distance. To be filled in with the venue's real data before publication]",
+  parcheggio: "Free parking on Via delle Ombrine.",
   quando: {
     titolo: "When we're open",
     testo:
