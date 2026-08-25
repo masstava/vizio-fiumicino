@@ -25,6 +25,7 @@ const it = {
     contattaci: "Contattaci",
     prenotaPosto: "Prenota il tuo posto",
     iscriviti: "Iscriviti",
+    scriviciWhatsapp: "Scrivici su WhatsApp",
   },
   sezioni: {
     cosaTrovi: "Cosa trovi da Vizio",
@@ -122,6 +123,11 @@ const it = {
       descrizione:
         "Vizio Bistrot, Via delle Ombrine 25, Fiumicino (RM). Telefono, WhatsApp, orari e indicazioni stradali.",
     },
+    experience: {
+      titolo: "Experience & Eventi",
+      descrizione:
+        "Menu degustazione, serate a tema e cene private da Vizio Bistrot, a Fiumicino. Si organizza per telefono o WhatsApp.",
+    },
   },
   paginaContatti: {
     mappaTitolo: "Mappa: Vizio Bistrot, Via delle Ombrine 25, Fiumicino",
@@ -168,6 +174,7 @@ const en: Dizionario = {
     contattaci: "Get in touch",
     prenotaPosto: "Reserve your seat",
     iscriviti: "Subscribe",
+    scriviciWhatsapp: "Message us on WhatsApp",
   },
   sezioni: {
     cosaTrovi: "What you'll find at Vizio",
@@ -262,6 +269,11 @@ const en: Dizionario = {
       titolo: "Contact",
       descrizione:
         "Vizio Bistrot, Via delle Ombrine 25, Fiumicino (RM). Phone, WhatsApp, opening hours and directions.",
+    },
+    experience: {
+      titolo: "Experiences & Events",
+      descrizione:
+        "Tasting menus, themed nights and private dinners at Vizio Bistrot, Fiumicino. Arranged by phone or WhatsApp.",
     },
   },
   paginaContatti: {
