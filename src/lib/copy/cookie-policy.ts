@@ -5,22 +5,35 @@ import type { Locale } from "@/src/lib/i18n/config";
 // =============================================================
 // COOKIE POLICY — 8 sezioni (§14.4)
 // =============================================================
-// Gli elenchi di cookie NON sono presi da un modello: sono quelli
-// che il sito imposta davvero, verificati navigando cinque pagine e
-// leggendo cookie, localStorage e sessionStorage. Oggi il sito
-// imposta UN cookie, e solo dopo che l'utente ha scelto.
+// Struttura, titoli e sotto-sezioni sono quelli della specifica.
 //
-// Dove una verifica non è possibile adesso — i cookie che GA4,
+// Gli elenchi di cookie NON vengono da un modello: sono quelli
+// misurati navigando cinque pagine e leggendo cookie, localStorage e
+// sessionStorage. Senza esprimere una scelta il sito non scrive
+// nulla; dopo la scelta scrive le due voci elencate in §3.
+//
+// Dove la verifica non è possibile adesso — i cookie che GA4,
 // TheFork o Brevo imposteranno una volta integrati — il testo lo
-// dice invece di elencare nomi presi altrove. Un elenco plausibile
-// ma non verificato è peggio di un'assenza dichiarata: sembra
-// preciso e non lo è.
+// dichiara invece di elencare nomi presi altrove: un elenco
+// plausibile ma non verificato sembra preciso e non lo è.
+//
+// AGGIUNTA rispetto alla specifica, segnalata: §4.4 sulla mappa di
+// Google nella pagina Contatti. La specifica elenca come terze parti
+// solo GA4, TheFork e Brevo, ma la mappa è l'UNICO contenuto di
+// terza parte realmente presente sul sito oggi. Ometterla da una
+// cookie policy sarebbe una lacuna sostanziale, non una differenza
+// di struttura.
+//
+// NOTA DI COERENZA: qui la terza categoria si chiama "Analitici",
+// come da specifica, mentre il pannello del consenso la chiama
+// "Statistiche". Vanno allineati — la decisione su quale nome tenere
+// è del committente.
 // =============================================================
 
 const it: Informativa = {
   titolo: "Cookie Policy",
   sottotitolo:
-    "Quali cookie e quali strumenti di memorizzazione usa questo sito, a cosa servono e come cambiare idea in qualsiasi momento.",
+    "Quali cookie e quali strumenti di memorizzazione usa questo sito, a cosa servono, quanto durano e come cambiare idea in qualsiasi momento.",
   aggiornata: (data) => `Ultimo aggiornamento: ${data}`,
   sezioni: [
     {
@@ -29,12 +42,22 @@ const it: Informativa = {
         {
           tipo: "p",
           testo:
-            "I cookie sono piccoli file che un sito salva nel tuo browser. Servono a ricordare qualcosa fra una pagina e l'altra o fra una visita e l'altra. Accanto ai cookie esistono altri strumenti che funzionano allo stesso modo — localStorage e sessionStorage — e che la normativa tratta alla stessa maniera: qui li chiamiamo tutti «cookie» per semplicità.",
+            "I cookie sono piccoli file di testo che un sito salva nel browser di chi lo visita. Servono a ricordare qualcosa fra una pagina e l'altra o fra una visita e l'altra.",
         },
         {
           tipo: "p",
           testo:
-            "I cookie di «prima parte» li imposta questo sito. Quelli di «terza parte» li imposta un altro soggetto attraverso contenuti incorporati nelle nostre pagine — per esempio una mappa.",
+            "Accanto ai cookie esistono tecnologie analoghe — in particolare localStorage e sessionStorage — che memorizzano informazioni nello stesso modo. La normativa le tratta alla pari dei cookie, e alla pari le trattiamo qui.",
+        },
+        {
+          tipo: "p",
+          testo:
+            "Si chiamano «di prima parte» quelli impostati da questo sito, «di terza parte» quelli impostati da altri soggetti attraverso contenuti incorporati nelle nostre pagine.",
+        },
+        {
+          tipo: "p",
+          testo:
+            "La materia è regolata dall'articolo 122 del Codice in materia di protezione dei dati personali (D.lgs. 196/2003 e successive modifiche), dalla Direttiva 2002/58/CE (ePrivacy) e dalle Linee guida cookie e altri strumenti di tracciamento del Garante per la protezione dei dati personali del 10 giugno 2021.",
         },
       ],
     },
@@ -44,7 +67,7 @@ const it: Informativa = {
         {
           tipo: "p",
           testo:
-            "Solo la prima è sempre attiva, perché senza il sito non funziona. Le altre tre restano spente finché non le attivi tu.",
+            "Solo la prima categoria è sempre attiva, perché senza il sito non funziona. Le altre tre restano spente finché non le attivi tu, e puoi disattivarle in qualsiasi momento.",
         },
         {
           tipo: "tabella",
@@ -53,29 +76,29 @@ const it: Informativa = {
             {
               categoria: "Necessari",
               finalita:
-                "Consegnare la pagina richiesta, ricordare la lingua e la tua scelta sui cookie, tenere il sito sicuro.",
-              base: "Obbligo legale e legittimo interesse — non richiedono consenso",
+                "Consegnare la pagina richiesta, ricordare la lingua e la scelta espressa sui cookie, mantenere il sito sicuro.",
+              base: "Non richiedono consenso (art. 122 Codice Privacy)",
               durata: "Fino a 12 mesi",
             },
             {
               categoria: "Funzionali",
               finalita:
                 "Abilitare contenuti di terze parti che scegli di caricare, come la mappa nella pagina Contatti.",
-              base: "Consenso",
+              base: "Consenso (art. 6.1.a GDPR)",
               durata: "Definita dal fornitore del contenuto",
             },
             {
-              categoria: "Statistiche",
+              categoria: "Analitici",
               finalita:
-                "Capire in forma aggregata quali pagine vengono lette e da dove arrivano le visite.",
-              base: "Consenso",
+                "Capire, in forma aggregata, quali pagine vengono lette e da dove arrivano le visite.",
+              base: "Consenso, salvo strumenti anonimi (vedi §3)",
               durata: "Da indicare quando lo strumento sarà attivo",
             },
             {
               categoria: "Marketing",
               finalita:
                 "Misurare le campagne e mostrare annunci più pertinenti su piattaforme esterne.",
-              base: "Consenso",
+              base: "Consenso (art. 6.1.a GDPR)",
               durata: "Da indicare quando lo strumento sarà attivo",
             },
           ],
@@ -83,7 +106,7 @@ const it: Informativa = {
       ],
     },
     {
-      titolo: "3. Cosa imposta il sito, oggi",
+      titolo: "3. Cookie tecnici e analytics anonimi di prima parte",
       blocchi: [
         {
           tipo: "p",
@@ -93,113 +116,168 @@ const it: Informativa = {
         {
           tipo: "p",
           testo:
-            "Quando scegli — qualunque cosa scegli, anche «Rifiuta tutti» — vengono salvate due voci, entrambe di prima parte e strettamente necessarie:",
+            "Quando scegli — qualunque cosa scegli, anche «Rifiuta tutti» — vengono salvate due voci, entrambe di prima parte e strettamente necessarie a ricordare la tua decisione:",
         },
         {
-          tipo: "definizioni",
-          voci: [
+          tipo: "tabella-cookie",
+          intestazioni: ["Nome", "Tipo", "Finalità", "Durata"],
+          righe: [
             {
-              termine: "vizio-consent (cookie)",
-              descrizione:
-                "Copia compatta della tua scelta, leggibile dal server. Durata: 12 mesi. Non contiene dati che ti identificano: solo quali categorie hai attivato.",
+              nome: "vizio-consent-v1",
+              tipo: "localStorage, prima parte",
+              finalita:
+                "La scelta in forma estesa, con la data in cui è stata espressa e quella di scadenza. Resta nel browser e non viene inviata a nessuno.",
+              durata: "12 mesi",
             },
             {
-              termine: "vizio-consent-v1 (localStorage)",
-              descrizione:
-                "La stessa scelta in forma estesa, con la data in cui l'hai espressa e quella di scadenza. Resta nel tuo browser e non viene inviata a nessuno.",
+              nome: "vizio-consent",
+              tipo: "Cookie, prima parte",
+              finalita:
+                "Copia compatta della stessa scelta, leggibile dal server. Non contiene dati identificativi: solo quali categorie sono attive.",
+              durata: "12 mesi",
+            },
+          ],
+        },
+        {
+          tipo: "p",
+          testo:
+            "Senza queste due voci non potremmo ricordare la tua decisione e dovremmo richiedertela a ogni pagina.",
+        },
+        {
+          tipo: "p",
+          testo:
+            "È inoltre prevista una misurazione aggregata delle visite tramite Vercel Web Analytics, che non usa cookie e non conserva l'indirizzo IP in chiaro. Non essendoci accesso né archiviazione di informazioni sul tuo dispositivo, non rientra fra gli strumenti soggetti a consenso e non compare nel banner. Questa misurazione non è ancora attiva.",
+        },
+      ],
+    },
+    {
+      titolo: "4. Cookie di terze parti",
+      blocchi: [
+        {
+          tipo: "p",
+          testo:
+            "Le terze parti impostano cookie propri, secondo le proprie informative, sulle quali non abbiamo controllo. Dove l'integrazione non è ancora avvenuta non elenchiamo nomi che non abbiamo potuto verificare.",
+        },
+      ],
+      sottosezioni: [
+        {
+          titolo: "4.1 Google Analytics 4",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "Se e quando verrà attivato, richiederà il tuo consenso alla categoria «Analitici». Non è al momento integrato: il sito è predisposto con il Consent Mode di Google, il cui stato di partenza è «negato» per tutte le finalità che richiedono consenso. Nomi e durate dei relativi cookie saranno elencati qui una volta attivo.",
             },
           ],
         },
         {
-          tipo: "p",
-          testo:
-            "Senza queste due voci non potremmo ricordare la tua decisione, e dovremmo richiedertela a ogni pagina.",
-        },
-      ],
-    },
-    {
-      titolo: "4. Cookie funzionali",
-      blocchi: [
-        {
-          tipo: "p",
-          testo:
-            "La pagina Contatti include una mappa fornita da Google. La mappa NON viene caricata automaticamente: al suo posto trovi un riquadro con un pulsante, e finché non lo premi nessuna richiesta parte verso Google e nessun cookie di Google viene impostato.",
-        },
-        {
-          tipo: "p",
-          testo:
-            "Se decidi di caricarla, Google riceve la tua richiesta e può impostare cookie propri, secondo la propria informativa. Nessun altro contenuto di terze parti è incorporato nel sito.",
-        },
-      ],
-    },
-    {
-      titolo: "5. Cookie statistici e di marketing",
-      blocchi: [
-        {
-          tipo: "p",
-          testo:
-            "Nessuno strumento di misurazione o di marketing è attualmente attivo su questo sito. Le due categorie compaiono comunque nel pannello delle preferenze perché la scelta sia già tua quando verranno attivate.",
-        },
-        {
-          tipo: "p",
-          testo:
-            "Il sito è predisposto con il Consent Mode di Google: lo stato di partenza è «negato» per tutte le finalità che richiedono consenso, e viene modificato solo dalla tua scelta. Quando la misurazione sarà attiva, i nomi e le durate dei relativi cookie saranno elencati qui.",
-        },
-      ],
-    },
-    {
-      titolo: "6. Servizi di terze parti collegati",
-      blocchi: [
-        {
-          tipo: "p",
-          testo:
-            "Alcune funzioni si appoggiano a servizi esterni. Se e quali cookie ciascuno imposti va verificato al momento dell'integrazione: finché non è avvenuta, non elenchiamo nomi che non abbiamo potuto controllare.",
-        },
-        {
-          tipo: "definizioni",
-          voci: [
+          titolo: "4.2 TheFork — widget di prenotazione",
+          blocchi: [
             {
-              termine: "TheFork",
-              descrizione:
-                "Prenotazione dei tavoli. Se prenoti tramite quel canale, si applica l'informativa di TheFork, che tratta i tuoi dati come titolare autonomo. Eventuali cookie propri: da verificare in fase di integrazione.",
+              tipo: "p",
+              testo:
+                "Le prenotazioni passano da TheFork, che tratta i dati come titolare autonomo secondo la propria informativa. Se il widget imposti cookie propri è da verificare in fase di implementazione: al momento il widget non è presente sul sito.",
+            },
+          ],
+        },
+        {
+          titolo: "4.3 Brevo — modulo newsletter",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "L'invio della newsletter sarà affidato a Brevo. Se il modulo di iscrizione imposti cookie tecnici propri è da verificare in fase di implementazione: al momento il modulo presente sul sito non è collegato ad alcun servizio.",
+            },
+          ],
+        },
+        {
+          titolo: "4.4 Google Maps — mappa della pagina Contatti",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "È l'unico contenuto di terza parte effettivamente presente sul sito. La mappa NON viene caricata automaticamente: al suo posto trovi un riquadro con un pulsante, e finché non lo premi nessuna richiesta parte verso Google e nessun cookie di Google viene impostato.",
             },
             {
-              termine: "Brevo",
-              descrizione:
-                "Invio della newsletter, quando sarà attiva. Eventuali cookie propri: da verificare in fase di integrazione.",
-            },
-            {
-              termine: "Google",
-              descrizione:
-                "Mappa della pagina Contatti (solo su tua richiesta) e, in futuro, misurazione delle visite.",
+              tipo: "p",
+              testo:
+                "Se scegli di caricarla, Google riceve la tua richiesta e può impostare cookie propri secondo la propria informativa. Rientra nella categoria «Funzionali».",
             },
           ],
         },
       ],
     },
     {
-      titolo: "7. Come cambiare idea",
+      titolo: "5. Come gestire le preferenze",
       blocchi: [
         {
           tipo: "p",
           testo:
-            "La tua scelta si riapre in qualsiasi momento dal pulsante qui sotto, presente anche in fondo a ogni pagina. Revocare è facile quanto acconsentire: puoi disattivare categorie che avevi attivato, e la modifica ha effetto subito.",
+            "La tua scelta si riapre in qualsiasi momento dal pulsante «Gestisci cookie», presente in fondo a ogni pagina e qui sotto. Revocare è facile quanto acconsentire: puoi disattivare categorie che avevi attivato, e la modifica ha effetto subito.",
         },
         { tipo: "gestisci-cookie" },
-        {
-          tipo: "p",
-          testo:
-            "Puoi anche gestire o cancellare i cookie dalle impostazioni del tuo browser. Se cancelli le nostre due voci, la scelta va perduta e il banner ricompare.",
-        },
       ],
     },
     {
-      titolo: "8. Quanto dura e come viene aggiornata",
+      titolo: "6. Disabilitare i cookie dal browser",
       blocchi: [
         {
           tipo: "p",
           testo:
-            "La tua scelta vale 12 mesi; alla scadenza il banner ricompare. Non la trattiamo come acquisita per sempre.",
+            "Puoi bloccare o cancellare i cookie anche dalle impostazioni del browser, indipendentemente da questo sito. Tieni presente che, cancellando le nostre due voci, la scelta va perduta e il banner ricompare.",
+        },
+        {
+          tipo: "collegamenti",
+          voci: [
+            {
+              testo: "Google Chrome",
+              href: "https://support.google.com/chrome/answer/95647",
+              esterno: true,
+            },
+            {
+              testo: "Mozilla Firefox",
+              href: "https://support.mozilla.org/kb/cookies-information-websites-store-on-your-computer",
+              esterno: true,
+            },
+            {
+              testo: "Apple Safari",
+              href: "https://support.apple.com/guide/safari/manage-cookies-sfri11471/mac",
+              esterno: true,
+            },
+            {
+              testo: "Microsoft Edge",
+              href: "https://support.microsoft.com/help/4027947",
+              esterno: true,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      titolo: "7. Titolare del trattamento",
+      blocchi: [
+        {
+          tipo: "p",
+          testo: `Il titolare del trattamento è ${TITOLARE.ragioneSociale}, ${TITOLARE.sedeLegale.completo}, partita IVA ${TITOLARE.partitaIva}. Recapiti e informazioni complete sui trattamenti sono nell'informativa sulla privacy.`,
+        },
+        {
+          tipo: "collegamenti",
+          voci: [{ testo: "Leggi l'informativa sulla privacy", href: "/privacy" }],
+        },
+      ],
+    },
+    {
+      titolo: "8. Riferimenti normativi",
+      blocchi: [
+        {
+          tipo: "elenco",
+          voci: [
+            "Regolamento (UE) 2016/679 (GDPR);",
+            "Direttiva 2002/58/CE (ePrivacy), come modificata dalla Direttiva 2009/136/CE;",
+            "D.lgs. 196/2003 (Codice in materia di protezione dei dati personali), in particolare l'articolo 122;",
+            "Linee guida cookie e altri strumenti di tracciamento, Garante per la protezione dei dati personali, 10 giugno 2021;",
+            "Linee guida 03/2022 dell'European Data Protection Board sui modelli ingannevoli (dark pattern) nelle interfacce delle piattaforme social.",
+          ],
         },
         {
           tipo: "p",
@@ -213,7 +291,7 @@ const it: Informativa = {
 const en: Informativa = {
   titolo: "Cookie Policy",
   sottotitolo:
-    "Which cookies and browser storage this site uses, what they do, and how to change your mind at any time.",
+    "Which cookies and browser storage this site uses, what they do, how long they last and how to change your mind at any time.",
   aggiornata: (data) => `Last updated: ${data}`,
   sezioni: [
     {
@@ -222,12 +300,22 @@ const en: Informativa = {
         {
           tipo: "p",
           testo:
-            "Cookies are small files a site saves in your browser. They remember something between one page and the next, or between visits. Alongside cookies there are other tools that work the same way — localStorage and sessionStorage — and which the law treats the same: here we call them all «cookies» for simplicity.",
+            "Cookies are small text files a site saves in the browser of whoever visits it. They remember something between one page and the next, or between visits.",
         },
         {
           tipo: "p",
           testo:
-            "«First-party» cookies are set by this site. «Third-party» ones are set by someone else through content embedded in our pages — a map, for instance.",
+            "Alongside cookies there are similar technologies — localStorage and sessionStorage in particular — that store information the same way. The law treats them on a par with cookies, and so do we here.",
+        },
+        {
+          tipo: "p",
+          testo:
+            "«First-party» cookies are set by this site; «third-party» ones are set by others through content embedded in our pages.",
+        },
+        {
+          tipo: "p",
+          testo:
+            "The matter is governed by Article 122 of the Italian Personal Data Protection Code (Legislative Decree 196/2003 as amended), by Directive 2002/58/EC (ePrivacy), and by the Guidelines on cookies and other tracking tools issued by the Italian data protection authority on 10 June 2021.",
         },
       ],
     },
@@ -237,7 +325,7 @@ const en: Informativa = {
         {
           tipo: "p",
           testo:
-            "Only the first is always on, because without it the site doesn't work. The other three stay off until you turn them on.",
+            "Only the first category is always on, because without it the site doesn't work. The other three stay off until you turn them on, and you can turn them off again at any time.",
         },
         {
           tipo: "tabella",
@@ -246,29 +334,29 @@ const en: Informativa = {
             {
               categoria: "Necessary",
               finalita:
-                "Delivering the page you asked for, remembering your language and your cookie choice, keeping the site secure.",
-              base: "Legal obligation and legitimate interest — no consent required",
+                "Delivering the page requested, remembering your language and your cookie choice, keeping the site secure.",
+              base: "No consent required (Art. 122, Italian Privacy Code)",
               durata: "Up to 12 months",
             },
             {
               categoria: "Functional",
               finalita:
                 "Enabling third-party content you choose to load, such as the map on the Contact page.",
-              base: "Consent",
+              base: "Consent (Art. 6(1)(a) GDPR)",
               durata: "Set by the content provider",
             },
             {
               categoria: "Analytics",
               finalita:
                 "Understanding, in aggregate, which pages get read and where visits come from.",
-              base: "Consent",
+              base: "Consent, except for anonymous tools (see §3)",
               durata: "To be stated once the tool is active",
             },
             {
               categoria: "Marketing",
               finalita:
                 "Measuring campaigns and showing more relevant ads on external platforms.",
-              base: "Consent",
+              base: "Consent (Art. 6(1)(a) GDPR)",
               durata: "To be stated once the tool is active",
             },
           ],
@@ -276,7 +364,7 @@ const en: Informativa = {
       ],
     },
     {
-      titolo: "3. What the site sets, today",
+      titolo: "3. First-party technical cookies and anonymous analytics",
       blocchi: [
         {
           tipo: "p",
@@ -286,113 +374,168 @@ const en: Informativa = {
         {
           tipo: "p",
           testo:
-            "When you choose — whatever you choose, including «Reject all» — two entries are saved, both first-party and strictly necessary:",
+            "When you choose — whatever you choose, including «Reject all» — two entries are saved, both first-party and strictly necessary to remember your decision:",
         },
         {
-          tipo: "definizioni",
-          voci: [
+          tipo: "tabella-cookie",
+          intestazioni: ["Name", "Type", "Purpose", "Duration"],
+          righe: [
             {
-              termine: "vizio-consent (cookie)",
-              descrizione:
-                "A compact copy of your choice, readable by the server. Duration: 12 months. It contains nothing identifying you: only which categories you turned on.",
+              nome: "vizio-consent-v1",
+              tipo: "localStorage, first party",
+              finalita:
+                "The choice in full, with the date it was made and its expiry. It stays in the browser and is not sent to anyone.",
+              durata: "12 months",
             },
             {
-              termine: "vizio-consent-v1 (localStorage)",
-              descrizione:
-                "The same choice in full, with the date you made it and its expiry. It stays in your browser and is not sent to anyone.",
+              nome: "vizio-consent",
+              tipo: "Cookie, first party",
+              finalita:
+                "A compact copy of the same choice, readable by the server. It holds nothing identifying: only which categories are on.",
+              durata: "12 months",
+            },
+          ],
+        },
+        {
+          tipo: "p",
+          testo:
+            "Without these two entries we couldn't remember your decision and would have to ask again on every page.",
+        },
+        {
+          tipo: "p",
+          testo:
+            "Aggregate measurement of visits through Vercel Web Analytics is also planned. It uses no cookies and does not retain IP addresses in clear. As it neither accesses nor stores information on your device, it does not fall among the tools requiring consent and does not appear in the banner. This measurement is not active yet.",
+        },
+      ],
+    },
+    {
+      titolo: "4. Third-party cookies",
+      blocchi: [
+        {
+          tipo: "p",
+          testo:
+            "Third parties set their own cookies under their own notices, over which we have no control. Where integration has not yet happened, we don't list names we haven't been able to verify.",
+        },
+      ],
+      sottosezioni: [
+        {
+          titolo: "4.1 Google Analytics 4",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "If and when it is switched on, it will require your consent to the «Analytics» category. It is not integrated at present: the site is set up with Google Consent Mode, whose starting state is «denied» for every purpose requiring consent. The names and durations of the relevant cookies will be listed here once it is active.",
             },
           ],
         },
         {
-          tipo: "p",
-          testo:
-            "Without these two entries we couldn't remember your decision, and would have to ask again on every page.",
-        },
-      ],
-    },
-    {
-      titolo: "4. Functional cookies",
-      blocchi: [
-        {
-          tipo: "p",
-          testo:
-            "The Contact page includes a map provided by Google. The map is NOT loaded automatically: in its place you'll find a panel with a button, and until you press it no request goes to Google and no Google cookie is set.",
-        },
-        {
-          tipo: "p",
-          testo:
-            "If you choose to load it, Google receives your request and may set its own cookies, under its own notice. No other third-party content is embedded in the site.",
-        },
-      ],
-    },
-    {
-      titolo: "5. Analytics and marketing cookies",
-      blocchi: [
-        {
-          tipo: "p",
-          testo:
-            "No measurement or marketing tool is currently active on this site. The two categories still appear in the preferences panel so that the choice is already yours when they are switched on.",
-        },
-        {
-          tipo: "p",
-          testo:
-            "The site is set up with Google Consent Mode: the starting state is «denied» for every purpose requiring consent, and it changes only through your choice. Once measurement is active, the names and durations of the relevant cookies will be listed here.",
-        },
-      ],
-    },
-    {
-      titolo: "6. Connected third-party services",
-      blocchi: [
-        {
-          tipo: "p",
-          testo:
-            "Some features rely on external services. Whether and which cookies each one sets has to be checked at integration time: until that happens, we don't list names we haven't been able to verify.",
-        },
-        {
-          tipo: "definizioni",
-          voci: [
+          titolo: "4.2 TheFork — booking widget",
+          blocchi: [
             {
-              termine: "TheFork",
-              descrizione:
-                "Table bookings. If you book through that channel, TheFork's own notice applies and it processes your data as an independent controller. Any cookies of its own: to be verified at integration time.",
+              tipo: "p",
+              testo:
+                "Bookings go through TheFork, which processes the data as an independent controller under its own notice. Whether the widget sets cookies of its own is to be verified at implementation time: the widget is not currently present on the site.",
+            },
+          ],
+        },
+        {
+          titolo: "4.3 Brevo — newsletter form",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "Newsletter delivery will be handled by Brevo. Whether the subscription form sets technical cookies of its own is to be verified at implementation time: the form currently on the site is not connected to any service.",
+            },
+          ],
+        },
+        {
+          titolo: "4.4 Google Maps — the map on the Contact page",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "This is the only third-party content actually present on the site. The map is NOT loaded automatically: in its place you'll find a panel with a button, and until you press it no request goes to Google and no Google cookie is set.",
             },
             {
-              termine: "Brevo",
-              descrizione:
-                "Newsletter delivery, once active. Any cookies of its own: to be verified at integration time.",
-            },
-            {
-              termine: "Google",
-              descrizione:
-                "The map on the Contact page (only at your request) and, in future, visit measurement.",
+              tipo: "p",
+              testo:
+                "If you choose to load it, Google receives your request and may set its own cookies under its own notice. It falls under the «Functional» category.",
             },
           ],
         },
       ],
     },
     {
-      titolo: "7. Changing your mind",
+      titolo: "5. Managing your preferences",
       blocchi: [
         {
           tipo: "p",
           testo:
-            "Your choice reopens at any time from the button below, which is also at the foot of every page. Withdrawing is as easy as consenting: you can switch off categories you had switched on, and the change takes effect immediately.",
+            "Your choice reopens at any time from the «Manage cookies» button, at the foot of every page and below. Withdrawing is as easy as consenting: you can switch off categories you had switched on, and the change takes effect immediately.",
         },
         { tipo: "gestisci-cookie" },
-        {
-          tipo: "p",
-          testo:
-            "You can also manage or delete cookies from your browser settings. If you delete our two entries, the choice is lost and the banner reappears.",
-        },
       ],
     },
     {
-      titolo: "8. How long it lasts, and how it's updated",
+      titolo: "6. Disabling cookies in your browser",
       blocchi: [
         {
           tipo: "p",
           testo:
-            "Your choice lasts 12 months; when it expires the banner returns. We don't treat it as settled forever.",
+            "You can also block or delete cookies from your browser settings, independently of this site. Bear in mind that deleting our two entries loses your choice and brings the banner back.",
+        },
+        {
+          tipo: "collegamenti",
+          voci: [
+            {
+              testo: "Google Chrome",
+              href: "https://support.google.com/chrome/answer/95647",
+              esterno: true,
+            },
+            {
+              testo: "Mozilla Firefox",
+              href: "https://support.mozilla.org/kb/cookies-information-websites-store-on-your-computer",
+              esterno: true,
+            },
+            {
+              testo: "Apple Safari",
+              href: "https://support.apple.com/guide/safari/manage-cookies-sfri11471/mac",
+              esterno: true,
+            },
+            {
+              testo: "Microsoft Edge",
+              href: "https://support.microsoft.com/help/4027947",
+              esterno: true,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      titolo: "7. Data controller",
+      blocchi: [
+        {
+          tipo: "p",
+          testo: `The data controller is ${TITOLARE.ragioneSociale}, ${TITOLARE.sedeLegale.completo}, VAT number ${TITOLARE.partitaIva}. Contact details and full information about processing are in the privacy notice.`,
+        },
+        {
+          tipo: "collegamenti",
+          voci: [{ testo: "Read the privacy notice", href: "/privacy" }],
+        },
+      ],
+    },
+    {
+      titolo: "8. Legal references",
+      blocchi: [
+        {
+          tipo: "elenco",
+          voci: [
+            "Regulation (EU) 2016/679 (GDPR);",
+            "Directive 2002/58/EC (ePrivacy), as amended by Directive 2009/136/EC;",
+            "Legislative Decree 196/2003 (Italian Personal Data Protection Code), in particular Article 122;",
+            "Guidelines on cookies and other tracking tools, Italian data protection authority, 10 June 2021;",
+            "Guidelines 03/2022 of the European Data Protection Board on deceptive design patterns in social media platform interfaces.",
+          ],
         },
         {
           tipo: "p",

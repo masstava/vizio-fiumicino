@@ -5,38 +5,43 @@ import type { Locale } from "@/src/lib/i18n/config";
 // =============================================================
 // PRIVACY POLICY — 11 sezioni (§14.3)
 // =============================================================
-// A differenza del copy editoriale, qui la sostanza NON è bozza:
-// titolare, basi giuridiche, categorie di dati e fornitori sono
-// decisioni già prese. Quella che ho scritto io è la prosa che le
-// esprime.
+// Struttura, titoli e sotto-sezioni sono quelli della specifica.
+// La sostanza (titolare, basi giuridiche, fornitori, ruoli) è già
+// decisa; quella scritta qui è la prosa che la esprime.
 //
-// Resta però contenuto legale: va riletto da chi ne risponde prima
-// della pubblicazione. Un errore qui non è una questione di tono.
+// RESTA CONTENUTO LEGALE: va riletto da chi ne risponde prima della
+// pubblicazione. Un errore qui non è una questione di tono.
 //
-// Due scelte di merito, dichiarate perché sono verificabili:
+// Tre cautele mantenute, perché riguardano cose che non ho potuto
+// verificare:
 //
-//  - Si distingue fra trattamenti ATTIVI OGGI e trattamenti che
-//    partiranno con funzioni non ancora costruite (newsletter,
-//    prenotazioni). Un'informativa che descrive come in corso
-//    qualcosa che non avviene è inesatta quanto una che tace.
-//    Misurato: navigando il sito senza esprimere una scelta non
-//    viene impostato alcun cookie e non viene scritto nulla nel
-//    browser.
+//  - §7: il meccanismo di trasferimento (DPF + Clausole tipo) è
+//    quello deciso, ma i fornitori possono cambiarlo. Il testo dice
+//    che le condizioni sono quelle della documentazione del
+//    fornitore e che su richiesta si indica quale si applichi al
+//    momento, invece di dichiarare come permanente uno stato che non
+//    controlliamo.
+//  - §6: Google è indicato come responsabile "se attivato". La
+//    qualificazione per GA4 è dibattuta e dipende dalla
+//    configurazione.
+//  - §2.2 e §6: TheFork resta titolare autonomo. Il sistema di
+//    prenotazione nativo (§21) non esiste nel repo — verificato.
+//    Da rivedere quando arriverà.
 //
-//  - Sui trasferimenti extra-UE non si afferma che un dato fornitore
-//    aderisca a un dato meccanismo: si dice quale meccanismo si
-//    applica e si rimanda alle sue condizioni. Affermarlo senza
-//    poterlo verificare sarebbe una dichiarazione a vuoto.
+// Due trattamenti descritti NON sono ancora attivi, e il testo lo
+// dice invece di lasciarlo intendere: Vercel Analytics (§3.3) e
+// Google Analytics 4 (§3.4). Verificato: nessuno dei due è fra le
+// dipendenze del progetto né importato nel codice.
 // =============================================================
 
 const it: Informativa = {
   titolo: "Informativa sulla privacy",
   sottotitolo:
-    "Come trattiamo i dati personali di chi visita questo sito e di chi ci contatta, ai sensi degli articoli 13 e 14 del Regolamento (UE) 2016/679.",
+    "Come Nuova Ristorazione S.r.l. tratta i dati personali di chi visita questo sito e di chi ci contatta, ai sensi degli articoli 13 e 14 del Regolamento (UE) 2016/679.",
   aggiornata: (data) => `Ultimo aggiornamento: ${data}`,
   sezioni: [
     {
-      titolo: "1. Chi tratta i tuoi dati",
+      titolo: "1. Titolare del trattamento",
       blocchi: [
         {
           tipo: "p",
@@ -44,286 +49,357 @@ const it: Informativa = {
         },
         {
           tipo: "p",
-          testo: `Per qualunque questione riguardi i tuoi dati puoi scrivere a ${TITOLARE.email} oppure, via posta elettronica certificata, a ${TITOLARE.pec}.`,
+          testo: `Recapiti per ogni questione relativa ai dati personali: ${TITOLARE.email}, oppure ${TITOLARE.pec} via posta elettronica certificata.`,
         },
         {
           tipo: "p",
           testo:
-            "Non è stato nominato un Responsabile della protezione dei dati (DPO): l'attività non rientra fra i casi in cui il Regolamento lo rende obbligatorio.",
+            "Non è stato nominato un Responsabile della protezione dei dati: l'attività non rientra fra i casi in cui l'articolo 37 del Regolamento lo rende obbligatorio.",
         },
       ],
     },
     {
-      titolo: "2. Quali dati raccogliamo",
+      titolo: "2. Tipologie di dati raccolti",
       blocchi: [
         {
           tipo: "p",
           testo:
-            "La semplice consultazione di questo sito non richiede di identificarsi. Finché non esprimi una scelta sui cookie e non ci contatti, non raccogliamo dati che ti riguardano.",
+            "La semplice consultazione del sito non richiede di identificarsi. I dati che seguono vengono trattati solo nelle situazioni indicate.",
+        },
+      ],
+      sottosezioni: [
+        {
+          titolo: "2.1 Dati conferiti tramite i moduli di contatto e newsletter",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "Nome, indirizzo email e, facoltativamente, numero di telefono, quando li comunichi per iscriverti alla newsletter o per chiederci qualcosa. Il telefono non è obbligatorio: serve solo se preferisci essere richiamato.",
+            },
+            {
+              tipo: "p",
+              testo:
+                "Il modulo newsletter presente sul sito non è al momento collegato ad alcun servizio di invio e non trasmette nulla: l'iscrizione sarà attiva quando lo indicheremo qui.",
+            },
+          ],
         },
         {
-          tipo: "definizioni",
-          voci: [
+          titolo: "2.2 Dati di prenotazione tramite TheFork",
+          blocchi: [
             {
-              termine: "Dati di navigazione",
-              descrizione:
-                "I sistemi che fanno funzionare il sito registrano, per necessità tecnica, informazioni come indirizzo IP, tipo di browser e pagina richiesta. Servono a consegnarti la pagina e a mantenere il servizio sicuro; non li usiamo per identificarti.",
+              tipo: "p",
+              testo:
+                "Le prenotazioni passano da TheFork, che tratta i dati come titolare autonomo e distinto: nome, recapito, data, orario e numero di persone vengono raccolti da quella piattaforma, secondo la sua informativa e non secondo questa.",
             },
             {
-              termine: "Preferenze sui cookie",
-              descrizione:
-                "La scelta che esprimi nel banner viene conservata nel tuo browser per poterla rispettare alla visita successiva. È l'unico dato che il sito salva sul tuo dispositivo di propria iniziativa.",
+              tipo: "p",
+              testo:
+                "Su quel trattamento non abbiamo controllo. Per esercitare i tuoi diritti su quei dati devi rivolgerti a TheFork; noi riceviamo la prenotazione e la trattiamo per tenerti il tavolo.",
+            },
+          ],
+        },
+        {
+          titolo: "2.3 Dati di navigazione",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "I sistemi che fanno funzionare il sito registrano, per necessità tecnica, indirizzo IP, tipo di browser e pagine visitate. Vengono usati in forma aggregata per finalità statistiche e per mantenere il servizio sicuro, non per identificare chi naviga.",
+            },
+          ],
+        },
+        {
+          titolo: "2.4 Cookie e tecnologie analoghe",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "Il sito usa cookie e strumenti di memorizzazione nel browser. Quali siano, a cosa servano e quanto durino è indicato nella Cookie Policy, che è parte integrante di questa informativa.",
             },
             {
-              termine: "Dati di contatto",
-              descrizione:
-                "Se ci scrivi via email o WhatsApp, o se ci telefoni, trattiamo quello che ci comunichi: nome, recapito e il contenuto del messaggio.",
-            },
-            {
-              termine: "Dati di prenotazione",
-              descrizione:
-                "Se prenoti un tavolo, trattiamo nome, recapito, data, orario e numero di persone, oltre a eventuali richieste particolari che scegli di comunicarci.",
-            },
-            {
-              termine: "Indirizzo email per la newsletter",
-              descrizione:
-                "Se ti iscrivi alla newsletter trattiamo il tuo indirizzo email. Al momento il modulo presente sul sito non è collegato ad alcun servizio e non invia nulla: l'iscrizione sarà attiva quando lo comunicheremo qui.",
-            },
-            {
-              termine: "Statistiche di utilizzo",
-              descrizione:
-                "Solo se acconsenti alla categoria «Statistiche», raccogliamo dati aggregati su quali pagine vengono lette e da dove arrivano le visite. Questa raccolta non è ancora attiva.",
+              tipo: "collegamenti",
+              voci: [{ testo: "Leggi la Cookie Policy", href: "/cookie-policy" }],
             },
           ],
         },
       ],
     },
     {
-      titolo: "3. Perché li trattiamo e su quale base giuridica",
-      blocchi: [
+      titolo: "3. Finalità del trattamento e basi giuridiche",
+      sottosezioni: [
         {
-          tipo: "definizioni",
-          voci: [
+          titolo: "3.1 Invio della newsletter",
+          blocchi: [
             {
-              termine: "Far funzionare il sito e tenerlo sicuro",
-              descrizione:
-                "Legittimo interesse (art. 6.1.f): consegnare le pagine richieste, prevenire abusi e malfunzionamenti. È l'interesse minimo senza il quale il servizio non esiste.",
-            },
-            {
-              termine: "Ricordare la tua scelta sui cookie",
-              descrizione:
-                "Obbligo legale (art. 6.1.c): conservare la preferenza è ciò che ci permette di rispettarla, ed è richiesto dalla normativa sui cookie.",
-            },
-            {
-              termine: "Rispondere a chi ci contatta",
-              descrizione:
-                "Misure precontrattuali o esecuzione di un contratto (art. 6.1.b) quando la richiesta riguarda una prenotazione; legittimo interesse (art. 6.1.f) quando è una domanda generica.",
-            },
-            {
-              termine: "Gestire le prenotazioni",
-              descrizione:
-                "Esecuzione di un contratto (art. 6.1.b): senza quei dati il tavolo non può essere tenuto.",
-            },
-            {
-              termine: "Inviare la newsletter",
-              descrizione:
-                "Consenso (art. 6.1.a), che puoi revocare in qualsiasi momento con il link di disiscrizione presente in ogni email.",
-            },
-            {
-              termine: "Misurare l'utilizzo del sito",
-              descrizione:
-                "Consenso (art. 6.1.a), espresso attivando la categoria «Statistiche». Senza, nessuna misurazione viene attivata.",
+              tipo: "p",
+              testo:
+                "Base giuridica: consenso (art. 6.1.a). L'invio è affidato a Brevo SAS. Il consenso è revocabile in qualsiasi momento, con il link di disiscrizione presente in ogni email o scrivendoci: la revoca non tocca la liceità di quanto fatto prima.",
             },
           ],
         },
         {
-          tipo: "p",
-          testo:
-            "Il conferimento dei dati è sempre facoltativo, ma senza i dati necessari a una prenotazione o a una risposta non possiamo darti seguito.",
-        },
-      ],
-    },
-    {
-      titolo: "4. Cookie e tecnologie simili",
-      blocchi: [
-        {
-          tipo: "p",
-          testo:
-            "Il sito usa cookie e strumenti di memorizzazione nel browser. Quali siano, a cosa servano e quanto durino è spiegato in dettaglio nella Cookie Policy, che è parte integrante di questa informativa.",
-        },
-        {
-          tipo: "p",
-          testo:
-            "Puoi cambiare idea in qualsiasi momento: la tua scelta si riapre dal pulsante qui sotto e dal collegamento presente in fondo a ogni pagina.",
-        },
-        { tipo: "gestisci-cookie" },
-      ],
-    },
-    {
-      titolo: "5. Chi altro può trattare i tuoi dati",
-      blocchi: [
-        {
-          tipo: "p",
-          testo:
-            "Non vendiamo e non cediamo dati personali. Alcuni fornitori li trattano per nostro conto, come responsabili del trattamento, sulla base di un contratto che ne limita l'uso a quanto serve al servizio.",
-        },
-        {
-          tipo: "definizioni",
-          voci: [
+          titolo: "3.2 Riscontro alle richieste di contatto",
+          blocchi: [
             {
-              termine: "Vercel Inc.",
-              descrizione:
-                "Hosting del sito. Tratta i dati di navigazione necessari a consegnare le pagine.",
-            },
-            {
-              termine: "Supabase Inc.",
-              descrizione:
-                "Banca dati dei contenuti del sito (menu, orari, eventi). I dati risiedono nella regione dell'Unione europea (Francoforte).",
-            },
-            {
-              termine: "Brevo SAS",
-              descrizione:
-                "Invio della newsletter, quando la funzione sarà attiva. Sede in Francia.",
-            },
-            {
-              termine: "Resend",
-              descrizione:
-                "Invio delle email di servizio legate alle prenotazioni, quando la funzione sarà attiva.",
-            },
-            {
-              termine: "Google LLC",
-              descrizione:
-                "Statistiche di utilizzo e mappa della pagina Contatti, solo previo tuo consenso. La mappa non viene caricata finché non la richiedi esplicitamente.",
-            },
-            {
-              termine: "TheFork",
-              descrizione:
-                "Piattaforma di prenotazione. Se prenoti tramite TheFork, quella società tratta i tuoi dati come titolare autonomo, secondo la propria informativa, sulla quale non abbiamo controllo.",
+              tipo: "p",
+              testo:
+                "Base giuridica: esecuzione di misure precontrattuali o del contratto (art. 6.1.b). Trattiamo quanto ci comunichi per risponderti e per dare seguito alla richiesta.",
             },
           ],
         },
         {
-          tipo: "p",
-          testo:
-            "I dati possono inoltre essere comunicati a professionisti e autorità quando la legge lo impone.",
+          titolo: "3.3 Statistiche di utilizzo aggregate",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "Base giuridica: legittimo interesse (art. 6.1.f) a conoscere l'andamento del sito. La misurazione prevista è Vercel Analytics, che non usa cookie e non conserva l'indirizzo IP in chiaro: per questo non è subordinata a consenso preventivo e non compare nel banner.",
+            },
+            {
+              tipo: "p",
+              testo:
+                "Questa misurazione non è ancora attiva. Puoi comunque opporti in qualsiasi momento ai sensi dell'articolo 21 scrivendo ai recapiti indicati.",
+            },
+          ],
         },
-      ],
-    },
-    {
-      titolo: "6. Trasferimenti fuori dall'Unione europea",
-      blocchi: [
         {
-          tipo: "p",
-          testo:
-            "Alcuni fornitori hanno sede negli Stati Uniti. La banca dati del sito è configurata sulla regione europea (Francoforte), ma non si può escludere che l'assistenza tecnica del fornitore vi acceda dall'estero.",
+          titolo: "3.4 Google Analytics 4, se attivato",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "Base giuridica: consenso esplicito (art. 6.1.a), espresso attivando la categoria corrispondente nel pannello dei cookie. A differenza della misurazione anonima, Google Analytics 4 usa cookie e non viene attivato senza il tuo consenso.",
+            },
+            {
+              tipo: "p",
+              testo:
+                "Al momento non è integrato. Il sito è però già predisposto con il Consent Mode di Google, il cui stato di partenza è «negato» per tutte le finalità che richiedono consenso.",
+            },
+          ],
         },
         {
-          tipo: "p",
-          testo:
-            "Quando un trasferimento avviene verso un Paese terzo, esso è coperto dalle garanzie previste dal Capo V del Regolamento: decisione di adeguatezza della Commissione europea, oppure clausole contrattuali tipo. Le condizioni applicabili a ciascun fornitore sono indicate nella documentazione del fornitore stesso; su richiesta ti indichiamo quale meccanismo si applica.",
-        },
-      ],
-    },
-    {
-      titolo: "7. Per quanto tempo li conserviamo",
-      blocchi: [
-        {
-          tipo: "definizioni",
-          voci: [
+          titolo: "3.5 Adempimento di obblighi di legge",
+          blocchi: [
             {
-              termine: "Preferenze sui cookie",
-              descrizione:
-                "12 mesi dalla scelta, dopodiché la richiesta viene riproposta.",
-            },
-            {
-              termine: "Messaggi e richieste",
-              descrizione:
-                "Il tempo necessario a rispondere e a gestire quanto ne consegue; poi vengono cancellati, salvo quanto la legge imponga di conservare.",
-            },
-            {
-              termine: "Dati di prenotazione",
-              descrizione:
-                "Il tempo necessario alla gestione della prenotazione e agli obblighi amministrativi e fiscali che ne derivano.",
-            },
-            {
-              termine: "Iscrizione alla newsletter",
-              descrizione: "Fino alla disiscrizione.",
-            },
-            {
-              termine: "Statistiche",
-              descrizione:
-                "Secondo la conservazione impostata sullo strumento di misurazione, che indicheremo nella Cookie Policy quando sarà attivo.",
+              tipo: "p",
+              testo:
+                "Base giuridica: obbligo legale (art. 6.1.c). Riguarda gli adempimenti amministrativi, contabili e fiscali, e le richieste legittime dell'autorità.",
             },
           ],
         },
       ],
     },
     {
-      titolo: "8. I tuoi diritti",
+      titolo: "4. Modalità del trattamento",
       blocchi: [
         {
           tipo: "p",
           testo:
-            "Il Regolamento ti riconosce una serie di diritti che puoi esercitare in qualsiasi momento e gratuitamente:",
+            "Il trattamento avviene con strumenti informatici, adottando le misure tecniche e organizzative adeguate previste dall'articolo 32 del Regolamento.",
         },
         {
           tipo: "elenco",
           voci: [
-            "sapere se trattiamo dati che ti riguardano e ottenerne copia (accesso, art. 15);",
-            "far correggere dati inesatti o incompleti (rettifica, art. 16);",
-            "chiederne la cancellazione, nei casi previsti (art. 17);",
-            "chiedere che il trattamento sia limitato (art. 18);",
-            "ricevere i dati in un formato leggibile da una macchina, o farli trasferire ad altro titolare (portabilità, art. 20);",
-            "opporti al trattamento fondato sul legittimo interesse (art. 21);",
-            "revocare il consenso in qualsiasi momento, senza che ciò tolga validità a quanto fatto prima (art. 7.3).",
+            "le comunicazioni fra il tuo browser e il sito viaggiano cifrate (HTTPS/TLS);",
+            "l'accesso ai dati è limitato al personale autorizzato e protetto da autenticazione;",
+            "l'infrastruttura dati è fornita da Supabase, con la base dati collocata nella regione dell'Unione europea.",
           ],
         },
         {
           tipo: "p",
-          testo: `Per esercitarli scrivi a ${TITOLARE.email}. Rispondiamo entro un mese; se la richiesta è complessa il termine può essere prorogato, e in quel caso te lo diciamo.`,
+          testo:
+            "Non è previsto alcun processo decisionale automatizzato né alcuna profilazione ai sensi dell'articolo 22.",
         },
       ],
     },
     {
-      titolo: "9. Se ritieni che qualcosa non vada",
+      titolo: "5. Periodo di conservazione",
       blocchi: [
         {
-          tipo: "p",
-          testo: `Puoi rivolgerti a noi in qualsiasi momento. Se non sei soddisfatto della risposta, hai diritto di proporre reclamo al ${GARANTE.nome} (${GARANTE.sito}) o all'autorità di controllo dello Stato membro in cui risiedi o lavori.`,
+          tipo: "definizioni",
+          voci: [
+            {
+              termine: "Iscrizione alla newsletter",
+              descrizione: "Fino alla revoca del consenso.",
+            },
+            {
+              termine: "Richieste di contatto",
+              descrizione:
+                "24 mesi dall'ultimo scambio, salvo quanto debba essere conservato più a lungo per obbligo di legge.",
+            },
+            {
+              termine: "Dati di navigazione",
+              descrizione: "Non oltre 12 mesi.",
+            },
+            {
+              termine: "Cookie e strumenti analoghi",
+              descrizione:
+                "Le durate sono indicate nella Cookie Policy, voce per voce.",
+            },
+          ],
         },
       ],
     },
     {
-      titolo: "10. Minori",
+      titolo: "6. Categorie di destinatari",
       blocchi: [
         {
           tipo: "p",
           testo:
-            "Questo sito non è rivolto a minori di quattordici anni e non raccoglie consapevolmente i loro dati. Se ritieni che un minore ci abbia comunicato dati personali, scrivici: li cancelleremo.",
+            "Non vendiamo e non cediamo dati personali. Possono venirne a conoscenza:",
+        },
+        {
+          tipo: "elenco",
+          voci: [
+            "il personale autorizzato al trattamento, istruito ai sensi dell'articolo 29;",
+            "i fornitori che trattano dati per nostro conto in qualità di responsabili ai sensi dell'articolo 28;",
+            "le autorità pubbliche, quando la legge lo richieda.",
+          ],
+        },
+        {
+          tipo: "definizioni",
+          voci: [
+            {
+              termine: "Supabase Inc. — responsabile",
+              descrizione:
+                "Infrastruttura della base dati dei contenuti del sito. Regione Unione europea (Francoforte).",
+            },
+            {
+              termine: "Vercel Inc. — responsabile",
+              descrizione:
+                "Hosting del sito e, quando sarà attiva, misurazione aggregata delle visite.",
+            },
+            {
+              termine: "Google LLC — responsabile, se attivato",
+              descrizione:
+                "Google Analytics 4 e mappa della pagina Contatti, entrambi subordinati al tuo consenso.",
+            },
+            {
+              termine: "Brevo SAS — responsabile",
+              descrizione: "Invio della newsletter, quando sarà attiva. Sede in Francia.",
+            },
+            {
+              termine: "TheFork — titolare autonomo, non nostro responsabile",
+              descrizione:
+                "Prenotazione dei tavoli. Tratta i dati per finalità proprie e sotto la propria responsabilità: non agisce per nostro conto e non è soggetto alle nostre istruzioni.",
+            },
+          ],
         },
       ],
     },
     {
-      titolo: "11. Modifiche a questa informativa",
+      titolo: "7. Trasferimenti verso Paesi terzi",
       blocchi: [
         {
           tipo: "p",
           testo:
-            "Possiamo aggiornare questa informativa quando cambiano i trattamenti, gli strumenti o la normativa. La data in cima indica l'ultimo aggiornamento; se le modifiche riguardano finalità per le quali serve il tuo consenso, te lo chiederemo di nuovo invece di darlo per acquisito.",
+            "Vercel Inc. e Google LLC hanno sede negli Stati Uniti. I trasferimenti verso tali fornitori sono fondati sull'EU-U.S. Data Privacy Framework e, in via ulteriore, sulle Clausole contrattuali tipo adottate dalla Commissione europea ai sensi dell'articolo 46.",
+        },
+        {
+          tipo: "p",
+          testo:
+            "La base dati Supabase è configurata sulla regione dell'Unione europea (Francoforte), il che riduce al minimo i trasferimenti; non è però escluso un accesso dall'estero da parte dell'assistenza tecnica del fornitore, coperto dalle medesime garanzie.",
+        },
+        {
+          tipo: "p",
+          testo:
+            "Le condizioni applicabili a ciascun fornitore sono quelle indicate nella documentazione contrattuale del fornitore stesso, che può aggiornarle: su richiesta ti indichiamo quale meccanismo risulta applicabile al momento della richiesta.",
+        },
+      ],
+    },
+    {
+      titolo: "8. Diritti dell'interessato",
+      blocchi: [
+        {
+          tipo: "p",
+          testo:
+            "Il Regolamento ti riconosce i diritti previsti dagli articoli da 15 a 22:",
+        },
+        {
+          tipo: "elenco",
+          voci: [
+            "accesso ai dati che ti riguardano e copia degli stessi (art. 15);",
+            "rettifica dei dati inesatti o incompleti (art. 16);",
+            "cancellazione, nei casi previsti (art. 17);",
+            "limitazione del trattamento (art. 18);",
+            "notifica ai destinatari di rettifica, cancellazione o limitazione (art. 19);",
+            "portabilità dei dati in formato leggibile da dispositivo automatico (art. 20);",
+            "opposizione al trattamento fondato sul legittimo interesse (art. 21);",
+            "non essere sottoposto a decisioni automatizzate, ipotesi qui non prevista (art. 22).",
+          ],
+        },
+        {
+          tipo: "p",
+          testo:
+            "Dove il trattamento si fonda sul consenso, puoi revocarlo in qualsiasi momento ai sensi dell'articolo 7, paragrafo 3, senza che ciò pregiudichi la liceità del trattamento svolto prima della revoca.",
+        },
+      ],
+    },
+    {
+      titolo: "9. Come esercitare i diritti",
+      blocchi: [
+        {
+          tipo: "p",
+          testo: "Puoi scrivere per posta elettronica, per PEC o per posta ordinaria:",
+        },
+        {
+          tipo: "definizioni",
+          voci: [
+            { termine: "Email", descrizione: TITOLARE.email },
+            { termine: "PEC", descrizione: TITOLARE.pec },
+            {
+              termine: "Posta ordinaria",
+              descrizione: `${TITOLARE.ragioneSociale}, ${TITOLARE.sedeLegale.completo}`,
+            },
+          ],
+        },
+        {
+          tipo: "p",
+          testo:
+            "Rispondiamo senza ingiustificato ritardo e comunque entro un mese dalla richiesta, come prevede l'articolo 12, paragrafo 3. Il termine può essere prorogato di due mesi se la richiesta è complessa o se ne riceviamo molte: in quel caso te lo comunichiamo entro il primo mese, spiegandone il motivo.",
+        },
+      ],
+    },
+    {
+      titolo: "10. Reclamo all'autorità di controllo",
+      blocchi: [
+        {
+          tipo: "p",
+          testo: `Se ritieni che il trattamento violi il Regolamento, hai diritto di proporre reclamo al ${GARANTE.nome}, oppure all'autorità di controllo dello Stato membro in cui risiedi, lavori o in cui si è verificata la presunta violazione.`,
+        },
+        {
+          tipo: "collegamenti",
+          voci: [{ testo: "garanteprivacy.it", href: GARANTE.sito, esterno: true }],
+        },
+      ],
+    },
+    {
+      titolo: "11. Modifiche alla presente informativa",
+      blocchi: [
+        {
+          tipo: "p",
+          testo:
+            "Questa informativa può essere aggiornata quando cambiano i trattamenti, gli strumenti impiegati o la normativa. La data dell'ultimo aggiornamento è indicata in apertura.",
+        },
+        {
+          tipo: "p",
+          testo:
+            "Se le modifiche riguardano finalità per le quali è necessario il consenso, ti verrà richiesto di nuovo invece di essere considerato acquisito.",
         },
       ],
     },
   ],
 };
 
+
 const en: Informativa = {
   titolo: "Privacy notice",
   sottotitolo:
-    "How we handle the personal data of people who visit this site and get in touch, under Articles 13 and 14 of Regulation (EU) 2016/679.",
+    "How Nuova Ristorazione S.r.l. handles the personal data of people who visit this site and get in touch, under Articles 13 and 14 of Regulation (EU) 2016/679.",
   aggiornata: (data) => `Last updated: ${data}`,
   sezioni: [
     {
-      titolo: "1. Who processes your data",
+      titolo: "1. Data controller",
       blocchi: [
         {
           tipo: "p",
@@ -331,217 +407,256 @@ const en: Informativa = {
         },
         {
           tipo: "p",
-          testo: `For anything concerning your data you can write to ${TITOLARE.email} or, by certified email, to ${TITOLARE.pec}.`,
+          testo: `Contact for any matter concerning personal data: ${TITOLARE.email}, or ${TITOLARE.pec} by certified email.`,
         },
         {
           tipo: "p",
           testo:
-            "No Data Protection Officer has been appointed: the business does not fall within the cases in which the Regulation makes one mandatory.",
+            "No Data Protection Officer has been appointed: the business does not fall within the cases in which Article 37 of the Regulation makes one mandatory.",
         },
       ],
     },
     {
-      titolo: "2. What data we collect",
+      titolo: "2. Categories of data collected",
       blocchi: [
         {
           tipo: "p",
           testo:
-            "Simply browsing this site does not require you to identify yourself. Until you make a choice about cookies and get in touch with us, we collect no data about you.",
+            "Simply browsing the site does not require you to identify yourself. The data below is processed only in the situations described.",
+        },
+      ],
+      sottosezioni: [
+        {
+          titolo: "2.1 Data provided through the contact and newsletter forms",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "Name, email address and, optionally, a phone number, when you give them to subscribe to the newsletter or to ask us something. The phone number is not required: it's only there if you'd rather be called back.",
+            },
+            {
+              tipo: "p",
+              testo:
+                "The newsletter form on the site is not currently connected to any sending service and transmits nothing: subscription will be active when we say so here.",
+            },
+          ],
         },
         {
-          tipo: "definizioni",
-          voci: [
+          titolo: "2.2 Booking data through TheFork",
+          blocchi: [
             {
-              termine: "Browsing data",
-              descrizione:
-                "The systems that run the site record, out of technical necessity, information such as IP address, browser type and the page requested. They serve to deliver the page and keep the service secure; we don't use them to identify you.",
+              tipo: "p",
+              testo:
+                "Bookings go through TheFork, which processes the data as a separate, independent controller: name, contact details, date, time and number of people are collected by that platform, under its notice and not this one.",
             },
             {
-              termine: "Cookie preferences",
-              descrizione:
-                "The choice you make in the banner is kept in your browser so we can honour it on your next visit. It's the only thing the site stores on your device of its own accord.",
+              tipo: "p",
+              testo:
+                "We have no control over that processing. To exercise your rights over that data you need to contact TheFork; we receive the booking and process it to hold your table.",
+            },
+          ],
+        },
+        {
+          titolo: "2.3 Browsing data",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "The systems that run the site record, out of technical necessity, IP address, browser type and pages visited. They are used in aggregate form for statistical purposes and to keep the service secure, not to identify who is browsing.",
+            },
+          ],
+        },
+        {
+          titolo: "2.4 Cookies and similar technologies",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "The site uses cookies and browser storage. What they are, what they do and how long they last is set out in the Cookie Policy, which forms part of this notice.",
             },
             {
-              termine: "Contact details",
-              descrizione:
-                "If you write to us by email or WhatsApp, or call us, we process what you tell us: name, contact details and the content of your message.",
-            },
-            {
-              termine: "Booking data",
-              descrizione:
-                "If you book a table, we process name, contact details, date, time and number of people, along with any particular requests you choose to share.",
-            },
-            {
-              termine: "Newsletter email address",
-              descrizione:
-                "If you subscribe to the newsletter we process your email address. At present the form on the site is not connected to any service and sends nothing: subscription will be active when we say so here.",
-            },
-            {
-              termine: "Usage statistics",
-              descrizione:
-                "Only if you consent to the «Analytics» category do we collect aggregate data on which pages get read and where visits come from. This collection is not active yet.",
+              tipo: "collegamenti",
+              voci: [{ testo: "Read the Cookie Policy", href: "/cookie-policy" }],
             },
           ],
         },
       ],
     },
     {
-      titolo: "3. Why we process it, and on what legal basis",
+      titolo: "3. Purposes of processing and legal bases",
+      sottosezioni: [
+        {
+          titolo: "3.1 Sending the newsletter",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "Legal basis: consent (Art. 6(1)(a)). Delivery is handled by Brevo SAS. Consent can be withdrawn at any time, using the unsubscribe link in every email or by writing to us: withdrawal does not affect the lawfulness of processing carried out beforehand.",
+            },
+          ],
+        },
+        {
+          titolo: "3.2 Responding to contact requests",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "Legal basis: performance of pre-contractual measures or of the contract (Art. 6(1)(b)). We process what you tell us in order to reply and follow up on your request.",
+            },
+          ],
+        },
+        {
+          titolo: "3.3 Aggregate usage statistics",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "Legal basis: legitimate interest (Art. 6(1)(f)) in knowing how the site performs. The intended tool is Vercel Analytics, which uses no cookies and does not retain IP addresses in clear: for that reason it is not subject to prior consent and does not appear in the banner.",
+            },
+            {
+              tipo: "p",
+              testo:
+                "This measurement is not active yet. You may object at any time under Article 21 by writing to the contacts given.",
+            },
+          ],
+        },
+        {
+          titolo: "3.4 Google Analytics 4, if enabled",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "Legal basis: explicit consent (Art. 6(1)(a)), given by turning on the corresponding category in the cookie panel. Unlike anonymous measurement, Google Analytics 4 uses cookies and is not activated without your consent.",
+            },
+            {
+              tipo: "p",
+              testo:
+                "It is not integrated at present. The site is however already set up with Google Consent Mode, whose starting state is «denied» for every purpose requiring consent.",
+            },
+          ],
+        },
+        {
+          titolo: "3.5 Compliance with legal obligations",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "Legal basis: legal obligation (Art. 6(1)(c)). This covers administrative, accounting and tax obligations, and lawful requests from the authorities.",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      titolo: "4. How data is processed",
       blocchi: [
         {
-          tipo: "definizioni",
+          tipo: "p",
+          testo:
+            "Processing is carried out using IT systems, applying the appropriate technical and organisational measures required by Article 32 of the Regulation.",
+        },
+        {
+          tipo: "elenco",
           voci: [
-            {
-              termine: "Running the site and keeping it secure",
-              descrizione:
-                "Legitimate interest (Art. 6(1)(f)): delivering the pages you ask for, preventing abuse and malfunction. It's the minimum interest without which the service doesn't exist.",
-            },
-            {
-              termine: "Remembering your cookie choice",
-              descrizione:
-                "Legal obligation (Art. 6(1)(c)): storing the preference is what lets us honour it, and the cookie rules require it.",
-            },
-            {
-              termine: "Replying to people who contact us",
-              descrizione:
-                "Pre-contractual steps or performance of a contract (Art. 6(1)(b)) where the request concerns a booking; legitimate interest (Art. 6(1)(f)) where it's a general question.",
-            },
-            {
-              termine: "Managing bookings",
-              descrizione:
-                "Performance of a contract (Art. 6(1)(b)): without that data the table can't be held.",
-            },
-            {
-              termine: "Sending the newsletter",
-              descrizione:
-                "Consent (Art. 6(1)(a)), which you can withdraw at any time using the unsubscribe link in every email.",
-            },
-            {
-              termine: "Measuring site usage",
-              descrizione:
-                "Consent (Art. 6(1)(a)), given by turning on the «Analytics» category. Without it, no measurement is activated.",
-            },
+            "traffic between your browser and the site is encrypted (HTTPS/TLS);",
+            "access to data is limited to authorised staff and protected by authentication;",
+            "the data infrastructure is provided by Supabase, with the database located in the European Union region.",
           ],
         },
         {
           tipo: "p",
           testo:
-            "Providing your data is always optional, but without the data needed for a booking or a reply we can't follow up.",
+            "There is no automated decision-making and no profiling within the meaning of Article 22.",
         },
       ],
     },
     {
-      titolo: "4. Cookies and similar technologies",
-      blocchi: [
-        {
-          tipo: "p",
-          testo:
-            "The site uses cookies and browser storage. What they are, what they do and how long they last is set out in detail in the Cookie Policy, which forms part of this notice.",
-        },
-        {
-          tipo: "p",
-          testo:
-            "You can change your mind at any time: your choice reopens from the button below and from the link at the foot of every page.",
-        },
-        { tipo: "gestisci-cookie" },
-      ],
-    },
-    {
-      titolo: "5. Who else may process your data",
-      blocchi: [
-        {
-          tipo: "p",
-          testo:
-            "We do not sell or trade personal data. Some suppliers process it on our behalf, as processors, under a contract limiting its use to what the service requires.",
-        },
-        {
-          tipo: "definizioni",
-          voci: [
-            {
-              termine: "Vercel Inc.",
-              descrizione:
-                "Site hosting. Processes the browsing data needed to deliver pages.",
-            },
-            {
-              termine: "Supabase Inc.",
-              descrizione:
-                "Database for the site's content (menu, opening hours, events). The data sits in the European Union region (Frankfurt).",
-            },
-            {
-              termine: "Brevo SAS",
-              descrizione:
-                "Newsletter delivery, once the feature is live. Based in France.",
-            },
-            {
-              termine: "Resend",
-              descrizione:
-                "Service emails relating to bookings, once the feature is live.",
-            },
-            {
-              termine: "Google LLC",
-              descrizione:
-                "Usage statistics and the map on the Contact page, only with your consent. The map is not loaded until you explicitly ask for it.",
-            },
-            {
-              termine: "TheFork",
-              descrizione:
-                "Booking platform. If you book through TheFork, that company processes your data as an independent controller under its own notice, over which we have no control.",
-            },
-          ],
-        },
-        {
-          tipo: "p",
-          testo:
-            "Data may also be disclosed to professional advisers and authorities where the law requires it.",
-        },
-      ],
-    },
-    {
-      titolo: "6. Transfers outside the European Union",
-      blocchi: [
-        {
-          tipo: "p",
-          testo:
-            "Some suppliers are based in the United States. The site's database is configured on the European region (Frankfurt), but access from abroad by the supplier's technical support cannot be ruled out.",
-        },
-        {
-          tipo: "p",
-          testo:
-            "Where a transfer to a third country takes place, it is covered by the safeguards in Chapter V of the Regulation: an adequacy decision of the European Commission, or standard contractual clauses. The conditions applying to each supplier are set out in that supplier's own documentation; on request we'll tell you which mechanism applies.",
-        },
-      ],
-    },
-    {
-      titolo: "7. How long we keep it",
+      titolo: "5. Retention period",
       blocchi: [
         {
           tipo: "definizioni",
           voci: [
-            {
-              termine: "Cookie preferences",
-              descrizione:
-                "12 months from your choice, after which we ask again.",
-            },
-            {
-              termine: "Messages and enquiries",
-              descrizione:
-                "As long as needed to reply and deal with what follows; then deleted, save for what the law requires us to keep.",
-            },
-            {
-              termine: "Booking data",
-              descrizione:
-                "As long as needed to manage the booking and to meet the administrative and tax obligations arising from it.",
-            },
             {
               termine: "Newsletter subscription",
-              descrizione: "Until you unsubscribe.",
+              descrizione: "Until consent is withdrawn.",
             },
             {
-              termine: "Statistics",
+              termine: "Contact requests",
               descrizione:
-                "According to the retention set on the measurement tool, which we'll state in the Cookie Policy once it is active.",
+                "24 months from the last exchange, save for anything that must be kept longer by law.",
+            },
+            { termine: "Browsing data", descrizione: "No more than 12 months." },
+            {
+              termine: "Cookies and similar tools",
+              descrizione: "Durations are given entry by entry in the Cookie Policy.",
             },
           ],
+        },
+      ],
+    },
+    {
+      titolo: "6. Categories of recipients",
+      blocchi: [
+        {
+          tipo: "p",
+          testo: "We do not sell or trade personal data. It may be seen by:",
+        },
+        {
+          tipo: "elenco",
+          voci: [
+            "staff authorised to process it, instructed under Article 29;",
+            "suppliers processing data on our behalf as processors under Article 28;",
+            "public authorities, where the law requires it.",
+          ],
+        },
+        {
+          tipo: "definizioni",
+          voci: [
+            {
+              termine: "Supabase Inc. — processor",
+              descrizione:
+                "Database infrastructure for the site's content. European Union region (Frankfurt).",
+            },
+            {
+              termine: "Vercel Inc. — processor",
+              descrizione:
+                "Site hosting and, once active, aggregate measurement of visits.",
+            },
+            {
+              termine: "Google LLC — processor, if enabled",
+              descrizione:
+                "Google Analytics 4 and the map on the Contact page, both subject to your consent.",
+            },
+            {
+              termine: "Brevo SAS — processor",
+              descrizione: "Newsletter delivery, once active. Based in France.",
+            },
+            {
+              termine: "TheFork — independent controller, not our processor",
+              descrizione:
+                "Table bookings. It processes data for its own purposes and under its own responsibility: it does not act on our behalf and is not subject to our instructions.",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      titolo: "7. Transfers to third countries",
+      blocchi: [
+        {
+          tipo: "p",
+          testo:
+            "Vercel Inc. and Google LLC are based in the United States. Transfers to those suppliers rest on the EU-U.S. Data Privacy Framework and, additionally, on the Standard Contractual Clauses adopted by the European Commission under Article 46.",
+        },
+        {
+          tipo: "p",
+          testo:
+            "The Supabase database is configured on the European Union region (Frankfurt), which keeps transfers to a minimum; access from abroad by the supplier's technical support cannot be ruled out, and is covered by the same safeguards.",
+        },
+        {
+          tipo: "p",
+          testo:
+            "The conditions applying to each supplier are those set out in that supplier's own contractual documentation, which it may update: on request we will tell you which mechanism applies at the time you ask.",
         },
       ],
     },
@@ -550,43 +665,60 @@ const en: Informativa = {
       blocchi: [
         {
           tipo: "p",
-          testo:
-            "The Regulation gives you a set of rights you can exercise at any time, free of charge:",
+          testo: "The Regulation gives you the rights set out in Articles 15 to 22:",
         },
         {
           tipo: "elenco",
           voci: [
-            "to know whether we process data about you and obtain a copy (access, Art. 15);",
-            "to have inaccurate or incomplete data corrected (rectification, Art. 16);",
-            "to ask for erasure, in the cases provided for (Art. 17);",
-            "to ask for processing to be restricted (Art. 18);",
-            "to receive your data in a machine-readable format, or have it transferred to another controller (portability, Art. 20);",
-            "to object to processing based on legitimate interest (Art. 21);",
-            "to withdraw consent at any time, without affecting what was done beforehand (Art. 7(3)).",
+            "access to data concerning you, and a copy of it (Art. 15);",
+            "rectification of inaccurate or incomplete data (Art. 16);",
+            "erasure, in the cases provided for (Art. 17);",
+            "restriction of processing (Art. 18);",
+            "notification to recipients of rectification, erasure or restriction (Art. 19);",
+            "portability of data in a machine-readable format (Art. 20);",
+            "objection to processing based on legitimate interest (Art. 21);",
+            "not to be subject to automated decisions, which do not occur here (Art. 22).",
           ],
         },
         {
           tipo: "p",
-          testo: `To exercise them, write to ${TITOLARE.email}. We reply within a month; if the request is complex the deadline may be extended, and we'll tell you if so.`,
+          testo:
+            "Where processing rests on consent, you may withdraw it at any time under Article 7(3), without affecting the lawfulness of processing carried out before withdrawal.",
         },
       ],
     },
     {
-      titolo: "9. If you think something is wrong",
+      titolo: "9. How to exercise your rights",
       blocchi: [
+        { tipo: "p", testo: "You can write by email, certified email or post:" },
         {
-          tipo: "p",
-          testo: `You can come to us at any time. If you're not satisfied with the answer, you have the right to lodge a complaint with the Italian data protection authority, ${GARANTE.nome} (${GARANTE.sito}), or with the supervisory authority of the Member State where you live or work.`,
+          tipo: "definizioni",
+          voci: [
+            { termine: "Email", descrizione: TITOLARE.email },
+            { termine: "Certified email (PEC)", descrizione: TITOLARE.pec },
+            {
+              termine: "Post",
+              descrizione: `${TITOLARE.ragioneSociale}, ${TITOLARE.sedeLegale.completo}`,
+            },
+          ],
         },
-      ],
-    },
-    {
-      titolo: "10. Children",
-      blocchi: [
         {
           tipo: "p",
           testo:
-            "This site is not aimed at children under fourteen and does not knowingly collect their data. If you believe a child has given us personal data, write to us and we'll delete it.",
+            "We reply without undue delay and in any case within one month of the request, as Article 12(3) requires. That period may be extended by two months where the request is complex or where we receive many: if so, we tell you within the first month and explain why.",
+        },
+      ],
+    },
+    {
+      titolo: "10. Complaint to the supervisory authority",
+      blocchi: [
+        {
+          tipo: "p",
+          testo: `If you believe the processing infringes the Regulation, you have the right to lodge a complaint with the Italian supervisory authority, ${GARANTE.nome}, or with the authority of the Member State where you live, work, or where the alleged infringement took place.`,
+        },
+        {
+          tipo: "collegamenti",
+          voci: [{ testo: "garanteprivacy.it", href: GARANTE.sito, esterno: true }],
         },
       ],
     },
@@ -596,7 +728,12 @@ const en: Informativa = {
         {
           tipo: "p",
           testo:
-            "We may update this notice when processing, tools or the law change. The date at the top shows the last update; if the changes concern purposes requiring your consent, we'll ask again rather than assume it.",
+            "This notice may be updated when processing, the tools used or the law change. The date of the last update is shown at the top.",
+        },
+        {
+          tipo: "p",
+          testo:
+            "If the changes concern purposes requiring consent, you will be asked again rather than having it treated as already given.",
         },
       ],
     },
