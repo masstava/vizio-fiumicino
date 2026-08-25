@@ -132,6 +132,16 @@ const it = {
       descrizione:
         "Menu degustazione, serate a tema e cene private da Vizio Bistrot, a Fiumicino. Si organizza per telefono o WhatsApp.",
     },
+    privacy: {
+      titolo: "Informativa sulla privacy",
+      descrizione:
+        "Come Nuova Ristorazione S.r.l. tratta i dati personali di chi visita vizio-fiumicino.it, ai sensi del Regolamento (UE) 2016/679.",
+    },
+    cookiePolicy: {
+      titolo: "Cookie Policy",
+      descrizione:
+        "Quali cookie usa vizio-fiumicino.it, a cosa servono, quanto durano e come cambiare idea in qualsiasi momento.",
+    },
   },
   consenso: {
     // Banner
@@ -155,6 +165,8 @@ const it = {
 
     // Riapertura dal footer
     gestisci: "Gestisci cookie",
+    linkPrivacy: "Privacy",
+    linkCookie: "Cookie Policy",
 
     categorie: {
       necessary: {
@@ -326,6 +338,16 @@ const en: Dizionario = {
       descrizione:
         "Tasting menus, themed nights and private dinners at Vizio Bistrot, Fiumicino. Arranged by phone or WhatsApp.",
     },
+    privacy: {
+      titolo: "Privacy notice",
+      descrizione:
+        "How Nuova Ristorazione S.r.l. handles the personal data of people visiting vizio-fiumicino.it, under Regulation (EU) 2016/679.",
+    },
+    cookiePolicy: {
+      titolo: "Cookie Policy",
+      descrizione:
+        "Which cookies vizio-fiumicino.it uses, what they do, how long they last and how to change your mind at any time.",
+    },
   },
   consenso: {
     titolo: "Cookies and privacy",
@@ -346,6 +368,8 @@ const en: Dizionario = {
     sempreAttivo: "Always on",
 
     gestisci: "Manage cookies",
+    linkPrivacy: "Privacy",
+    linkCookie: "Cookie Policy",
 
     categorie: {
       necessary: {

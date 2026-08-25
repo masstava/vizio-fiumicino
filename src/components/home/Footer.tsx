@@ -1,9 +1,10 @@
+import Link from "next/link";
 import { GestisciCookie } from "@/src/components/consenso/GestisciCookie";
 import { Logo } from "@/src/components/ui/Logo";
 import { SocialIcon } from "@/src/components/ui/SocialIcon";
 import { CONTATTI } from "@/src/lib/contatti";
 import type { FasciaOraria, GiornoOrario } from "@/src/lib/dominio";
-import type { Locale } from "@/src/lib/i18n/config";
+import { localizedPath, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
 
 interface FooterProps {
@@ -171,7 +172,22 @@ export function Footer({ orari, apertoOra, notaOrari, locale }: FooterProps) {
         </div>
       </div>
 
-      <div className="mt-8">
+      {/* Riga legale: le due informative e la riapertura del pannello
+          consenso. "Gestisci cookie" sta qui e non altrove perché il
+          footer è l'unico punto presente su ogni pagina. */}
+      <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-1">
+        <Link
+          href={localizedPath("/privacy", locale)}
+          className="inline-flex min-h-11 items-center font-sans text-sm text-muted-dark underline underline-offset-4 transition-colors hover:text-cream-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text md:min-h-0"
+        >
+          {t.consenso.linkPrivacy}
+        </Link>
+        <Link
+          href={localizedPath("/cookie-policy", locale)}
+          className="inline-flex min-h-11 items-center font-sans text-sm text-muted-dark underline underline-offset-4 transition-colors hover:text-cream-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text md:min-h-0"
+        >
+          {t.consenso.linkCookie}
+        </Link>
         <GestisciCookie locale={locale} />
       </div>
 
