@@ -22,28 +22,21 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const t = getDizionario(locale);
 
-  // Il prefisso di lingua va messo su TUTTI gli href, ancore comprese:
-  // senza, da /en il clic rimanda alla home italiana.
+  // Ogni voce punta alla propria pagina, nessuna più a un'ancora della
+  // home: localizedPath ci mette il prefisso di lingua, senza il quale
+  // da /en il clic rimanderebbe alla versione italiana.
   //
-  // Ogni voce che ha una pagina dedicata ci punta; resta un'ancora
-  // sola, "Menu", perché il menu completo in home è un'anteprima e la
-  // pagina /menu è raggiunta dalla sua CTA.
-  //
-  // Le ancore della home (#piatti-in-evidenza, #cocktail, #contatti)
-  // restano al loro posto: chi ci arriva da un link esterno o salvato
-  // continua a trovarle. Il footer ha ancora id="contatti" ed è
-  // montato su ogni pagina.
-  const base = localizedPath("/", locale);
+  // Le ancore della home (#menu, #piatti-in-evidenza, #cocktail,
+  // #contatti) restano al loro posto e continuano a funzionare per chi
+  // ci arriva da un link esterno o salvato: qui cambia solo dove punta
+  // il menu. Il footer ha ancora id="contatti" ed è montato su ogni
+  // pagina.
   const NAV_LINKS = [
-    { href: `${base}#menu`, label: t.nav.menu, ancora: true },
-    { href: localizedPath("/la-carne", locale), label: t.nav.carne, ancora: false },
-    { href: localizedPath("/cocktail-bar", locale), label: t.nav.cocktail, ancora: false },
-    {
-      href: localizedPath("/experience-eventi", locale),
-      label: t.nav.experience,
-      ancora: false,
-    },
-    { href: localizedPath("/contatti", locale), label: t.nav.contatti, ancora: false },
+    { href: localizedPath("/menu", locale), label: t.nav.menu },
+    { href: localizedPath("/la-carne", locale), label: t.nav.carne },
+    { href: localizedPath("/cocktail-bar", locale), label: t.nav.cocktail },
+    { href: localizedPath("/experience-eventi", locale), label: t.nav.experience },
+    { href: localizedPath("/contatti", locale), label: t.nav.contatti },
   ];
 
   return (
@@ -61,22 +54,18 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           aria-label={t.nav.principale}
           className="hidden items-center gap-8 md:flex"
         >
-          {NAV_LINKS.map((link) => {
-            // Le pagine passano da Link (navigazione client e
-            // prefetch); le ancore restano <a>, perché Link non
-            // aggiunge nulla a uno scroll nella stessa pagina.
-            const classe =
-              "font-sans text-sm text-muted-dark transition-colors hover:text-cream-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text";
-            return link.ancora ? (
-              <a key={link.href} href={link.href} className={classe}>
-                {link.label}
-              </a>
-            ) : (
-              <Link key={link.href} href={link.href} className={classe}>
-                {link.label}
-              </Link>
-            );
-          })}
+          {/* Tutte le voci sono pagine, quindi tutte passano da Link:
+              navigazione client e prefetch. Il ramo <a> che serviva
+              alle ancore non ha più voci a cui applicarsi. */}
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="font-sans text-sm text-muted-dark transition-colors hover:text-cream-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text"
+            >
+              {link.label}
+            </Link>
+          ))}
         </nav>
 
         <div className="flex items-center gap-3">
@@ -110,20 +99,16 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           aria-label={t.nav.principale}
           className="flex flex-col gap-1 border-t border-cream-text/10 px-6 pb-4 pt-2 md:hidden"
         >
-          {NAV_LINKS.map((link) => {
-            const classe =
-              "flex min-h-11 items-center rounded-[2px] px-2 font-sans text-sm text-muted-dark transition-colors hover:text-cream-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text";
-            const chiudi = () => setMenuOpen(false);
-            return link.ancora ? (
-              <a key={link.href} href={link.href} onClick={chiudi} className={classe}>
-                {link.label}
-              </a>
-            ) : (
-              <Link key={link.href} href={link.href} onClick={chiudi} className={classe}>
-                {link.label}
-              </Link>
-            );
-          })}
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setMenuOpen(false)}
+              className="flex min-h-11 items-center rounded-[2px] px-2 font-sans text-sm text-muted-dark transition-colors hover:text-cream-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-text"
+            >
+              {link.label}
+            </Link>
+          ))}
         </nav>
       )}
     </header>
