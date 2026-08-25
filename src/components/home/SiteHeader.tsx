@@ -25,17 +25,25 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   // Il prefisso di lingua va messo su TUTTI gli href, ancore comprese:
   // senza, da /en il clic rimanda alla home italiana.
   //
-  // "La carne" e "Cocktail" puntavano ad ancore della home perché le
-  // pagine dedicate non esistevano ancora. Ora esistono, e vincono
-  // sull'anteprima in home. Le ancore #piatti-in-evidenza e #cocktail
-  // restano al loro posto nella home: chi ci arriva da un link
-  // esterno o salvato continua a trovarle.
+  // Ogni voce che ha una pagina dedicata ci punta; resta un'ancora
+  // sola, "Menu", perché il menu completo in home è un'anteprima e la
+  // pagina /menu è raggiunta dalla sua CTA.
+  //
+  // Le ancore della home (#piatti-in-evidenza, #cocktail, #contatti)
+  // restano al loro posto: chi ci arriva da un link esterno o salvato
+  // continua a trovarle. Il footer ha ancora id="contatti" ed è
+  // montato su ogni pagina.
   const base = localizedPath("/", locale);
   const NAV_LINKS = [
     { href: `${base}#menu`, label: t.nav.menu, ancora: true },
     { href: localizedPath("/la-carne", locale), label: t.nav.carne, ancora: false },
     { href: localizedPath("/cocktail-bar", locale), label: t.nav.cocktail, ancora: false },
-    { href: `${base}#contatti`, label: t.nav.contatti, ancora: true },
+    {
+      href: localizedPath("/experience-eventi", locale),
+      label: t.nav.experience,
+      ancora: false,
+    },
+    { href: localizedPath("/contatti", locale), label: t.nav.contatti, ancora: false },
   ];
 
   return (

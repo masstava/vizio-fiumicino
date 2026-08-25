@@ -11,6 +11,10 @@ const it = {
     menu: "Menu",
     carne: "La carne",
     cocktail: "Cocktail",
+    // Etichetta accorciata rispetto al titolo della pagina
+    // ("Experience & Eventi"): in una barra a cinque voci il titolo
+    // intero occupava quanto due voci normali.
+    experience: "Experience",
     contatti: "Contatti",
     principale: "Principale",
     apriMenu: "Apri il menu",
@@ -160,6 +164,7 @@ const en: Dizionario = {
     menu: "Menu",
     carne: "The meat",
     cocktail: "Cocktails",
+    experience: "Experiences",
     contatti: "Contact",
     principale: "Main",
     apriMenu: "Open menu",
