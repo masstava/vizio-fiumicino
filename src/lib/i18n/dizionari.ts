@@ -191,6 +191,16 @@ const it = {
       },
     },
   },
+  menuOperativo: {
+    titoloPagina: "Menu",
+    descrizionePagina:
+      "Il menu di Vizio Bistrot da consultare al tavolo: piatti, prezzi e allergeni.",
+    vaiA: "Vai alla sezione",
+    consigliatoOra: "Ora",
+    allergeni: "Allergeni",
+    tornaSu: "Torna su",
+    vuoto: "Il menu non è disponibile in questo momento. Chiedi al personale di sala.",
+  },
   paginaContatti: {
     mappaTitolo: "Mappa: Vizio Bistrot, Via delle Ombrine 25, Fiumicino",
     caricaMappa: "Carica la mappa",
@@ -395,6 +405,16 @@ const en: Dizionario = {
           "They let us measure campaigns and show more relevant ads on external platforms.",
       },
     },
+  },
+  menuOperativo: {
+    titoloPagina: "Menu",
+    descrizionePagina:
+      "The Vizio Bistrot menu to read at your table: dishes, prices and allergens.",
+    vaiA: "Go to section",
+    consigliatoOra: "Now",
+    allergeni: "Allergens",
+    tornaSu: "Back to top",
+    vuoto: "The menu isn't available right now. Please ask a member of staff.",
   },
   paginaContatti: {
     mappaTitolo: "Map: Vizio Bistrot, Via delle Ombrine 25, Fiumicino",

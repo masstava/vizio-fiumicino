@@ -13,7 +13,15 @@ export interface CategoriaMenu {
 
 export interface MacroMenu {
   id: string;
+  /** Nome già tradotto nella lingua della pagina. */
   nome: string;
+  /**
+   * Nome originale del database, non tradotto. Serve a chi deve
+   * riconoscere una macro specifica per nome (per esempio la
+   * pre-selezione oraria della vista al tavolo): "nome" cambia con la
+   * lingua e non è utilizzabile come chiave.
+   */
+  chiave?: string;
   categorie: CategoriaMenu[];
 }
 

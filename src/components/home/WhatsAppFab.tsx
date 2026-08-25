@@ -1,6 +1,8 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useOverlayAttivo } from "@/src/components/overlay/OverlayContext";
+import { stripLocale } from "@/src/lib/i18n/config";
 import { CONTATTI } from "@/src/lib/contatti";
 import type { Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
@@ -15,11 +17,18 @@ export function WhatsAppFab({ locale }: { locale: Locale }) {
   const t = getDizionario(locale);
   const overlayAttivo = useOverlayAttivo();
 
+  // Sulla vista al tavolo il bottone non compare. È la stessa ragione
+  // per cui lì non ci sono header e footer: chi legge il menu ha il
+  // personale di sala a due passi, e un bollo verde fisso sopra i
+  // piatti è l'opposto dell'esperienza immersiva richiesta.
+  const percorso = stripLocale(usePathname() || "/");
+  const vistaAlTavolo = percorso === "/menu-online";
+
   // Nascosto quando un overlay occupa lo schermo: popup newsletter e
   // banner cookie non esistono ancora, ma quando arriveranno basterà
   // che si registrino nel contesto (vedi OverlayContext) perché questo
   // bottone si tolga di mezzo da solo.
-  if (overlayAttivo) return null;
+  if (overlayAttivo || vistaAlTavolo) return null;
 
   const href = `${CONTATTI.whatsapp.href}?text=${encodeURIComponent(t.whatsapp.messaggio)}`;
 
