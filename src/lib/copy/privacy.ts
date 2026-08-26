@@ -24,13 +24,24 @@ import type { Locale } from "@/src/lib/i18n/config";
 //  - §6: Google è indicato come responsabile "se attivato". La
 //    qualificazione per GA4 è dibattuta e dipende dalla
 //    configurazione.
-//  - §2.2 e §6: TheFork resta titolare autonomo. Il sistema di
-//    prenotazione nativo (§21) non esiste nel repo — verificato.
-//    Da rivedere quando arriverà.
+//  - §5: i 12 mesi indicati per i dati di prenotazione sono una
+//    PROPOSTA, non un valore confermato dal committente — coerente
+//    con l'ordine di grandezza già usato per le richieste di
+//    contatto (24 mesi), ma da confermare prima che questo testo
+//    valga come definitivo.
+//
+// Aggiornamento 2026-08-26: il sistema di prenotazione nativo (§21)
+// è ora completo e in produzione. I dati di chi prenota dal sito
+// (§2.2) sono trattati direttamente da noi, non più tramite TheFork
+// — §2.2, §3.2 (nuovo), §5 e §6 sono stati corretti di conseguenza.
+// Se TheFork continua a esistere come canale di sola scoperta
+// esterno (marketplace/app, non integrato sul sito), quel trattamento
+// avviene interamente fuori dal nostro sito e non richiede menzione
+// qui.
 //
 // Due trattamenti descritti NON sono ancora attivi, e il testo lo
-// dice invece di lasciarlo intendere: Vercel Analytics (§3.3) e
-// Google Analytics 4 (§3.4). Verificato: nessuno dei due è fra le
+// dice invece di lasciarlo intendere: Vercel Analytics (§3.4) e
+// Google Analytics 4 (§3.5). Verificato: nessuno dei due è fra le
 // dipendenze del progetto né importato nel codice.
 // =============================================================
 
@@ -84,17 +95,17 @@ const it: Informativa = {
           ],
         },
         {
-          titolo: "2.2 Dati di prenotazione tramite TheFork",
+          titolo: "2.2 Dati di prenotazione",
           blocchi: [
             {
               tipo: "p",
               testo:
-                "Le prenotazioni passano da TheFork, che tratta i dati come titolare autonomo e distinto: nome, recapito, data, orario e numero di persone vengono raccolti da quella piattaforma, secondo la sua informativa e non secondo questa.",
+                "Chi prenota un tavolo tramite il modulo presente sul sito ci comunica nome, telefono, email (facoltativa), data, fascia oraria e numero di coperti, ed eventualmente note o allergie; per le prenotazioni legate a un evento specifico, anche le risposte alle domande aggiuntive previste per quell'evento.",
             },
             {
               tipo: "p",
               testo:
-                "Su quel trattamento non abbiamo controllo. Per esercitare i tuoi diritti su quei dati devi rivolgerti a TheFork; noi riceviamo la prenotazione e la trattiamo per tenerti il tavolo.",
+                "Questi dati sono raccolti e trattati direttamente da noi, in qualità di titolari del trattamento: non transitano da, né sono raccolti da, piattaforme di prenotazione terze.",
             },
           ],
         },
@@ -138,7 +149,17 @@ const it: Informativa = {
           ],
         },
         {
-          titolo: "3.2 Riscontro alle richieste di contatto",
+          titolo: "3.2 Gestione delle prenotazioni",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "Base giuridica: esecuzione di misure precontrattuali o del contratto (art. 6.1.b). Accettare una prenotazione è una misura precontrattuale richiesta da chi prenota; trattiamo i dati indicati al punto 2.2 per confermarla, gestirla e, se richiesto, cancellarla. L'invio delle email di conferma e delle eventuali comunicazioni relative a una cancellazione è affidato a Resend.",
+            },
+          ],
+        },
+        {
+          titolo: "3.3 Riscontro alle richieste di contatto",
           blocchi: [
             {
               tipo: "p",
@@ -148,7 +169,7 @@ const it: Informativa = {
           ],
         },
         {
-          titolo: "3.3 Statistiche di utilizzo aggregate",
+          titolo: "3.4 Statistiche di utilizzo aggregate",
           blocchi: [
             {
               tipo: "p",
@@ -163,7 +184,7 @@ const it: Informativa = {
           ],
         },
         {
-          titolo: "3.4 Google Analytics 4, se attivato",
+          titolo: "3.5 Google Analytics 4, se attivato",
           blocchi: [
             {
               tipo: "p",
@@ -178,7 +199,7 @@ const it: Informativa = {
           ],
         },
         {
-          titolo: "3.5 Adempimento di obblighi di legge",
+          titolo: "3.6 Adempimento di obblighi di legge",
           blocchi: [
             {
               tipo: "p",
@@ -226,6 +247,11 @@ const it: Informativa = {
               termine: "Richieste di contatto",
               descrizione:
                 "24 mesi dall'ultimo scambio, salvo quanto debba essere conservato più a lungo per obbligo di legge.",
+            },
+            {
+              termine: "Dati di prenotazione",
+              descrizione:
+                "12 mesi dalla data della prenotazione, salvo la necessità di conservarli più a lungo per obblighi fiscali o contabili.",
             },
             {
               termine: "Dati di navigazione",
@@ -279,9 +305,9 @@ const it: Informativa = {
               descrizione: "Invio della newsletter, quando sarà attiva. Sede in Francia.",
             },
             {
-              termine: "TheFork — titolare autonomo, non nostro responsabile",
+              termine: "Resend, Inc. — responsabile",
               descrizione:
-                "Prenotazione dei tavoli. Tratta i dati per finalità proprie e sotto la propria responsabilità: non agisce per nostro conto e non è soggetto alle nostre istruzioni.",
+                "Invio delle email di conferma delle prenotazioni e delle eventuali comunicazioni relative a una loro cancellazione. Sede negli Stati Uniti.",
             },
           ],
         },
@@ -294,6 +320,11 @@ const it: Informativa = {
           tipo: "p",
           testo:
             "Vercel Inc. e Google LLC hanno sede negli Stati Uniti. I trasferimenti verso tali fornitori sono fondati sull'EU-U.S. Data Privacy Framework e, in via ulteriore, sulle Clausole contrattuali tipo adottate dalla Commissione europea ai sensi dell'articolo 46.",
+        },
+        {
+          tipo: "p",
+          testo:
+            "Anche Resend, Inc., il fornitore usato per l'invio delle email di conferma e delle eventuali comunicazioni di cancellazione delle prenotazioni, ha sede negli Stati Uniti.",
         },
         {
           tipo: "p",
@@ -442,17 +473,17 @@ const en: Informativa = {
           ],
         },
         {
-          titolo: "2.2 Booking data through TheFork",
+          titolo: "2.2 Booking data",
           blocchi: [
             {
               tipo: "p",
               testo:
-                "Bookings go through TheFork, which processes the data as a separate, independent controller: name, contact details, date, time and number of people are collected by that platform, under its notice and not this one.",
+                "Anyone booking a table through the form on the site gives us their name, phone number, email address (optional), date, time slot and number of guests, and optionally any notes or allergies; for bookings tied to a specific event, also the answers to any additional questions set for that event.",
             },
             {
               tipo: "p",
               testo:
-                "We have no control over that processing. To exercise your rights over that data you need to contact TheFork; we receive the booking and process it to hold your table.",
+                "This data is collected and processed directly by us, as data controller: it does not pass through, or get collected by, third-party booking platforms.",
             },
           ],
         },
@@ -496,7 +527,17 @@ const en: Informativa = {
           ],
         },
         {
-          titolo: "3.2 Responding to contact requests",
+          titolo: "3.2 Managing bookings",
+          blocchi: [
+            {
+              tipo: "p",
+              testo:
+                "Legal basis: performance of pre-contractual measures or of the contract (Art. 6(1)(b)). Accepting a booking is a pre-contractual measure requested by the person booking; we process the data described in 2.2 to confirm it, manage it and, if requested, cancel it. Confirmation emails and any communications relating to a cancellation are sent through Resend.",
+            },
+          ],
+        },
+        {
+          titolo: "3.3 Responding to contact requests",
           blocchi: [
             {
               tipo: "p",
@@ -506,7 +547,7 @@ const en: Informativa = {
           ],
         },
         {
-          titolo: "3.3 Aggregate usage statistics",
+          titolo: "3.4 Aggregate usage statistics",
           blocchi: [
             {
               tipo: "p",
@@ -521,7 +562,7 @@ const en: Informativa = {
           ],
         },
         {
-          titolo: "3.4 Google Analytics 4, if enabled",
+          titolo: "3.5 Google Analytics 4, if enabled",
           blocchi: [
             {
               tipo: "p",
@@ -536,7 +577,7 @@ const en: Informativa = {
           ],
         },
         {
-          titolo: "3.5 Compliance with legal obligations",
+          titolo: "3.6 Compliance with legal obligations",
           blocchi: [
             {
               tipo: "p",
@@ -585,6 +626,11 @@ const en: Informativa = {
               descrizione:
                 "24 months from the last exchange, save for anything that must be kept longer by law.",
             },
+            {
+              termine: "Booking data",
+              descrizione:
+                "12 months from the date of the booking, save for the need to keep it longer for tax or accounting obligations.",
+            },
             { termine: "Browsing data", descrizione: "No more than 12 months." },
             {
               termine: "Cookies and similar tools",
@@ -632,9 +678,9 @@ const en: Informativa = {
               descrizione: "Newsletter delivery, once active. Based in France.",
             },
             {
-              termine: "TheFork — independent controller, not our processor",
+              termine: "Resend, Inc. — processor",
               descrizione:
-                "Table bookings. It processes data for its own purposes and under its own responsibility: it does not act on our behalf and is not subject to our instructions.",
+                "Sending booking confirmation emails and any communications relating to a cancellation. Based in the United States.",
             },
           ],
         },
@@ -647,6 +693,11 @@ const en: Informativa = {
           tipo: "p",
           testo:
             "Vercel Inc. and Google LLC are based in the United States. Transfers to those suppliers rest on the EU-U.S. Data Privacy Framework and, additionally, on the Standard Contractual Clauses adopted by the European Commission under Article 46.",
+        },
+        {
+          tipo: "p",
+          testo:
+            "Resend, Inc., the supplier used for sending booking confirmation emails and any cancellation-related communications, is also based in the United States.",
         },
         {
           tipo: "p",
