@@ -5,18 +5,14 @@ import { Button } from "@/src/components/ui/Button";
 import type { GiornoOrario } from "@/src/lib/dominio";
 import type { Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
-import type { ContestoEvento } from "@/src/lib/prenotazioni/evento-contesto";
+import type { ContestoEvento, RispostaExtra } from "@/src/lib/prenotazioni/evento-contesto";
 import {
   formatDataLeggibile,
   orariSelezionabili,
   unisciCapienza,
   type EsitoFascia,
 } from "@/src/lib/prenotazioni/disponibilita";
-import {
-  creaPrenotazione,
-  leggiCapienzaGiorno,
-  type RispostaExtra,
-} from "../_actions";
+import { creaPrenotazione, leggiCapienzaGiorno } from "../_actions";
 
 const inputClass =
   "w-full min-h-11 md:min-h-0 bg-cream border border-ink/20 rounded-[2px] px-3 py-2 font-sans text-sm text-ink placeholder:text-muted/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 focus-visible:border-bordeaux/50";

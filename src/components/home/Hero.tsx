@@ -1,9 +1,9 @@
+import Link from "next/link";
 import { Button } from "@/src/components/ui/Button";
-import { DialogPrenota } from "./DialogPrenota";
 import { FlameAccent } from "@/src/components/ui/FlameAccent";
 import { ImagePlaceholder } from "@/src/components/ui/ImagePlaceholder";
 import { RECENSIONI } from "@/src/lib/contatti";
-import type { Locale } from "@/src/lib/i18n/config";
+import { localizedPath, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
 
 // Video reale del locale, ospitato su Supabase Storage (bucket
@@ -67,12 +67,11 @@ export function Hero({
         <h1 className="mb-8 font-serif text-4xl font-medium leading-[1.1] md:text-6xl">
           {headline}
         </h1>
-        {/* TEMPORANEO come nell'header: vedi DialogPrenota.tsx. */}
-        <DialogPrenota locale={locale}>
+        <Link href={localizedPath("/prenota", locale)}>
           <Button type="button" variant="primary">
             {t.cta.prenotaTavolo}
           </Button>
-        </DialogPrenota>
+        </Link>
 
         {/* Valori statici letti dalla fonte unica: diventeranno un
             fetch reale quando arriverà l'integrazione con l'API

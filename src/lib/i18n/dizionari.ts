@@ -191,15 +191,6 @@ const it = {
       },
     },
   },
-  // TEMPORANEO — vedi src/components/home/DialogPrenota.tsx.
-  // Da rimuovere insieme al dialogo quando arriva il sistema di
-  // prenotazione nativo (§21).
-  prenotaPlaceholder: {
-    titolo: "Prenotazioni online in arrivo",
-    testo:
-      "Il sistema di prenotazione online arriva a breve. Nel frattempo chiamaci o scrivici su WhatsApp: rispondiamo negli orari di apertura.",
-    chiudi: "Chiudi",
-  },
   paginaPrenota: {
     titolo: "Prenota un tavolo",
     descrizione:
@@ -519,12 +510,6 @@ const en: Dizionario = {
           "They let us measure campaigns and show more relevant ads on external platforms.",
       },
     },
-  },
-  prenotaPlaceholder: {
-    titolo: "Online booking coming soon",
-    testo:
-      "Online booking is on its way. In the meantime give us a call or message us on WhatsApp: we answer during opening hours.",
-    chiudi: "Close",
   },
   paginaPrenota: {
     titolo: "Book a table",

@@ -37,10 +37,6 @@ export async function leggiCapienzaGiorno(data: string): Promise<RigaCapienza[]>
 // Creazione
 // =============================================================
 
-// Ri-esportato: PrenotaForm.tsx lo importa da qui. Dichiarato in
-// evento-contesto.ts, non qui — vedi quel file per il motivo.
-export type { RispostaExtra };
-
 export interface CreaPrenotazioneInput {
   locale: Locale;
   nome: string;

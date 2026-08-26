@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/src/components/ui/Button";
-import { DialogPrenota } from "./DialogPrenota";
 import { Logo } from "@/src/components/ui/Logo";
 import { localizedPath, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
@@ -16,10 +15,6 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 // verificato qui (cream-text/muted-dark su bg-dark), non quello della
 // sezione che l'header di volta in volta copre.
 //
-// Il pulsante "Prenota" non è più inerte: apre un dialogo che dice
-// che la prenotazione online non c'è ancora e offre telefono e
-// WhatsApp. È un tappabuchi dichiarato, da sostituire con
-// l'integrazione vera (§21) — vedi DialogPrenota.tsx.
 export function SiteHeader({ locale }: { locale: Locale }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const t = getDizionario(locale);
@@ -72,16 +67,11 @@ export function SiteHeader({ locale }: { locale: Locale }) {
 
         <div className="flex items-center gap-3">
           <LanguageSwitcher locale={locale} />
-          {/* TEMPORANEO: il dialogo è un tappabuchi finché non esiste
-              il sistema di prenotazione nativo (§21). Il pulsante non
-              cambia — testo, stile e posizione restano quelli. Per
-              rimuoverlo basta togliere il wrapper: vedi le istruzioni
-              in DialogPrenota.tsx. */}
-          <DialogPrenota locale={locale}>
+          <Link href={localizedPath("/prenota", locale)}>
             <Button type="button" variant="primary" className="px-4 md:px-6">
               {t.cta.prenota}
             </Button>
-          </DialogPrenota>
+          </Link>
 
           <button
             type="button"
