@@ -12,17 +12,23 @@ import type { Locale } from "@/src/lib/i18n/config";
 // sessionStorage. Senza esprimere una scelta il sito non scrive
 // nulla; dopo la scelta scrive le due voci elencate in §3.
 //
-// Dove la verifica non è possibile adesso — i cookie che GA4,
-// TheFork o Brevo imposteranno una volta integrati — il testo lo
-// dichiara invece di elencare nomi presi altrove: un elenco
-// plausibile ma non verificato sembra preciso e non lo è.
+// Dove la verifica non è possibile adesso — i cookie che GA4 o Brevo
+// imposteranno una volta integrati — il testo lo dichiara invece di
+// elencare nomi presi altrove: un elenco plausibile ma non verificato
+// sembra preciso e non lo è.
 //
-// AGGIUNTA rispetto alla specifica, segnalata: §4.4 sulla mappa di
-// Google nella pagina Contatti. La specifica elenca come terze parti
-// solo GA4, TheFork e Brevo, ma la mappa è l'UNICO contenuto di
-// terza parte realmente presente sul sito oggi. Ometterla da una
-// cookie policy sarebbe una lacuna sostanziale, non una differenza
-// di struttura.
+// AGGIORNAMENTO 2026-08-26: rimossa la voce "TheFork — widget di
+// prenotazione" (già dichiarata "non presente sul sito"). Il sistema
+// di prenotazione nativo (§21) è ora completo: quel widget non verrà
+// integrato, l'ipotesi è superata. Le sottosezioni di §4 successive
+// sono state rinumerate.
+//
+// AGGIUNTA rispetto alla specifica, segnalata: §4.3 (già §4.4) sulla
+// mappa di Google nella pagina Contatti. La specifica elenca come
+// terze parti solo GA4, TheFork e Brevo, ma la mappa è l'UNICO
+// contenuto di terza parte realmente presente sul sito oggi.
+// Ometterla da una cookie policy sarebbe una lacuna sostanziale, non
+// una differenza di struttura.
 //
 // I nomi delle categorie sono quelli del pannello del consenso, non
 // quelli della specifica: §14.4 diceva "Analitici", il CMP già in
@@ -173,17 +179,7 @@ const it: Informativa = {
           ],
         },
         {
-          titolo: "4.2 TheFork — widget di prenotazione",
-          blocchi: [
-            {
-              tipo: "p",
-              testo:
-                "Le prenotazioni passano da TheFork, che tratta i dati come titolare autonomo secondo la propria informativa. Se il widget imposti cookie propri è da verificare in fase di implementazione: al momento il widget non è presente sul sito.",
-            },
-          ],
-        },
-        {
-          titolo: "4.3 Brevo — modulo newsletter",
+          titolo: "4.2 Brevo — modulo newsletter",
           blocchi: [
             {
               tipo: "p",
@@ -193,7 +189,7 @@ const it: Informativa = {
           ],
         },
         {
-          titolo: "4.4 Google Maps — mappa della pagina Contatti",
+          titolo: "4.3 Google Maps — mappa della pagina Contatti",
           blocchi: [
             {
               tipo: "p",
@@ -431,17 +427,7 @@ const en: Informativa = {
           ],
         },
         {
-          titolo: "4.2 TheFork — booking widget",
-          blocchi: [
-            {
-              tipo: "p",
-              testo:
-                "Bookings go through TheFork, which processes the data as an independent controller under its own notice. Whether the widget sets cookies of its own is to be verified at implementation time: the widget is not currently present on the site.",
-            },
-          ],
-        },
-        {
-          titolo: "4.3 Brevo — newsletter form",
+          titolo: "4.2 Brevo — newsletter form",
           blocchi: [
             {
               tipo: "p",
@@ -451,7 +437,7 @@ const en: Informativa = {
           ],
         },
         {
-          titolo: "4.4 Google Maps — the map on the Contact page",
+          titolo: "4.3 Google Maps — the map on the Contact page",
           blocchi: [
             {
               tipo: "p",

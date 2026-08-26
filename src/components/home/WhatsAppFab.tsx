@@ -10,9 +10,10 @@ import { tracciaEvento } from "@/src/lib/analytics";
 
 // Contatto rapido per domande su menu e allergeni.
 //
-// NON è un'alternativa a "Prenota": quella resta nell'header e punterà
-// a TheFork. Qui si risponde a chi ha una domanda prima di decidere,
-// non a chi ha già deciso.
+// NON è un'alternativa a "Prenota": quella resta nell'header e porta
+// al sistema di prenotazione nativo (/prenota, §21 passo 6/6). Qui si
+// risponde a chi ha una domanda prima di decidere, non a chi ha già
+// deciso.
 export function WhatsAppFab({ locale }: { locale: Locale }) {
   const t = getDizionario(locale);
   const overlayAttivo = useOverlayAttivo();
