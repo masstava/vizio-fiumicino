@@ -188,6 +188,115 @@ async function inviaEmailNotificaStaff(dati: DatiEmailPrenotazione): Promise<voi
   }
 }
 
+// ---------------------------------------------------------------
+// Cancellazione dal pannello staff — §21 passo 5
+// ---------------------------------------------------------------
+// Quando lo staff cancella una prenotazione da /gestione/prenotazioni
+// (passo 4), il cliente va avvisato: senza questa email scoprirebbe
+// la cancellazione solo presentandosi al locale. Stesso contratto
+// delle altre email di questo modulo: non lancia mai, un indirizzo
+// assente non è un errore.
+
+export interface DatiEmailCancellazione {
+  id: string;
+  locale: Locale;
+  nome: string;
+  email: string | null;
+  /** "YYYY-MM-DD" */
+  data: string;
+  /** "HH:MM" */
+  fascia: string;
+  coperti: number;
+}
+
+export async function inviaEmailCancellazioneCliente(
+  dati: DatiEmailCancellazione,
+): Promise<void> {
+  if (!dati.email) return;
+
+  const resend = clientResend();
+  if (!resend) {
+    console.error(
+      "[inviaEmailCancellazioneCliente] RESEND_API_KEY assente: email non inviata",
+      { prenotazioneId: dati.id },
+    );
+    return;
+  }
+
+  const t = getDizionario(dati.locale).emailCancellazione;
+  const tPrenotazione = getDizionario(dati.locale).emailPrenotazione;
+  const riferimento = dati.id.slice(0, 8).toUpperCase();
+  const linkPrenota = `${SITE_URL}${localizedPath("/prenota", dati.locale)}`;
+
+  try {
+    const { error } = await resend.emails.send({
+      from: MITTENTE_PRENOTAZIONI,
+      to: dati.email,
+      subject: t.oggetto(riferimento),
+      html: htmlEmailCancellazione(dati, t, tPrenotazione, linkPrenota),
+    });
+
+    if (error) {
+      console.error("[inviaEmailCancellazioneCliente] invio fallito:", error, {
+        prenotazioneId: dati.id,
+      });
+    }
+  } catch (err) {
+    console.error("[inviaEmailCancellazioneCliente] eccezione durante l'invio:", err, {
+      prenotazioneId: dati.id,
+    });
+  }
+}
+
+function htmlEmailCancellazione(
+  dati: DatiEmailCancellazione,
+  t: ReturnType<typeof getDizionario>["emailCancellazione"],
+  tPrenotazione: ReturnType<typeof getDizionario>["emailPrenotazione"],
+  linkPrenota: string,
+): string {
+  const dataLeggibile = formatDataLeggibile(dati.data, dati.locale);
+
+  const righeRiepilogo = [
+    [tPrenotazione.labelData, dataLeggibile],
+    [tPrenotazione.labelFascia, dati.fascia],
+    [tPrenotazione.labelCoperti, String(dati.coperti)],
+  ];
+
+  const righeHtml = righeRiepilogo
+    .map(
+      ([etichetta, valore]) => `
+        <tr>
+          <td style="padding:6px 0;color:#6b6b6b;font-size:14px;">${escapeHtml(etichetta)}</td>
+          <td style="padding:6px 0;color:#1a1a1a;font-size:14px;font-weight:600;text-align:right;text-decoration:line-through;">${escapeHtml(valore)}</td>
+        </tr>`,
+    )
+    .join("");
+
+  return `
+    <div style="background:#f7f2e9;padding:32px 16px;font-family:Georgia,'Times New Roman',serif;">
+      <div style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:2px;overflow:hidden;">
+        <div style="background:#1a1a1a;padding:24px 28px;">
+          <p style="margin:0;color:#f5efe4;font-size:20px;letter-spacing:0.02em;">Vizio Bistrot</p>
+        </div>
+        <div style="padding:28px;">
+          <p style="margin:0 0 4px;color:#1a1a1a;font-size:16px;">${escapeHtml(t.saluto(dati.nome))}</p>
+          <p style="margin:0 0 20px;color:#1a1a1a;font-size:15px;line-height:1.5;">${escapeHtml(t.corpo)}</p>
+
+          <table style="width:100%;border-collapse:collapse;border-top:1px solid #e5ddcf;border-bottom:1px solid #e5ddcf;">
+            ${righeHtml}
+          </table>
+
+          <p style="margin:20px 0 0;color:#1a1a1a;font-size:14px;">${escapeHtml(t.contattaci)}</p>
+
+          <p style="margin:20px 0 8px;color:#1a1a1a;font-size:14px;">${escapeHtml(t.prenotaTesto)}</p>
+          <a href="${linkPrenota}" style="display:inline-block;background:#8b1a1a;color:#f5efe4;padding:10px 20px;border-radius:2px;text-decoration:none;font-size:14px;">${escapeHtml(t.prenotaLink)}</a>
+
+          <p style="margin:28px 0 0;color:#1a1a1a;font-size:14px;">${escapeHtml(t.firma)}<br>Vizio Bistrot</p>
+        </div>
+      </div>
+    </div>`;
+}
+
 function escapeHtml(testo: string): string {
   return testo
     .replace(/&/g, "&amp;")

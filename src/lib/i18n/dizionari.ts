@@ -254,6 +254,57 @@ const it = {
     gestisciLink: "Gestisci la prenotazione",
     firma: "A presto,",
   },
+  emailCancellazione: {
+    oggetto: (riferimento: string) => `Prenotazione cancellata — rif. ${riferimento}`,
+    saluto: (nome: string) => `Ciao ${nome},`,
+    corpo: "la tua prenotazione da Vizio Bistrot è stata cancellata dal nostro staff.",
+    contattaci: "Se pensi sia un errore o hai domande, contattaci.",
+    prenotaTesto: "Vuoi prenotare di nuovo?",
+    prenotaLink: "Prenota un tavolo",
+    firma: "A presto,",
+  },
+  paginaGestisci: {
+    titolo: "Gestisci la tua prenotazione",
+    descrizione: "Visualizza o cancella la tua prenotazione da Vizio Bistrot.",
+    heroOcchiello: "Auto-gestione",
+    heroTitolo: "La tua prenotazione",
+    heroSottotitolo: "Qui puoi vedere i dettagli o cancellarla.",
+
+    linkNonValidoTitolo: "Prenotazione non trovata",
+    linkNonValidoTesto:
+      "Questo link non è valido, o la prenotazione a cui si riferisce non esiste più.",
+
+    labelAltreInformazioni: "Altre informazioni",
+
+    chiudiDialogo: "Chiudi",
+    cancellaBottone: "Cancella prenotazione",
+    cancellaConfermaTitolo: "Cancellare la prenotazione?",
+    cancellaConfermaTesto:
+      "L'operazione non si può annullare. Se vuoi solo cambiare data, orario o numero di persone, cancella e prenota di nuovo da qui sotto.",
+    cancellaConfermaBottone: "Sì, cancella",
+    cancellaAnnullaBottone: "No, torna indietro",
+    cancellandoInCorso: "Cancellazione in corso…",
+    erroreCancellazione:
+      "Non è stato possibile cancellare la prenotazione. Riprova, o contattaci.",
+
+    stati: {
+      cancellata: {
+        titolo: "Prenotazione cancellata",
+        testo: "La tua prenotazione è stata cancellata. Ti aspettiamo un'altra volta.",
+      },
+      completata: {
+        titolo: "Prenotazione completata",
+        testo: "Questa prenotazione risulta già conclusa. Grazie della visita!",
+      },
+      "no-show": {
+        titolo: "Prenotazione non presentata",
+        testo: "Questa prenotazione è stata segnata come non presentata.",
+      },
+    },
+
+    riprenotaTesto: "Vuoi prenotare di nuovo o hai bisogno di cambiare qualcosa?",
+    riprenotaLink: "Prenota un tavolo",
+  },
   menuOperativo: {
     titoloPagina: "Menu",
     descrizionePagina:
@@ -527,6 +578,57 @@ const en: Dizionario = {
     gestisciTesto: "To change or cancel your booking:",
     gestisciLink: "Manage your booking",
     firma: "See you soon,",
+  },
+  emailCancellazione: {
+    oggetto: (riferimento: string) => `Booking cancelled — ref. ${riferimento}`,
+    saluto: (nome: string) => `Hi ${nome},`,
+    corpo: "your booking at Vizio Bistrot has been cancelled by our staff.",
+    contattaci: "If you think this is a mistake or have questions, get in touch.",
+    prenotaTesto: "Want to book again?",
+    prenotaLink: "Book a table",
+    firma: "See you soon,",
+  },
+  paginaGestisci: {
+    titolo: "Manage your booking",
+    descrizione: "View or cancel your booking at Vizio Bistrot.",
+    heroOcchiello: "Self-service",
+    heroTitolo: "Your booking",
+    heroSottotitolo: "See the details here, or cancel it.",
+
+    linkNonValidoTitolo: "Booking not found",
+    linkNonValidoTesto:
+      "This link isn't valid, or the booking it points to no longer exists.",
+
+    labelAltreInformazioni: "Other information",
+
+    chiudiDialogo: "Close",
+    cancellaBottone: "Cancel booking",
+    cancellaConfermaTitolo: "Cancel this booking?",
+    cancellaConfermaTesto:
+      "This can't be undone. If you just want to change the date, time or party size, cancel and book again below.",
+    cancellaConfermaBottone: "Yes, cancel it",
+    cancellaAnnullaBottone: "No, go back",
+    cancellandoInCorso: "Cancelling…",
+    erroreCancellazione:
+      "We couldn't cancel the booking. Try again, or get in touch.",
+
+    stati: {
+      cancellata: {
+        titolo: "Booking cancelled",
+        testo: "Your booking has been cancelled. We hope to see you another time.",
+      },
+      completata: {
+        titolo: "Booking completed",
+        testo: "This booking is already marked as completed. Thanks for visiting!",
+      },
+      "no-show": {
+        titolo: "Booking marked as no-show",
+        testo: "This booking has been marked as a no-show.",
+      },
+    },
+
+    riprenotaTesto: "Want to book again, or need to change something?",
+    riprenotaLink: "Book a table",
   },
   menuOperativo: {
     titoloPagina: "Menu",

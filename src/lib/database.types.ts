@@ -423,6 +423,7 @@ export type Database = {
           evento_id: string | null
           fascia: string
           id: string
+          locale: string
           nome: string
           note: string | null
           risposte_extra: Json | null
@@ -439,6 +440,7 @@ export type Database = {
           evento_id?: string | null
           fascia: string
           id?: string
+          locale?: string
           nome: string
           note?: string | null
           risposte_extra?: Json | null
@@ -455,6 +457,7 @@ export type Database = {
           evento_id?: string | null
           fascia?: string
           id?: string
+          locale?: string
           nome?: string
           note?: string | null
           risposte_extra?: Json | null
@@ -496,6 +499,7 @@ export type Database = {
           p_email: string
           p_evento_id: string
           p_fascia: string
+          p_locale: string
           p_nome: string
           p_note: string
           p_risposte_extra: Json
@@ -513,10 +517,13 @@ export type Database = {
           creata_il: string
           data: string
           evento_id: string | null
+          evento_titolo: string | null
+          evento_titolo_en: string | null
           fascia: string
           id: string
           nome: string
           note: string | null
+          risposte_extra: Json | null
           stato: string
         }[]
       }

@@ -5,7 +5,7 @@ import {
   oggiEOraRoma,
   orariPrenotabili,
 } from "@/src/lib/prenotazioni/disponibilita";
-import type { RispostaExtra } from "@/src/lib/prenotazioni/evento-contesto";
+import { risposteExtraDaJson } from "@/src/lib/prenotazioni/evento-contesto";
 import { SelettoreData } from "./_components/SelettoreData";
 import {
   PrenotazioniListClient,
@@ -17,17 +17,6 @@ import type { StatoPrenotazione } from "./_actions";
 export const dynamic = "force-dynamic";
 
 const FORMATO_DATA = /^\d{4}-\d{2}-\d{2}$/;
-
-function risposteExtraDiRiga(valore: unknown): RispostaExtra[] {
-  if (!Array.isArray(valore)) return [];
-  return valore.filter(
-    (v): v is RispostaExtra =>
-      typeof v === "object" &&
-      v !== null &&
-      typeof (v as RispostaExtra).etichetta === "string" &&
-      typeof (v as RispostaExtra).valore === "string",
-  );
-}
 
 export default async function PrenotazioniPage({
   searchParams,
@@ -74,7 +63,7 @@ export default async function PrenotazioniPage({
     coperti: p.coperti,
     note: p.note,
     stato: p.stato as StatoPrenotazione,
-    risposteExtra: risposteExtraDiRiga(p.risposte_extra),
+    risposteExtra: risposteExtraDaJson(p.risposte_extra),
   }));
 
   const occupatiPerFascia: Record<string, number> = {};

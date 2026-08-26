@@ -27,6 +27,24 @@ export interface ContestoEvento {
 }
 
 /**
+ * Interpreta la colonna jsonb risposte_extra: un array di oggetti
+ * {etichetta, valore}, o niente. Condivisa fra la dashboard
+ * (/gestione/prenotazioni) e la pagina di auto-gestione (§21 passo 5)
+ * per non ridefinire due volte la stessa guardia sulla forma del
+ * Json.
+ */
+export function risposteExtraDaJson(valore: unknown): RispostaExtra[] {
+  if (!Array.isArray(valore)) return [];
+  return valore.filter(
+    (v): v is RispostaExtra =>
+      typeof v === "object" &&
+      v !== null &&
+      typeof (v as RispostaExtra).etichetta === "string" &&
+      typeof (v as RispostaExtra).valore === "string",
+  );
+}
+
+/**
  * Contesto di un evento passato via ?evento_id=, per il form di
  * prenotazione. Se l'id non esiste o l'evento non è più attivo, si
  * ritorna null e il form si comporta come se il parametro non ci

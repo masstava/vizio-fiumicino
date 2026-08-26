@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/src/lib/supabase/server";
+import { isLocale } from "@/src/lib/i18n/config";
+import { inviaEmailCancellazioneCliente } from "@/src/lib/prenotazioni/email";
 
 // Stesso enum del check constraint su prenotazioni.stato (migration
 // del passo 1) — qui solo per la sicurezza dei tipi lato dashboard, il
@@ -12,15 +14,27 @@ export type StatoPrenotazione =
   | "completata"
   | "no-show";
 
+/**
+ * Cambia lo stato di una prenotazione. Se il nuovo stato è
+ * "cancellata", avvisa il cliente per email (§21 passo 5) — è lo
+ * staff a cancellare per lui, non un'azione che il cliente ha fatto:
+ * senza un avviso lo scoprirebbe solo presentandosi al locale.
+ *
+ * L'email non condiziona l'esito di questa action: se l'invio
+ * fallisce (vedi email.ts, non lancia mai) il cambio di stato resta
+ * comunque valido — stessa filosofia del passo 3.
+ */
 export async function cambiaStatoPrenotazione(
   id: string,
   stato: StatoPrenotazione,
 ): Promise<void> {
   const supabase = await createClient();
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("prenotazioni")
     .update({ stato })
-    .eq("id", id);
+    .eq("id", id)
+    .select("nome, email, data, fascia, coperti, locale")
+    .single();
 
   if (error) {
     console.error("[cambiaStatoPrenotazione] update fallito:", error, {
@@ -30,6 +44,18 @@ export async function cambiaStatoPrenotazione(
     throw new Error(error.message);
   }
   revalidatePath("/gestione/prenotazioni");
+
+  if (stato === "cancellata") {
+    await inviaEmailCancellazioneCliente({
+      id,
+      locale: isLocale(data.locale) ? data.locale : "it",
+      nome: data.nome,
+      email: data.email,
+      data: data.data,
+      fascia: data.fascia.slice(0, 5),
+      coperti: data.coperti,
+    });
+  }
 }
 
 export interface RigaCapienzaInput {

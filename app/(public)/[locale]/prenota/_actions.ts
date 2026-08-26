@@ -88,6 +88,10 @@ export async function creaPrenotazione(
     p_note: input.note,
     p_evento_id: input.eventoId,
     p_risposte_extra: input.risposteExtra,
+    // Scritta a database (§21 passo 5): serve per sapere in che lingua
+    // avvisare il cliente se lo staff cancella dal pannello — non
+    // c'era altro modo di recuperarla dopo la creazione.
+    p_locale: input.locale,
   };
 
   const { data, error } = await supabase.rpc(
