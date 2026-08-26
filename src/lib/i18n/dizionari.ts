@@ -200,6 +200,47 @@ const it = {
       "Il sistema di prenotazione online arriva a breve. Nel frattempo chiamaci o scrivici su WhatsApp: rispondiamo negli orari di apertura.",
     chiudi: "Chiudi",
   },
+  paginaPrenota: {
+    titolo: "Prenota un tavolo",
+    descrizione:
+      "Prenota un tavolo da Vizio Bistrot, a Fiumicino: scegli data e orario, ti confermiamo subito la disponibilità.",
+    heroOcchiello: "Prenotazioni",
+    heroTitolo: "Prenota un tavolo",
+    heroSottotitolo:
+      "Scegli data e orario: ti diciamo subito se c'è posto.",
+
+    perEvento: (titolo: string) => `Stai prenotando per: ${titolo}`,
+
+    campoNome: "Nome",
+    campoTelefono: "Telefono",
+    campoEmail: "Email",
+    campoEmailNota: "Facoltativa: se la lasci, ti confermiamo anche per email.",
+    campoData: "Data",
+    campoFascia: "Orario",
+    campoCoperti: "Numero di persone",
+    campoNote: "Note o allergie",
+    campoNotePlaceholder: "Intolleranze, allergie, richieste particolari…",
+
+    fasciaScegliData: "Scegli prima una data",
+    fasciaChiuso: "Chiuso questo giorno — scegli un'altra data",
+    fasciaCaricamento: "Verifico la disponibilità…",
+    fasciaNessunOrario: "Nessun orario disponibile per questa data",
+    fasciaTuttoPieno: "Al completo per tutti gli orari di questa data — provane un'altra",
+    fasciaPiena: "al completo",
+    fasciaPostiResidui: (n: number) => `${n} ${n === 1 ? "posto" : "posti"} rimasti`,
+
+    invia: "Invia la richiesta",
+    inviando: "Invio in corso…",
+
+    erroreCapienza: "Questo orario si è appena riempito. Scegline un altro.",
+    erroreGenerico: "Qualcosa non ha funzionato. Riprova, o chiamaci.",
+
+    confermaTitolo: "Prenotazione registrata",
+    confermaTesto: "Ti aspettiamo. A breve arriva anche la conferma via email, se ci hai lasciato un indirizzo.",
+    confermaRiferimento: "Riferimento",
+    confermaRiepilogoTitolo: "Riepilogo",
+    nuovaPrenotazione: "Fai un'altra prenotazione",
+  },
   menuOperativo: {
     titoloPagina: "Menu",
     descrizionePagina:
@@ -420,6 +461,46 @@ const en: Dizionario = {
     testo:
       "Online booking is on its way. In the meantime give us a call or message us on WhatsApp: we answer during opening hours.",
     chiudi: "Close",
+  },
+  paginaPrenota: {
+    titolo: "Book a table",
+    descrizione:
+      "Book a table at Vizio Bistrot, Fiumicino: choose a date and time, we confirm availability straight away.",
+    heroOcchiello: "Bookings",
+    heroTitolo: "Book a table",
+    heroSottotitolo: "Choose a date and time: we'll tell you right away if there's room.",
+
+    perEvento: (titolo: string) => `You're booking for: ${titolo}`,
+
+    campoNome: "Name",
+    campoTelefono: "Phone",
+    campoEmail: "Email",
+    campoEmailNota: "Optional: if you leave it, we'll confirm by email too.",
+    campoData: "Date",
+    campoFascia: "Time",
+    campoCoperti: "Number of people",
+    campoNote: "Notes or allergies",
+    campoNotePlaceholder: "Intolerances, allergies, special requests…",
+
+    fasciaScegliData: "Choose a date first",
+    fasciaChiuso: "Closed that day — choose another date",
+    fasciaCaricamento: "Checking availability…",
+    fasciaNessunOrario: "No time available for this date",
+    fasciaTuttoPieno: "Fully booked for every time on this date — try another one",
+    fasciaPiena: "full",
+    fasciaPostiResidui: (n: number) => `${n} ${n === 1 ? "seat" : "seats"} left`,
+
+    invia: "Send the request",
+    inviando: "Sending…",
+
+    erroreCapienza: "That time just filled up. Please choose another.",
+    erroreGenerico: "Something didn't work. Please try again, or call us.",
+
+    confermaTitolo: "Booking confirmed",
+    confermaTesto: "We'll be expecting you. A confirmation email is on its way too, if you left an address.",
+    confermaRiferimento: "Reference",
+    confermaRiepilogoTitolo: "Summary",
+    nuovaPrenotazione: "Make another booking",
   },
   menuOperativo: {
     titoloPagina: "Menu",

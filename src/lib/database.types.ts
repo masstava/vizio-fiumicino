@@ -481,6 +481,31 @@ export type Database = {
         Args: { p_token: string }
         Returns: boolean
       }
+      capienza_del_giorno: {
+        Args: { p_data: string }
+        Returns: {
+          fascia: string
+          limite_coperti: number | null
+          occupati: number
+        }[]
+      }
+      crea_prenotazione: {
+        Args: {
+          p_coperti: number
+          p_data: string
+          p_email: string
+          p_evento_id: string
+          p_fascia: string
+          p_nome: string
+          p_note: string
+          p_risposte_extra: Json
+          p_telefono: string
+        }
+        Returns: {
+          id: string
+          token_gestione: string
+        }[]
+      }
       prenotazione_da_token: {
         Args: { p_token: string }
         Returns: {
