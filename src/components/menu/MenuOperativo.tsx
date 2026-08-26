@@ -2,10 +2,36 @@
 
 import { DishDetailDialog } from "@/src/components/home/DishDetailDialog";
 import { DishRow } from "@/src/components/ui/DishRow";
-import type { MacroMenu } from "@/src/components/menu/MenuCompleto";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/src/components/ui/accordion";
+import type { CategoriaMenu, MacroMenu } from "@/src/components/menu/MenuCompleto";
 import type { VoceAllergene } from "@/src/components/menu/LegendaAllergeni";
+import type { PiattoRiga } from "@/src/lib/dominio";
 import type { Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
+
+// Sopra questa soglia di voci, E con più di una sotto-categoria, una
+// macro-categoria diventa uno scroll lineare troppo lungo per la nav
+// sticky (che salta solo tra macro, non tra sotto-categorie) — è il
+// problema di densità di Bar & Cocktail (12 sotto-categorie, 80+
+// voci). Sotto la soglia, o con una sola sotto-categoria (niente da
+// "saltare"), l'accordion aggiungerebbe un tocco in più senza un
+// vero beneficio: resta la lista piatta di sempre.
+//
+// ASSUNZIONE DA CONFERMARE: 15 è una soglia di comodo, non un numero
+// misurato sui dati reali del locale. Facile da cambiare in un solo
+// punto se in pratica risulta troppo bassa o troppo alta.
+const SOGLIA_VOCI_PER_ACCORDION = 15;
+
+function beneficiaDiAccordion(categorie: CategoriaMenu[]): boolean {
+  if (categorie.length <= 1) return false;
+  const totaleVoci = categorie.reduce((tot, c) => tot + c.piatti.length, 0);
+  return totaleVoci > SOGLIA_VOCI_PER_ACCORDION;
+}
 
 // Vista operativa del menu: telefono appoggiato al tavolo durante il
 // servizio. Niente header, niente footer, niente racconto.
@@ -92,43 +118,42 @@ export function MenuOperativo({
         >
           <h2 className="font-serif text-2xl font-medium text-ink">{m.nome}</h2>
 
-          {m.categorie.map((c) => (
-            <div key={c.id} className="mt-6">
-              <h3 className="font-sans text-[10px] uppercase tracking-widest text-muted">
-                {c.nome}
-              </h3>
-              <ul>
-                {c.piatti.map((p) => (
-                  <li key={p.id}>
-                    {/* Tocco sul piatto → la scheda di dettaglio già
-                        costruita per il resto del sito. Il <button>
-                        avvolge la riga intera: su un telefono il
-                        bersaglio è tutta la riga, non un'icona. */}
-                    <DishDetailDialog
+          {beneficiaDiAccordion(m.categorie) ? (
+            // Chiuso di default (nessun defaultValue) e "multiple": più
+            // sotto-categorie possono restare aperte insieme, per chi
+            // vuole confrontarle — aprirne una non chiude l'altra.
+            <Accordion type="multiple" className="mt-4">
+              {m.categorie.map((c) => (
+                <AccordionItem key={c.id} value={c.id}>
+                  <AccordionTrigger className="min-h-11 py-3 font-sans text-[10px] font-normal uppercase tracking-widest text-muted hover:text-ink [&>svg]:h-3 [&>svg]:w-3">
+                    {c.nome}
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <ListaPiatti
+                      piatti={c.piatti}
                       locale={locale}
-                      dish={{
-                        id: p.id,
-                        nome: p.nome,
-                        descrizione: p.descrizione ?? null,
-                        foto_url: p.foto_url ?? null,
-                        allergeni: (p.allergeni ?? [])
-                          .map((codice) => nomeAllergene.get(codice))
-                          .filter((n): n is string => Boolean(n)),
-                      }}
-                    >
-                      <button
-                        type="button"
-                        aria-label={t.piatto.apriDettaglio(p.nome)}
-                        className="block w-full cursor-pointer text-left transition-colors hover:bg-ink/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux"
-                      >
-                        <DishRow dish={p} tone="light" />
-                      </button>
-                    </DishDetailDialog>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+                      t={t}
+                      nomeAllergene={nomeAllergene}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          ) : (
+            m.categorie.map((c) => (
+              <div key={c.id} className="mt-6">
+                <h3 className="font-sans text-[10px] uppercase tracking-widest text-muted">
+                  {c.nome}
+                </h3>
+                <ListaPiatti
+                  piatti={c.piatti}
+                  locale={locale}
+                  t={t}
+                  nomeAllergene={nomeAllergene}
+                />
+              </div>
+            ))
+          )}
         </section>
       ))}
 
@@ -151,5 +176,53 @@ export function MenuOperativo({
         </section>
       )}
     </div>
+  );
+}
+
+// Estratta perché il tocco-su-piatto→scheda di dettaglio è identico
+// nei due rami di rendering di una sotto-categoria (accordion chiuso
+// o lista piatta) — qui evita di scriverlo due volte.
+function ListaPiatti({
+  piatti,
+  locale,
+  t,
+  nomeAllergene,
+}: {
+  piatti: PiattoRiga[];
+  locale: Locale;
+  t: ReturnType<typeof getDizionario>;
+  nomeAllergene: Map<number, string>;
+}) {
+  return (
+    <ul>
+      {piatti.map((p) => (
+        <li key={p.id}>
+          {/* Tocco sul piatto → la scheda di dettaglio già costruita
+              per il resto del sito. Il <button> avvolge la riga
+              intera: su un telefono il bersaglio è tutta la riga, non
+              un'icona. */}
+          <DishDetailDialog
+            locale={locale}
+            dish={{
+              id: p.id,
+              nome: p.nome,
+              descrizione: p.descrizione ?? null,
+              foto_url: p.foto_url ?? null,
+              allergeni: (p.allergeni ?? [])
+                .map((codice) => nomeAllergene.get(codice))
+                .filter((n): n is string => Boolean(n)),
+            }}
+          >
+            <button
+              type="button"
+              aria-label={t.piatto.apriDettaglio(p.nome)}
+              className="block w-full cursor-pointer text-left transition-colors hover:bg-ink/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux"
+            >
+              <DishRow dish={p} tone="light" />
+            </button>
+          </DishDetailDialog>
+        </li>
+      ))}
+    </ul>
   );
 }
