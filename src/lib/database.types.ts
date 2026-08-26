@@ -482,7 +482,19 @@ export type Database = {
     Functions: {
       annulla_prenotazione: {
         Args: { p_token: string }
-        Returns: boolean
+        Returns: {
+          coperti: number
+          data: string
+          email: string | null
+          evento_titolo: string | null
+          fascia: string
+          id: string
+          locale: string
+          nome: string
+          note: string | null
+          risposte_extra: Json | null
+          telefono: string
+        }[]
       }
       capienza_del_giorno: {
         Args: { p_data: string }

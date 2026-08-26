@@ -16,10 +16,13 @@ import type { RispostaExtra } from "@/src/lib/prenotazioni/evento-contesto";
 // chiamate in un try/catch per stare tranquillo: il contratto è "non
 // lancia", punto.
 
-export interface DatiEmailPrenotazione {
+// Dati che bastano per l'avviso operativo allo staff — nuova
+// prenotazione o cancellazione, stesso contenuto in entrambi i casi
+// (vedi inviaNotificaStaff). DatiEmailPrenotazione ci aggiunge solo
+// ciò che serve in più per l'email al CLIENTE (token del link di
+// auto-gestione, lingua in cui scrivere).
+export interface DatiNotificaStaff {
   id: string;
-  tokenGestione: string;
-  locale: Locale;
   nome: string;
   telefono: string;
   email: string | null;
@@ -33,14 +36,22 @@ export interface DatiEmailPrenotazione {
   risposteExtra: RispostaExtra[] | null;
 }
 
+export interface DatiEmailPrenotazione extends DatiNotificaStaff {
+  tokenGestione: string;
+  locale: Locale;
+}
+
 /**
- * Invia entrambe le email (cliente + staff) per una prenotazione già
- * creata. Le due chiamate sono indipendenti — partono insieme — e
- * nessuna delle due può far fallire questa funzione: un errore
+ * Invia entrambe le email (cliente + staff) per una prenotazione
+ * appena creata. Le due chiamate sono indipendenti — partono insieme
+ * — e nessuna delle due può far fallire questa funzione: un errore
  * nell'una non deve impedire il tentativo sull'altra.
  */
 export async function inviaEmailPrenotazione(dati: DatiEmailPrenotazione): Promise<void> {
-  await Promise.all([inviaEmailConfermaCliente(dati), inviaEmailNotificaStaff(dati)]);
+  await Promise.all([
+    inviaEmailConfermaCliente(dati),
+    inviaNotificaStaff(dati, "nuova"),
+  ]);
 }
 
 // ---------------------------------------------------------------
@@ -141,12 +152,23 @@ function htmlEmailCliente(
 // Avviso operativo, non un'email al pubblico: sempre in italiano
 // (indipendentemente dalla lingua scelta dal cliente) e senza la cura
 // editoriale della email cliente, come da richiesta.
+//
+// Stessa funzione per due eventi diversi — una nuova prenotazione
+// (passo 3) o una cancellazione self-service (passo 5, aggiunta): il
+// contenuto operativo che serve alla sala è lo stesso identico dato,
+// cambiano solo l'oggetto e la prima riga, per non far leggere "nuova
+// prenotazione" quando in realtà si è appena liberato un tavolo.
 
-async function inviaEmailNotificaStaff(dati: DatiEmailPrenotazione): Promise<void> {
+type TipoNotificaStaff = "nuova" | "cancellazione";
+
+async function inviaNotificaStaff(
+  dati: DatiNotificaStaff,
+  tipo: TipoNotificaStaff,
+): Promise<void> {
   const resend = clientResend();
   if (!resend) {
     console.error(
-      "[inviaEmailNotificaStaff] RESEND_API_KEY assente: notifica non inviata",
+      `[inviaNotificaStaff:${tipo}] RESEND_API_KEY assente: notifica non inviata`,
       { prenotazioneId: dati.id },
     );
     return;
@@ -154,8 +176,12 @@ async function inviaEmailNotificaStaff(dati: DatiEmailPrenotazione): Promise<voi
 
   const dataLeggibile = formatDataLeggibile(dati.data, "it");
   const riferimento = dati.id.slice(0, 8).toUpperCase();
+  const prefisso = tipo === "nuova" ? "Nuova prenotazione" : "Cancellazione self-service";
 
   const righe = [
+    tipo === "cancellazione"
+      ? "Il cliente ha cancellato questa prenotazione dal link di auto-gestione."
+      : null,
     `Rif. ${riferimento}`,
     `Nome: ${dati.nome}`,
     `Telefono: ${dati.telefono}`,
@@ -172,20 +198,32 @@ async function inviaEmailNotificaStaff(dati: DatiEmailPrenotazione): Promise<voi
     const { error } = await resend.emails.send({
       from: MITTENTE_PRENOTAZIONI,
       to: TITOLARE.email,
-      subject: `Nuova prenotazione — ${dati.nome}, ${dataLeggibile}, ${dati.fascia}, ${dati.coperti} coperti`,
+      subject: `${prefisso} — ${dati.nome}, ${dataLeggibile}, ${dati.fascia}, ${dati.coperti} coperti`,
       text: righe.join("\n"),
     });
 
     if (error) {
-      console.error("[inviaEmailNotificaStaff] invio fallito:", error, {
+      console.error(`[inviaNotificaStaff:${tipo}] invio fallito:`, error, {
         prenotazioneId: dati.id,
       });
     }
   } catch (err) {
-    console.error("[inviaEmailNotificaStaff] eccezione durante l'invio:", err, {
+    console.error(`[inviaNotificaStaff:${tipo}] eccezione durante l'invio:`, err, {
       prenotazioneId: dati.id,
     });
   }
+}
+
+/**
+ * Notifica allo staff che il CLIENTE ha cancellato self-service (da
+ * /gestisci-prenotazione) — non lo staff dal pannello, quello è già
+ * un'azione loro. Utile operativamente per liberare il tavolo. Stesso
+ * contratto delle altre email del modulo: non lancia mai.
+ */
+export async function inviaEmailNotificaStaffCancellazione(
+  dati: DatiNotificaStaff,
+): Promise<void> {
+  await inviaNotificaStaff(dati, "cancellazione");
 }
 
 // ---------------------------------------------------------------

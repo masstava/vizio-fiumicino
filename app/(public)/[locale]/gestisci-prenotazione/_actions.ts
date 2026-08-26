@@ -4,6 +4,7 @@ import { createClient } from "@/src/lib/supabase/server";
 import { campoLocalizzato } from "@/src/lib/i18n/campi";
 import type { Locale } from "@/src/lib/i18n/config";
 import { risposteExtraDaJson, type RispostaExtra } from "@/src/lib/prenotazioni/evento-contesto";
+import { inviaEmailNotificaStaffCancellazione } from "@/src/lib/prenotazioni/email";
 
 export interface PrenotazioneToken {
   id: string;
@@ -67,8 +68,17 @@ export type AnnullaEsito = { ok: true } | { ok: false; messaggio: string };
  * Cancella una prenotazione tramite la RPC annulla_prenotazione, MAI
  * un update diretto: la funzione garantisce che si possa cancellare
  * solo una prenotazione ancora "confermata" (un secondo tentativo
- * sullo stesso token, o su una già completata/no-show, torna false
- * senza toccare nulla — non serve verificarlo qui prima).
+ * sullo stesso token, o su una già completata/no-show, torna zero
+ * righe senza toccare nulla — non serve verificarlo qui prima).
+ *
+ * La funzione restituisce i dettagli della riga appena cancellata
+ * (non solo un booleano): servono per avvisare lo staff via email che
+ * il CLIENTE ha cancellato — completamento simmetrico del passo 5,
+ * che finora avvisava solo nella direzione staff → cliente. La
+ * cancellazione è già cosa fatta a questo punto (l'update è dentro la
+ * RETURNING della RPC): l'email è una notifica in più, non una
+ * condizione — se l'invio fallisce (vedi email.ts, non lancia mai)
+ * l'esito resta comunque "cancellata con successo".
  */
 export async function annullaPrenotazioneToken(token: string): Promise<AnnullaEsito> {
   const supabase = await createClient();
@@ -81,9 +91,23 @@ export async function annullaPrenotazioneToken(token: string): Promise<AnnullaEs
     return { ok: false, messaggio: error.message };
   }
 
-  if (!data) {
+  const riga = data?.[0];
+  if (!riga) {
     return { ok: false, messaggio: "Non cancellabile: già gestita o token non valido." };
   }
+
+  await inviaEmailNotificaStaffCancellazione({
+    id: riga.id,
+    nome: riga.nome,
+    telefono: riga.telefono,
+    email: riga.email,
+    data: riga.data,
+    fascia: riga.fascia.slice(0, 5),
+    coperti: riga.coperti,
+    note: riga.note,
+    eventoTitolo: riga.evento_titolo,
+    risposteExtra: risposteExtraDaJson(riga.risposte_extra),
+  });
 
   return { ok: true };
 }
