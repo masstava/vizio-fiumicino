@@ -86,6 +86,64 @@ export type Database = {
           },
         ]
       }
+      campi_extra_evento: {
+        Row: {
+          etichetta: string
+          evento_id: string
+          id: string
+          ordine: number
+        }
+        Insert: {
+          etichetta: string
+          evento_id: string
+          id?: string
+          ordine?: number
+        }
+        Update: {
+          etichetta?: string
+          evento_id?: string
+          id?: string
+          ordine?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campi_extra_evento_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventi"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      capienza_config: {
+        Row: {
+          data: string
+          evento_id: string | null
+          fascia: string
+          limite_coperti: number | null
+        }
+        Insert: {
+          data: string
+          evento_id?: string | null
+          fascia: string
+          limite_coperti?: number | null
+        }
+        Update: {
+          data?: string
+          evento_id?: string | null
+          fascia?: string
+          limite_coperti?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "capienza_config_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventi"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categorie: {
         Row: {
           categoria_macro_id: string
@@ -355,11 +413,88 @@ export type Database = {
           },
         ]
       }
+      prenotazioni: {
+        Row: {
+          aggiornata_il: string
+          coperti: number
+          creata_il: string
+          data: string
+          email: string | null
+          evento_id: string | null
+          fascia: string
+          id: string
+          nome: string
+          note: string | null
+          risposte_extra: Json | null
+          stato: string
+          telefono: string
+          token_gestione: string
+        }
+        Insert: {
+          aggiornata_il?: string
+          coperti: number
+          creata_il?: string
+          data: string
+          email?: string | null
+          evento_id?: string | null
+          fascia: string
+          id?: string
+          nome: string
+          note?: string | null
+          risposte_extra?: Json | null
+          stato?: string
+          telefono: string
+          token_gestione?: string
+        }
+        Update: {
+          aggiornata_il?: string
+          coperti?: number
+          creata_il?: string
+          data?: string
+          email?: string | null
+          evento_id?: string | null
+          fascia?: string
+          id?: string
+          nome?: string
+          note?: string | null
+          risposte_extra?: Json | null
+          stato?: string
+          telefono?: string
+          token_gestione?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prenotazioni_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventi"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      annulla_prenotazione: {
+        Args: { p_token: string }
+        Returns: boolean
+      }
+      prenotazione_da_token: {
+        Args: { p_token: string }
+        Returns: {
+          coperti: number
+          creata_il: string
+          data: string
+          evento_id: string | null
+          fascia: string
+          id: string
+          nome: string
+          note: string | null
+          stato: string
+        }[]
+      }
       reorder_piatti: {
         Args: { p_categoria_id: string; p_ordini: Json }
         Returns: undefined
