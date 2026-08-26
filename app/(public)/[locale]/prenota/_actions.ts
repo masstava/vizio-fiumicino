@@ -2,7 +2,10 @@
 
 import { createClient } from "@/src/lib/supabase/server";
 import type { ArgomentiRpc, ArgomentiRpcStretti } from "@/src/lib/supabase/rpc";
+import type { Locale } from "@/src/lib/i18n/config";
 import type { RigaCapienza } from "@/src/lib/prenotazioni/disponibilita";
+import type { RispostaExtra } from "@/src/lib/prenotazioni/evento-contesto";
+import { inviaEmailPrenotazione } from "@/src/lib/prenotazioni/email";
 
 // =============================================================
 // Disponibilità
@@ -34,15 +37,12 @@ export async function leggiCapienzaGiorno(data: string): Promise<RigaCapienza[]>
 // Creazione
 // =============================================================
 
-// Alias e non interface: serve l'index signature implicito per
-// risultare assegnabile a Json, il tipo del parametro jsonb della RPC
-// (stesso motivo di BadgeInput/FasciaInput in dashboard).
-export type RispostaExtra = {
-  etichetta: string;
-  valore: string;
-};
+// Ri-esportato: PrenotaForm.tsx lo importa da qui. Dichiarato in
+// evento-contesto.ts, non qui — vedi quel file per il motivo.
+export type { RispostaExtra };
 
 export interface CreaPrenotazioneInput {
+  locale: Locale;
   nome: string;
   telefono: string;
   email: string | null;
@@ -51,6 +51,8 @@ export interface CreaPrenotazioneInput {
   coperti: number;
   note: string | null;
   eventoId: string | null;
+  /** Solo per l'email di conferma/notifica: non un campo della tabella. */
+  eventoTitolo: string | null;
   risposteExtra: RispostaExtra[] | null;
 }
 
@@ -108,6 +110,26 @@ export async function creaPrenotazione(
       messaggio: "Nessuna riga restituita dalla funzione di creazione.",
     };
   }
+
+  // La prenotazione è già creata e valida a questo punto: l'email è
+  // una notifica, non una condizione. inviaEmailPrenotazione non
+  // propaga mai un errore (vedi quel modulo) — awaited solo per non
+  // lasciare una promise pendente dopo la risposta della action, non
+  // per farne dipendere l'esito.
+  await inviaEmailPrenotazione({
+    id: riga.id,
+    tokenGestione: riga.token_gestione,
+    locale: input.locale,
+    nome: input.nome,
+    telefono: input.telefono,
+    email: input.email,
+    data: input.data,
+    fascia: input.fascia,
+    coperti: input.coperti,
+    note: input.note,
+    eventoTitolo: input.eventoTitolo,
+    risposteExtra: input.risposteExtra,
+  });
 
   return { ok: true, id: riga.id };
 }

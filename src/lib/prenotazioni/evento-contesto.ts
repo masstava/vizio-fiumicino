@@ -8,6 +8,18 @@ export interface CampoExtraEvento {
   etichetta: string;
 }
 
+// Alias e non interface: serve l'index signature implicito per
+// risultare assegnabile a Json, il tipo del parametro jsonb di
+// crea_prenotazione (stesso motivo di BadgeInput/FasciaInput in
+// dashboard). Dichiarato qui — accanto a CampoExtraEvento, di cui è
+// la risposta — e non nella route: sia _actions.ts (form pubblico)
+// sia email.ts (§21 passo 3) ne hanno bisogno, e src/lib non deve
+// dipendere da app/.
+export type RispostaExtra = {
+  etichetta: string;
+  valore: string;
+};
+
 export interface ContestoEvento {
   id: string;
   titolo: string;

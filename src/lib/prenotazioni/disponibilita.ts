@@ -1,4 +1,5 @@
 import type { FasciaOraria, GiornoOrario } from "@/src/lib/dominio";
+import type { Locale } from "@/src/lib/i18n/config";
 
 // =============================================================
 // Griglia degli orari prenotabili — §21, passo 2
@@ -115,6 +116,25 @@ export function oggiEOraRoma(now: Date = new Date()): { data: string; ora: strin
     data: `${valore("year")}-${valore("month")}-${valore("day")}`,
     ora: `${valore("hour")}:${valore("minute")}`,
   };
+}
+
+/**
+ * Data "YYYY-MM-DD" in forma leggibile, nella lingua della
+ * prenotazione — usata sia dalla schermata di conferma sia dall'email
+ * (§21 passo 3), stessa tecnica di formattazione già in uso per gli
+ * eventi (ExperienceEventi.tsx, eventi-sito.ts): mezzogiorno UTC per
+ * non far scivolare la data di un giorno quando il fuso locale è
+ * indietro.
+ */
+export function formatDataLeggibile(dataISO: string, locale: Locale): string {
+  const [y, m, d] = dataISO.split("-").map(Number);
+  return new Intl.DateTimeFormat(locale === "en" ? "en-GB" : "it-IT", {
+    timeZone: "Europe/Rome",
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(Date.UTC(y, m - 1, d, 12)));
 }
 
 export interface RigaCapienza {

@@ -7,6 +7,7 @@ import type { Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
 import type { ContestoEvento } from "@/src/lib/prenotazioni/evento-contesto";
 import {
+  formatDataLeggibile,
   orariSelezionabili,
   unisciCapienza,
   type EsitoFascia,
@@ -32,20 +33,6 @@ function aggiungiGiorni(dataISO: string, giorni: number): string {
   const data = new Date(Date.UTC(y, m - 1, d));
   data.setUTCDate(data.getUTCDate() + giorni);
   return data.toISOString().slice(0, 10);
-}
-
-// Stessa tecnica di formattazione già usata per gli eventi
-// (ExperienceEventi.tsx, eventi-sito.ts): mezzogiorno UTC per non far
-// scivolare la data di un giorno quando il fuso locale è indietro.
-function formatDataLeggibile(dataISO: string, locale: Locale): string {
-  const [y, m, d] = dataISO.split("-").map(Number);
-  return new Intl.DateTimeFormat(locale === "en" ? "en-GB" : "it-IT", {
-    timeZone: "Europe/Rome",
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(new Date(Date.UTC(y, m - 1, d, 12)));
 }
 
 interface Riepilogo {
@@ -158,6 +145,7 @@ export function PrenotaForm({
           : null;
 
       const esito = await creaPrenotazione({
+        locale,
         nome: nome.trim(),
         telefono: telefono.trim(),
         email: email.trim() || null,
@@ -166,6 +154,7 @@ export function PrenotaForm({
         coperti,
         note: note.trim() || null,
         eventoId: contestoEvento?.id ?? null,
+        eventoTitolo: contestoEvento?.titolo ?? null,
         risposteExtra: risposteExtra && risposteExtra.length > 0 ? risposteExtra : null,
       });
 
