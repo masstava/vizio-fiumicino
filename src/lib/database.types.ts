@@ -524,6 +524,19 @@ export type Database = {
         Args: { p_categoria_id: string; p_ordini: Json }
         Returns: undefined
       }
+      save_evento: {
+        Args: {
+          p_attivo: boolean
+          p_campi_extra: Json
+          p_data_evento: string
+          p_descrizione: string
+          p_descrizione_en: string
+          p_id: string
+          p_titolo: string
+          p_titolo_en: string
+        }
+        Returns: string
+      }
       save_orari: { Args: { p_rows: Json }; Returns: undefined }
       save_piatto: {
         Args: {

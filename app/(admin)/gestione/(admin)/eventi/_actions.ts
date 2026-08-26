@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/src/lib/supabase/server";
+import type { ArgomentiRpc, ArgomentiRpcStretti } from "@/src/lib/supabase/rpc";
 
 export async function toggleAttivo(id: string, attivo: boolean) {
   const supabase = await createClient();
@@ -22,6 +23,13 @@ export async function deleteEvento(id: string) {
   revalidatePath("/gestione/eventi");
 }
 
+// Alias e non interface: serve l'index signature implicito per
+// risultare assegnabile a Json, il tipo del parametro jsonb di
+// save_evento (stesso motivo di BadgeInput in dashboard/menu).
+export type CampoExtraInput = {
+  etichetta: string;
+};
+
 export interface SaveEventoInput {
   id: string | null;
   titolo: string;
@@ -30,30 +38,43 @@ export interface SaveEventoInput {
   descrizione_en: string | null;
   data_evento: string | null;
   attivo: boolean;
+  /** Fino a 3, ordine = posizione nell'array — vincolo d'interfaccia, non del DB. */
+  campiExtra: CampoExtraInput[];
 }
 
+/**
+ * Scrive eventi + campi_extra_evento in un'unica transazione tramite
+ * la funzione save_evento (sostituzione completa dei campi extra a
+ * ogni salvataggio, stesso schema di save_piatto per badge/allergeni):
+ * un fallimento a metà strada non lascia un evento con solo alcuni
+ * campi extra aggiornati.
+ */
 export async function saveEvento(
   input: SaveEventoInput,
 ): Promise<{ id: string }> {
   const supabase = await createClient();
 
-  const payload = {
-    titolo: input.titolo,
-    titolo_en: input.titolo_en,
-    descrizione: input.descrizione,
-    descrizione_en: input.descrizione_en,
-    data_evento: input.data_evento,
-    attivo: input.attivo,
+  const argomenti: ArgomentiRpc<"save_evento"> = {
+    p_id: input.id,
+    p_titolo: input.titolo,
+    p_titolo_en: input.titolo_en,
+    p_descrizione: input.descrizione,
+    p_descrizione_en: input.descrizione_en,
+    p_data_evento: input.data_evento,
+    p_attivo: input.attivo,
+    p_campi_extra: input.campiExtra.map((c, ordine) => ({
+      etichetta: c.etichetta,
+      ordine,
+    })),
   };
 
-  const query = input.id
-    ? supabase.from("eventi").update(payload).eq("id", input.id)
-    : supabase.from("eventi").insert(payload);
-
-  const { data, error } = await query.select("id").single();
+  const { data, error } = await supabase.rpc(
+    "save_evento",
+    argomenti as ArgomentiRpcStretti<"save_evento">,
+  );
 
   if (error) throw new Error(error.message);
 
   revalidatePath("/gestione/eventi");
-  return { id: data.id };
+  return { id: data };
 }

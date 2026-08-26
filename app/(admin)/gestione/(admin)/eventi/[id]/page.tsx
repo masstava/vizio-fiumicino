@@ -12,11 +12,16 @@ export default async function ModificaEventoPage({
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: evento } = await supabase
-    .from("eventi")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
+  // Due letture indipendenti (evento e i suoi campi extra): partono
+  // insieme, non in sequenza.
+  const [{ data: evento }, { data: campiExtra }] = await Promise.all([
+    supabase.from("eventi").select("*").eq("id", id).maybeSingle(),
+    supabase
+      .from("campi_extra_evento")
+      .select("etichetta")
+      .eq("evento_id", id)
+      .order("ordine"),
+  ]);
 
   if (!evento) notFound();
 
@@ -38,6 +43,7 @@ export default async function ModificaEventoPage({
           descrizione_en: evento.descrizione_en ?? "",
           data_evento: evento.data_evento ?? "",
           attivo: evento.attivo,
+          campiExtra: (campiExtra ?? []).map((c) => ({ etichetta: c.etichetta })),
         }}
       />
     </div>
