@@ -16,3 +16,7 @@ Prima di considerare chiuso qualsiasi lavoro su UI (pubblico o dashboard):
 - [ ] Query indipendenti raggruppate in Promise.all; sequenziare solo le dipendenze genuine (una query ha davvero bisogno dell'id/risultato dell'altra)
 
 Questo si applica per default a ogni nuovo componente o pagina, non solo quando esplicitamente richiesto nel prompt.
+
+## Server actions
+
+- [ ] Dopo qualsiasi modifica a un file "use server" che tocca export di tipi (spostamento, ri-esportazione con `export type { X }`), carica davvero la pagina che lo consuma in un browser — tsc e build non intercettano un ReferenceError a runtime causato da questo pattern specifico. Un file "use server" non elimina le ri-esportazioni di tipo a compile-time come farebbe un modulo normale.
