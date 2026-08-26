@@ -6,6 +6,17 @@ import { Resend } from "resend";
 // fare al posto vostro: va predisposto nel pannello Resend.
 export const MITTENTE_PRENOTAZIONI = "Vizio Bistrot <prenotazioni@vizio-fiumicino.it>";
 
+// Chi riceve le notifiche operative sulle prenotazioni (nuova
+// prenotazione, cancellazione self-service) — un dato nuovo si
+// aggiunge QUI, mai ripetuto nei singoli punti di invio, stesso
+// principio già in uso per i dati di contatto (src/lib/contatti.ts).
+// Resend accetta un array in "to" nativamente: nessun invio multiplo
+// da orchestrare a mano.
+export const DESTINATARI_NOTIFICA_STAFF = [
+  "info@vizio-fiumicino.it",
+  "m.tavaroli@easydigitalgroup.it",
+];
+
 let client: Resend | null | undefined;
 
 /**

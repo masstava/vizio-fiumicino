@@ -1,5 +1,8 @@
-import { clientResend, MITTENTE_PRENOTAZIONI } from "@/src/lib/email/resend";
-import { TITOLARE } from "@/src/lib/legale";
+import {
+  clientResend,
+  DESTINATARI_NOTIFICA_STAFF,
+  MITTENTE_PRENOTAZIONI,
+} from "@/src/lib/email/resend";
 import { SITE_URL } from "@/src/lib/site-url";
 import { localizedPath, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
@@ -197,7 +200,7 @@ async function inviaNotificaStaff(
   try {
     const { error } = await resend.emails.send({
       from: MITTENTE_PRENOTAZIONI,
-      to: TITOLARE.email,
+      to: DESTINATARI_NOTIFICA_STAFF,
       subject: `${prefisso} — ${dati.nome}, ${dataLeggibile}, ${dati.fascia}, ${dati.coperti} coperti`,
       text: righe.join("\n"),
     });
