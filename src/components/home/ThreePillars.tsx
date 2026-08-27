@@ -33,9 +33,15 @@ export function ThreePillars({
         variante="scura"
         className="pointer-events-none absolute -right-10 -top-8 -z-10 h-64 opacity-[0.05] md:h-80"
       />
-      <p className="mb-8 font-sans text-[10px] tracking-widest uppercase text-muted">
+      {/* h2, non p: la pagina saltava da <h1> (Hero) direttamente a
+          <h3> qui sotto per i tre pilastri, senza un <h2> a
+          introdurre la sezione (Audit tecnico #2, punto 1). Questo
+          occhiello ne fa già le veci nel contenuto — non serve
+          aggiungere un titolo invisibile in più, solo dargli il tag
+          giusto: stile invariato. */}
+      <h2 className="mb-8 font-sans text-[10px] tracking-widest uppercase text-muted">
         {t.sezioni.cosaTrovi}
-      </p>
+      </h2>
       <div className="grid gap-10 md:grid-cols-3 md:gap-8">
         {PILLARS.map((pillar) => (
           <div key={pillar.title}>
