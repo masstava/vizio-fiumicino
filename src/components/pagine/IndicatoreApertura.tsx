@@ -6,12 +6,17 @@ import { getDizionario } from "@/src/lib/i18n/dizionari";
 // Il calcolo NON è qui: arriva da isApertoOra() (src/lib/orari.ts),
 // la stessa funzione che alimenta il footer. Qui c'è solo la resa.
 //
-// È un componente nuovo e non il riuso di quello del footer perché
-// lì la pastiglia è scritta in linea dentro Footer.tsx: estrarla
-// avrebbe voluto dire modificare un componente montato anche in home,
-// che in questo step è fuori scope. La logica resta comunque unica —
-// duplicato è il markup, non il calcolo. Da consolidare quando si
-// toccherà il footer per altri motivi.
+// Condiviso da Footer.tsx e da questa pagina Contatti (Audit tecnico
+// #2, punto 4): finché la home era considerata intoccabile, estrarre
+// il markup dal Footer significava toccare un componente montato
+// ovunque per un cambio fuori scope, e la pastiglia restava scritta
+// in linea lì. Da allora la home è stata toccata più volte (CTA del
+// sistema di prenotazione compreso) — il vincolo che giustificava la
+// duplicazione non c'è più, e "normal-case tracking-normal" qui sotto
+// è esattamente quello che serviva al Footer per stare accanto
+// all'etichetta "ORARI" (uppercase, tracking-widest) senza ereditarne
+// lo stile: dove non serve (qui in Contatti) non ha alcun effetto,
+// perché non c'è nulla da correggere.
 //
 // Il pallino colorato è decorativo (aria-hidden): l'informazione sta
 // nel testo accanto, quindi non è veicolata dal solo colore.
@@ -27,7 +32,7 @@ export function IndicatoreApertura({
   const t = getDizionario(locale);
   return (
     <span
-      className={`inline-flex items-center gap-1.5 font-sans text-xs ${
+      className={`inline-flex items-center gap-1.5 font-sans text-xs normal-case tracking-normal ${
         tone === "dark" ? "text-muted-dark" : "text-muted"
       }`}
     >

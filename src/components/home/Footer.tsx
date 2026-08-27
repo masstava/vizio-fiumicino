@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { GestisciCookie } from "@/src/components/consenso/GestisciCookie";
+import { IndicatoreApertura } from "@/src/components/pagine/IndicatoreApertura";
 import { Logo } from "@/src/components/ui/Logo";
 import { SocialIcon } from "@/src/components/ui/SocialIcon";
 import { CONTATTI } from "@/src/lib/contatti";
@@ -91,17 +92,7 @@ export function Footer({ orari, apertoOra, notaOrari, locale }: FooterProps) {
             <p className="font-sans text-[10px] tracking-widest uppercase text-muted-dark">
               {t.footer.orari}
             </p>
-            {/* Calcolato da questa stessa fonte dati (orari), non una
-                nuova tabella. Il pallino è decorativo: lo stato è
-                comunicato anche a parole per non dipendere dal solo
-                colore. */}
-            <span className="flex items-center gap-1.5 font-sans text-xs normal-case tracking-normal text-muted-dark">
-              <span
-                aria-hidden="true"
-                className={`h-1.5 w-1.5 rounded-full ${apertoOra ? "bg-emerald-400" : "bg-rose-400"}`}
-              />
-              {apertoOra ? t.footer.apertoOra : t.footer.chiusoOra}
-            </span>
+            <IndicatoreApertura aperto={apertoOra} locale={locale} tone="dark" />
           </div>
           {orariLines.length > 0 ? (
             <ul className="space-y-1 font-sans text-sm leading-relaxed">
