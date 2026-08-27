@@ -19,8 +19,13 @@ import { getDizionario } from "@/src/lib/i18n/dizionari";
 // preload="metadata" scarica solo l'intestazione del file, non il
 // video intero: la riproduzione parte quando il browser decide, senza
 // contendere banda al primo contenuto utile.
-const HERO_VIDEO_URL =
-  "https://efqytltwyruxmszxilca.supabase.co/storage/v1/object/public/sito-media/video-home.mp4";
+//
+// Costruito da NEXT_PUBLIC_SUPABASE_URL invece che scritto per
+// intero: un URL letterale con il project ref dentro (Audit tecnico
+// #2, punto 2) si sarebbe rotto in silenzio a un cambio di progetto
+// Supabase, mentre il resto del sito — che legge quella variabile —
+// avrebbe continuato a funzionare.
+const HERO_VIDEO_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/sito-media/video-home.mp4`;
 
 // Tema scuro, come da wireframe. L'ImagePlaceholder resta come livello
 // di base sotto al video: copre l'attesa prima che il primo fotogramma
