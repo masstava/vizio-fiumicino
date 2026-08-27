@@ -1,12 +1,17 @@
 import type { Locale } from "@/src/lib/i18n/config";
 
 // =============================================================
-// COPY DELLA PAGINA "LA CARNE" — BOZZA, NON TESTO DEFINITIVO
+// COPY DELLA PAGINA "LA CARNE"
 // =============================================================
 // Scritto sul posizionamento di progetto ("qualità, gusto e libertà
 // senza compromessi") e sulla nicchia dichiarata: a Fiumicino il
 // pesce domina, la carne è ciò che distingue Vizio ed è oggi
 // sotto-comunicata. Questa pagina esiste per correggere quello.
+//
+// "nicchia" e "fuoco" sono testo definitivo: correzione editoriale
+// che sostituisce la bozza precedente. Le altre sezioni di questo
+// file (hero, icona, chiusura) restano bozza fino a una correzione
+// separata — non toccate da questo intervento.
 //
 // Nessun dato tecnico è inventato qui: provenienza, razze e tempi di
 // frollatura NON sono nella specifica né nel database, quindi restano
@@ -31,9 +36,7 @@ const it = {
   nicchia: {
     titolo: "Una scelta controcorrente",
     paragrafi: [
-      "Accendere una griglia a Fiumicino è una piccola eresia. Qui il pesce è tradizione, identità, abitudine: la carta di ogni locale comincia dal mare e quasi sempre finisce lì.",
-      "Non lo facciamo per contrasto, ma per completare. C'è la sera del crudo e del vino bianco, e c'è la sera in cui vuoi il fuoco, il fumo, un taglio che si tiene con le mani. La prima, qui, la trovi ovunque. La seconda quasi da nessuna parte.",
-      "Da Vizio la brace è accesa tutte le sere. Qualità, gusto e libertà senza compromessi: dall'aperitivo al dopocena, senza cambiare locale.",
+      "Lavoriamo la carne con la stessa cura che a Fiumicino si riserva al pesce. Dalla costata alla fiorentina, dal T-bone al Filetto alla Rossini: tagli importanti e piatti elaborati, la stessa attenzione dall'aperitivo al dopocena.",
     ],
   },
   icona: {
@@ -45,8 +48,8 @@ const it = {
   fuoco: {
     titolo: "Come la trattiamo",
     paragrafi: [
-      "Il fuoco è l'unico condimento obbligatorio. Sale, tempo e la mano di chi sta alla griglia: il resto lo fa il taglio.",
-      "Quando un taglio passa dalla frollatura lo scriviamo sul menu, accanto al piatto. È un'informazione per chi ordina, non un vezzo da esibire.",
+      "Cuociamo su pietra lavica, non su fiamma diretta. Il calore si distribuisce in modo uniforme: meno bruciature, la stessa qualità dal primo taglio della sera all'ultimo. L'aroma di griglia resta, solo più pulito: lascia parlare la carne invece di coprirla.",
+      "Una cottura scelta per esaltare la carne, non per nasconderla.",
     ],
   },
   daConfermare:
@@ -69,9 +72,7 @@ const en: CopyLaCarne = {
   nicchia: {
     titolo: "Against the current",
     paragrafi: [
-      "Lighting a grill in Fiumicino is a small heresy. Here fish is tradition, identity, habit: every menu in town starts with the sea and usually ends there.",
-      "We don't do it out of contrast, but to complete the picture. There are evenings for raw fish and white wine, and evenings when you want fire, smoke, a cut you hold in your hands. The first kind you'll find anywhere here. The second, almost nowhere.",
-      "At Vizio the embers are lit every night. Quality, flavour and freedom without compromise: from aperitivo to the last drink, without changing venue.",
+      "We work meat with the same care Fiumicino reserves for fish. From ribeye to Florentine, from T-bone to our Filetto alla Rossini: serious cuts and elaborate dishes, the same attention from aperitivo to late night.",
     ],
   },
   icona: {
@@ -83,8 +84,8 @@ const en: CopyLaCarne = {
   fuoco: {
     titolo: "How we treat it",
     paragrafi: [
-      "Fire is the only compulsory seasoning. Salt, time and the hand at the grill: the cut does the rest.",
-      "When a cut has been aged, we say so on the menu, next to the dish. It's information for whoever is ordering, not a badge to show off.",
+      "We cook on volcanic stone, not open flame. Heat spreads evenly: fewer burnt spots, the same quality from the first cut of the night to the last. The char-grilled aroma is still there, just cleaner, letting the meat speak for itself instead of covering it up.",
+      "A cooking method chosen to bring out the meat, not to mask it.",
     ],
   },
   daConfermare:
