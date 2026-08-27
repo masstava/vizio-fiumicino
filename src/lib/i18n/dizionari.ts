@@ -225,6 +225,7 @@ const it = {
 
     erroreCapienza: "Questo orario si è appena riempito. Scegline un altro.",
     erroreGenerico: "Qualcosa non ha funzionato. Riprova, o chiamaci.",
+    erroreLimiteRichieste: "Troppi tentativi in poco tempo. Aspetta qualche minuto e riprova, o chiamaci.",
 
     confermaTitolo: "Prenotazione registrata",
     confermaTesto: "Ti aspettiamo. A breve arriva anche la conferma via email, se ci hai lasciato un indirizzo.",
@@ -544,6 +545,7 @@ const en: Dizionario = {
 
     erroreCapienza: "That time just filled up. Please choose another.",
     erroreGenerico: "Something didn't work. Please try again, or call us.",
+    erroreLimiteRichieste: "Too many attempts in a short time. Wait a few minutes and try again, or call us.",
 
     confermaTitolo: "Booking confirmed",
     confermaTesto: "We'll be expecting you. A confirmation email is on its way too, if you left an address.",

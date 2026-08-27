@@ -63,6 +63,12 @@ export function PrenotaForm({
   const [coperti, setCoperti] = useState(2);
   const [note, setNote] = useState("");
   const [extra, setExtra] = useState<Record<string, string>>({});
+  // Honeypot: un utente reale non lo vede né lo raggiunge da tastiera
+  // (nascosto fuori schermo, aria-hidden, escluso dal tab order — vedi
+  // il campo più sotto), quindi resta sempre vuoto per chi compila il
+  // form normalmente. Un bot che compila ogni input che trova nel DOM
+  // lo riempie senza saperlo.
+  const [sitoWeb, setSitoWeb] = useState("");
 
   const [capienza, setCapienza] = useState<
     { fascia: string; limiteCoperti: number | null; occupati: number }[]
@@ -152,6 +158,7 @@ export function PrenotaForm({
         eventoId: contestoEvento?.id ?? null,
         eventoTitolo: contestoEvento?.titolo ?? null,
         risposteExtra: risposteExtra && risposteExtra.length > 0 ? risposteExtra : null,
+        honeypot: sitoWeb,
       });
 
       if (esito.ok) {
@@ -165,6 +172,8 @@ export function PrenotaForm({
         // la capienza per riflettere lo stato vero, invece di lasciare
         // a schermo un numero di posti residui che non è più corretto.
         leggiCapienzaGiorno(data).then(setCapienza).catch(() => {});
+      } else if (esito.messaggio === "RATE_LIMITED") {
+        setErrore(t.paginaPrenota.erroreLimiteRichieste);
       } else {
         setErrore(t.paginaPrenota.erroreGenerico);
       }
@@ -185,6 +194,7 @@ export function PrenotaForm({
     setCoperti(2);
     setNote("");
     setExtra({});
+    setSitoWeb("");
     setErrore(null);
   }
 
@@ -244,6 +254,25 @@ export function PrenotaForm({
 
   return (
     <form onSubmit={handleSubmit} className="max-w-xl space-y-5">
+      {/* Honeypot anti-spam: fuori schermo (non display:none, che
+          alcuni bot riconoscono e ignorano) e fuori dall'albero di
+          accessibilità (aria-hidden, tabIndex=-1) — un utente reale,
+          anche da tastiera o lettore di schermo, non lo incontra mai.
+          autoComplete="off" evita che il browser lo compili da solo
+          per un utente reale con l'autofill. */}
+      <div aria-hidden="true" className="absolute -left-[9999px] top-auto h-0 w-0 overflow-hidden">
+        <label htmlFor="pr-sito-web">Sito web</label>
+        <input
+          id="pr-sito-web"
+          name="sito-web"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={sitoWeb}
+          onChange={(e) => setSitoWeb(e.target.value)}
+        />
+      </div>
+
       {contestoEvento && (
         <p className="rounded-[2px] border border-gold bg-gold/25 px-3 py-2 font-sans text-sm text-dark">
           {t.paginaPrenota.perEvento(contestoEvento.titolo)}

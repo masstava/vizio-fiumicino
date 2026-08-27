@@ -245,6 +245,24 @@ export type Database = {
         }
         Relationships: []
       }
+      limite_richieste_prenotazione: {
+        Row: {
+          creata_il: string
+          id: number
+          ip: string
+        }
+        Insert: {
+          creata_il?: string
+          id?: number
+          ip: string
+        }
+        Update: {
+          creata_il?: string
+          id?: number
+          ip?: string
+        }
+        Relationships: []
+      }
       orari: {
         Row: {
           apertura: string | null
@@ -577,6 +595,10 @@ export type Database = {
           p_prezzo_variabile: boolean
         }
         Returns: string
+      }
+      verifica_limite_richieste: {
+        Args: { p_ip: string }
+        Returns: boolean
       }
     }
     Enums: {
