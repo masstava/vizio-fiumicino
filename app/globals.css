@@ -53,6 +53,46 @@ html {
      scende a 1,46:1, quindi su fondo chiaro NON è utilizzabile per
      il testo. */
   --color-gold-brand: #dfc98a;
+
+  /* =============================================================
+     Dashboard (/gestione) — token distinti dal sito pubblico
+     =============================================================
+     Vedi DASHBOARD_DESIGN_SYSTEM.md per il sistema completo.
+     Prefisso "admin-" per evitare collisioni: --color-ink qui sopra è
+     già un colore di TESTO del sito pubblico (#1a1a1a); il nero quasi
+     puro della dashboard è invece uno sfondo (sidebar), un ruolo
+     diverso con un valore diverso — da qui la necessità di un token
+     separato piuttosto che riusare "ink" con un significato nuovo.
+
+     --color-admin-brick fa eccezione di proposito: NON è un valore
+     nuovo, è un alias di --color-bordeaux. Il rosso mattone della
+     dashboard è lo stesso già in uso sul sito pubblico, riferimento
+     diretto e non una seconda costante con lo stesso numero scritta
+     a mano due volte. */
+  --color-admin-ink: #17181c;
+  --color-admin-canvas: #faf9f7;
+  --color-admin-surface: #ffffff;
+  --color-admin-line: #e7e5e0;
+  --color-admin-line-strong: #d6d4cd;
+  --color-admin-text: #1a1a18;
+  --color-admin-text-2: #6b6a64;
+  --color-admin-text-3: #6f6d66;
+  --color-admin-brick: var(--color-bordeaux);
+  --color-admin-brick-wash: #fbeaea;
+
+  /* Badge di stato: verde/ambra/grigio, tre toni scelti per stare in
+     armonia con --admin-brick (stessa temperatura calda/neutra dei
+     grigi, nessun verde/ambra acceso che stonerebbe). Ogni coppia
+     testo+wash è pensata per il pattern "pillola con pallino colorato
+     + testo" (§ Badge di stato in DASHBOARD_DESIGN_SYSTEM.md): il
+     colore pieno per il pallino e per il testo, il wash come sfondo
+     tenue della pillola. */
+  --color-admin-green: #2f6b4f;
+  --color-admin-green-wash: #e7f3ec;
+  --color-admin-amber: #8a5a12;
+  --color-admin-amber-wash: #fbf0dd;
+  --color-admin-gray: #6b6a64;
+  --color-admin-gray-wash: #eeece8;
 }
 
 /* =============================================================

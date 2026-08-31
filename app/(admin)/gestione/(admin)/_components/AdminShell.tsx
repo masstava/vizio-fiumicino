@@ -1,17 +1,23 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { AdminTopbar } from "@/src/components/admin/AdminTopbar";
 import { SidebarNav } from "./SidebarNav";
 import { SignOutButton } from "./SignOutButton";
 
-// Struttura della dashboard.
+// Struttura della dashboard — restyling del contenitore (Passaggio
+// 1/6 del refactor UI/UX, vedi DASHBOARD_DESIGN_SYSTEM.md). Il
+// comportamento responsive sotto è lo STESSO già verificato in
+// precedenza (apertura/chiusura, focus, Esc, overlay): cambia solo
+// l'aspetto, non la logica.
 //
-// Desktop invariato: colonna laterale sempre visibile a 224px.
+// Desktop invariato nella struttura: colonna laterale sempre
+// visibile, ora 232px (era 224px) per il nuovo sistema di design.
 //
-// Mobile: la stessa colonna occuperebbe 224px dei 380 disponibili,
-// lasciando 156px ai form — che è il contrario della priorità giusta.
-// Diventa quindi un pannello che compare al tocco e si richiude
-// scegliendo una voce, toccando fuori o con Esc.
+// Mobile: la stessa colonna occuperebbe una fetta enorme dei 380px
+// disponibili, lasciando troppo poco ai form — che è il contrario
+// della priorità giusta. Diventa quindi un pannello che compare al
+// tocco e si richiude scegliendo una voce, toccando fuori o con Esc.
 //
 // Il pannello non intrappola il focus di proposito: è una divulgazione,
 // non una finestra modale. Chi naviga da tastiera può uscirne
@@ -52,7 +58,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           diventa una X e deve restare visibile e toccabile. Coprirlo
           toglierebbe l'unico comando evidente per richiudere — restano
           Esc e il tocco fuori, ma nessuno dei due si vede. */}
-      <div className="sticky top-0 z-50 flex items-center gap-3 bg-dark px-4 py-3 md:hidden">
+      <div className="sticky top-0 z-50 flex items-center gap-3 bg-admin-ink px-4 py-3 md:hidden">
         <button
           ref={bottoneRef}
           type="button"
@@ -72,7 +78,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </button>
         <div className="min-w-0">
           <p className="truncate font-serif text-base font-medium leading-tight text-cream-text">
-            Vizio Bistrot
+            Vizio
           </p>
           <p className="font-sans text-[9px] tracking-[0.18em] uppercase text-muted-dark">
             Gestione
@@ -87,7 +93,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <div
           aria-hidden="true"
           onClick={chiudi}
-          className="fixed inset-0 z-30 bg-dark/60 md:hidden"
+          className="fixed inset-0 z-30 bg-admin-ink/60 md:hidden"
         />
       )}
 
@@ -96,19 +102,19 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         id="admin-nav-mobile"
         ref={pannelloRef}
         className={[
-          "z-40 flex flex-col bg-dark",
+          "z-40 flex flex-col bg-admin-ink",
           // mobile: fuori schermo finché non si apre
           // pt-[68px]: altezza della barra superiore, così la prima
           // voce non finisce sotto di essa.
           "fixed inset-y-0 left-0 w-64 pt-[68px] transition-transform duration-200 motion-reduce:transition-none",
           aperto ? "translate-x-0" : "-translate-x-full",
-          // desktop: invariato rispetto a prima
-          "md:static md:w-56 md:flex-shrink-0 md:translate-x-0 md:pt-0",
+          // desktop: 232px, invariata la staticità rispetto a prima
+          "md:static md:w-[232px] md:flex-shrink-0 md:translate-x-0 md:pt-0",
         ].join(" ")}
       >
         <div className="hidden border-b border-cream-text/10 px-6 py-6 md:block">
           <p className="font-serif text-lg font-medium leading-tight text-cream-text">
-            Vizio Bistrot
+            Vizio
           </p>
           <p className="mt-0.5 font-sans text-[9px] tracking-[0.18em] uppercase text-muted-dark">
             Gestione
@@ -126,7 +132,18 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      <main className="min-w-0 flex-1 overflow-auto bg-cream">{children}</main>
+      {/* [&_.font-serif]:font-sans — § Tipografia in
+          DASHBOARD_DESIGN_SYSTEM.md: Fraunces resta riservato al
+          wordmark della sidebar qui sopra, non altrove nella
+          dashboard. Le pagine sotto (non toccate in questo passaggio)
+          hanno ancora .font-serif sui propri titoli h1: questa regola
+          li riporta a Inter senza modificare un solo file di pagina —
+          un override di stile scoped al contenitore, non un cambio di
+          contenuto. */}
+      <main className="min-w-0 flex-1 overflow-auto bg-admin-canvas [&_.font-serif]:font-sans">
+        <AdminTopbar />
+        {children}
+      </main>
     </div>
   );
 }
