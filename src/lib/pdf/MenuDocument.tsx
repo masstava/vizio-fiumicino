@@ -413,8 +413,8 @@ export function MenuDocument({
 
   const thankYouText =
     lang === "en"
-      ? "Thank you for choosing Vizio. Sign up for our newsletter to stay updated on events and surprises reserved for our followers."
-      : "Grazie per aver scelto Vizio. Iscriviti alla newsletter per non perdere eventi e sorprese riservate a chi ci segue.";
+      ? "Thank you for choosing Vizio. Sign up for our newsletter: -10% on your first visit, no minimum spend, plus early access to our themed evenings."
+      : "Grazie per aver scelto Vizio. Iscriviti alla newsletter: -10% sulla tua prima visita, senza spesa minima, più l'accesso in anteprima alle nostre serate a tema.";
 
   return (
     <Document>

@@ -10,6 +10,14 @@ import { getDizionario } from "@/src/lib/i18n/dizionari";
 // in uno step dedicato al modulo newsletter — per ora il form non
 // invia nulla da nessuna parte: preventDefault serve solo a evitare
 // un reload di pagina al submit, non c'è alcuna richiesta di rete.
+//
+// ATTENZIONE: t.newsletter.testo porta ora un incentivo reale (-10%
+// prima visita, accesso anticipato alle serate a tema) — un impegno
+// del locale verso chi si iscrive, non solo una descrizione. Finché
+// il form non invia nulla da nessuna parte (vedi sopra), iscriversi
+// oggi non produce alcun -10% né alcun accesso anticipato: il testo è
+// online prima del meccanismo che lo rende vero. Va implementato a
+// breve — non è una promessa da lasciare silenziosamente inevasa.
 export function Newsletter({ locale }: { locale: Locale }) {
   const t = getDizionario(locale);
   return (
@@ -21,6 +29,9 @@ export function Newsletter({ locale }: { locale: Locale }) {
         <h2 className="mb-4 font-serif text-2xl font-medium text-ink">
           {t.newsletter.titolo}
         </h2>
+        <p className="mb-4 font-sans text-base leading-relaxed text-muted">
+          {t.newsletter.testo}
+        </p>
         <form
           onSubmit={(e) => e.preventDefault()}
           className="flex flex-col gap-3 sm:flex-row"

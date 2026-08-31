@@ -71,7 +71,7 @@ const it = {
   newsletter: {
     titolo: "Resta aggiornato",
     testo:
-      "Serate, novità del menu e appuntamenti: una mail ogni tanto, niente di più.",
+      "Iscriviti alla newsletter: -10% sulla tua prima visita, senza spesa minima, più l'accesso in anteprima alle nostre serate a tema.",
     emailLabel: "Indirizzo email",
     emailPlaceholder: "La tua email",
   },
@@ -397,7 +397,7 @@ const en: Dizionario = {
   newsletter: {
     titolo: "Stay in the loop",
     testo:
-      "Evenings, new dishes and upcoming dates: an email now and then, nothing more.",
+      "Sign up for our newsletter: -10% on your first visit, no minimum spend, plus early access to our themed evenings.",
     emailLabel: "Email address",
     emailPlaceholder: "Your email",
   },
