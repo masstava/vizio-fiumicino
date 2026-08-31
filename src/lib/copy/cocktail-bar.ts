@@ -38,7 +38,7 @@ const it = {
     titolo: "Il bar non è il dopo",
     paragrafi: [
       "In molti locali il bancone è un'anticamera: serve a farti aspettare il tavolo. Qui è il contrario — è il filo che tiene insieme la serata.",
-      "Si comincia con qualcosa di secco e sveglio prima di sedersi. Si continua con un drink che regge la brace invece di spegnerla. Si chiude con un amaro, un distillato o un ultimo cocktail che non ha fretta.",
+      "Si comincia con qualcosa di secco e sveglio prima di sedersi. Si continua con un drink che regge la griglia invece di spegnerla. Si chiude con un amaro, un distillato o un ultimo cocktail che non ha fretta.",
       "Qualità, gusto e libertà senza compromessi vale anche qui: nessuno deve spiegarti che dopo l'antipasto si beve soltanto vino.",
     ],
   },

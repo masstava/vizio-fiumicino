@@ -19,7 +19,7 @@ export function generateStaticParams() {
 }
 
 const DESCRIZIONE: Record<Locale, string> = {
-  it: "Carne alla brace, cocktail d'autore e aperitivo fino a notte fonda, a Fiumicino. Via delle Ombrine 25.",
+  it: "Carne alla griglia, cocktail d'autore e aperitivo fino a notte fonda, a Fiumicino. Via delle Ombrine 25.",
   en: "Grilled meat, signature cocktails and aperitivo until late, in Fiumicino. Via delle Ombrine 25.",
 };
 
