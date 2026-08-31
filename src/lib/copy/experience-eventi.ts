@@ -1,7 +1,7 @@
 import type { Locale } from "@/src/lib/i18n/config";
 
 // =============================================================
-// COPY DELLA PAGINA "EXPERIENCE & EVENTI" — BOZZA, NON DEFINITIVO
+// COPY DELLA PAGINA "EXPERIENCE & EVENTI"
 // =============================================================
 // Stesso registro editoriale delle altre pagine di Strato 1.
 //
@@ -10,9 +10,16 @@ import type { Locale } from "@/src/lib/i18n/config";
 // qui vorrebbe dire avere due posti da aggiornare e uno dei due
 // sbagliato.
 //
-// Del menu degustazione non si dice quante portate abbia, quanto
-// costi o quanto duri: nulla di tutto ciò è nella specifica o nel
-// database. Resta un segnaposto esplicito.
+// "degustazione" è testo definitivo: corregge il posizionamento
+// precedente, che presentava il menu degustazione come proposta "su
+// richiesta" — non lo è. Nasce dalle stagioni e dalle occasioni
+// pensate dallo chef (es. San Valentino); una richiesta per
+// un'occasione propria resta possibile, ma è secondaria, non il
+// messaggio principale. Il segnaposto su portate/prezzo/durata è
+// stato rimosso, non solo confermato: la nuova impostazione non
+// promette un prodotto fisso con quelle caratteristiche, quindi non
+// serve più specificarle. Le altre sezioni di questo file (hero,
+// eventi, privati) restano bozza fino a una correzione separata.
 //
 // §8, blocco 7: eventi privati = solo un contatto. Nessun modulo,
 // nessun flusso di prenotazione sala — e nessuna frase che lo lasci
@@ -29,12 +36,9 @@ const it = {
   degustazione: {
     titolo: "Il menu degustazione",
     paragrafi: [
-      "È il modo più diretto per capire come lavoriamo: scegliamo noi, tu ti siedi. Si passa dal bancone alla brace senza dover decidere niente.",
-      "Si prenota per telefono, perché quasi sempre c'è qualcosa da concordare prima — allergie, intolleranze, una portata da togliere o da raddoppiare.",
+      "Il menu degustazione nasce dalle stagioni e dalle occasioni speciali: lo chef lo pensa per momenti come San Valentino, non come proposta fissa sempre uguale. Se hai un'occasione tua da festeggiare, scrivici: ne parliamo insieme e troviamo la strada giusta.",
     ],
   },
-  degustazioneDaConfermare:
-    "[DA CONFERMARE: numero di portate, prezzo a persona, durata indicativa, eventuale abbinamento bevande, preavviso richiesto. Da compilare con i dati reali del locale prima della pubblicazione]",
   eventi: {
     occhiello: "In programma",
     titolo: "Le prossime serate",
@@ -64,12 +68,9 @@ const en: CopyExperience = {
   degustazione: {
     titolo: "The tasting menu",
     paragrafi: [
-      "It's the most direct way to see how we work: we choose, you sit down. It runs from the bar to the embers without you having to decide anything.",
-      "It's booked by phone, because there's almost always something to agree on first — allergies, intolerances, a course to drop or to double.",
+      "Our tasting menu follows the seasons and special occasions: the chef designs it for moments like Valentine's Day, not as a fixed offer that's always the same. If you have your own occasion to celebrate, get in touch: let's talk it through together.",
     ],
   },
-  degustazioneDaConfermare:
-    "[TO BE CONFIRMED: number of courses, price per person, approximate length, optional drinks pairing, notice required. To be filled in with the venue's real data before publication]",
   eventi: {
     occhiello: "Coming up",
     titolo: "The next evenings",

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Footer } from "@/src/components/home/Footer";
 import { SiteHeader } from "@/src/components/home/SiteHeader";
 import { Reveal } from "@/src/components/motion/Reveal";
-import { NotaBozza } from "@/src/components/pagine/NotaBozza";
 import { PaginaHero } from "@/src/components/pagine/PaginaHero";
 import { DarkSectionAccent } from "@/src/components/ui/DarkSectionAccent";
 import { Section } from "@/src/components/ui/Section";
@@ -80,7 +79,6 @@ export default async function ExperienceEventiPage({
               </p>
             ))}
           </div>
-          <NotaBozza testo={copy.degustazioneDaConfermare} locale={locale} />
           <div className="mt-8">
             <a
               href={CONTATTI.telefono.href}
