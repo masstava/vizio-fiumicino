@@ -1,17 +1,26 @@
 import type { Locale } from "@/src/lib/i18n/config";
 
 // =============================================================
-// COPY DELLA PAGINA "COCKTAIL & BAR" — BOZZA, NON TESTO DEFINITIVO
+// COPY DELLA PAGINA "COCKTAIL & BAR"
 // =============================================================
 // Stesso registro editoriale della pagina "La carne", tema bancone.
 // Scritto sul posizionamento di progetto: "qualità, gusto e libertà
 // senza compromessi", dall'aperitivo al dopocena.
 //
-// Nessun drink è nominato qui dentro: i drink citati in pagina
-// arrivano dal database, uno per categoria diversa (vedi
-// src/lib/selezione-bar.ts). Elencarli a mano avrebbe rischiato di
-// riprodurre il difetto già corretto in home (§18): quattro varianti
-// quasi identiche della stessa cosa.
+// "icona" è testo definitivo: sostituisce il vecchio segnaposto
+// "firma della casa da raccontare" — carta stagionale e nome del bar
+// manager non erano confermati come reali, quindi non si menzionano
+// più. Il drink stesso (nome, descrizione, badge) arriva dal
+// database, stesso pattern del Filetto alla Rossini su "La carne"
+// (vedi PiattoIcona in page.tsx): la pagina non può descrivere un
+// drink diverso da quello servito. Le altre sezioni di questo file
+// restano bozza fino a una correzione separata.
+//
+// Gli altri drink citati in pagina (sezione "selezione") arrivano dal
+// database, uno per categoria diversa (vedi src/lib/selezione-bar.ts).
+// Elencarli a mano avrebbe rischiato di riprodurre il difetto già
+// corretto in home (§18): quattro varianti quasi identiche della
+// stessa cosa.
 //
 // Nessuna affermazione operativa non verificabile: gli orari sono
 // unici per il locale, non separati fra cucina e bancone, quindi qui
@@ -46,8 +55,12 @@ const it = {
       "Gli analcolici hanno una loro parte della carta e la stessa cura degli altri. Stessa attenzione alle proporzioni, stessi bicchieri, stesso tempo.",
     ],
   },
-  daConfermare:
-    "[DA CONFERMARE: firma della casa da raccontare per esteso, eventuale carta stagionale, nome del bar manager se lo si vuole citare]",
+  icona: {
+    occhiello: "Il drink icona",
+    titolo: "Cocktail Vizio",
+    testo:
+      "Se dovessimo scegliere un solo drink per raccontare il bancone, sarebbe questo. Porta il nome del locale, con la stessa cura di ogni altro cocktail in carta.",
+  },
   chiusura: {
     titolo: "Il bancone è lì.",
     testo: "Guarda cosa c'è in carta, oppure tieni il posto per stasera.",
@@ -84,8 +97,12 @@ const en: CopyCocktailBar = {
       "Alcohol-free drinks have their own part of the list and the same care as the rest. Same attention to proportions, same glassware, same time.",
     ],
   },
-  daConfermare:
-    "[TO BE CONFIRMED: the house signature to tell in full, any seasonal list, the bar manager's name if you want it mentioned]",
+  icona: {
+    occhiello: "The signature drink",
+    titolo: "Cocktail Vizio",
+    testo:
+      "If we had to pick one drink to sum up the bar, this would be it. It carries the name of the restaurant, with the same care as every other cocktail on the list.",
+  },
   chiusura: {
     titolo: "The bar is right there.",
     testo: "Have a look at the list, or hold a spot for tonight.",

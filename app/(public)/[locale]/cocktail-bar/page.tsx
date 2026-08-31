@@ -4,12 +4,16 @@ import { CompactDishCard } from "@/src/components/home/CompactDishCard";
 import { Footer } from "@/src/components/home/Footer";
 import { SiteHeader } from "@/src/components/home/SiteHeader";
 import { Reveal } from "@/src/components/motion/Reveal";
-import { NotaBozza } from "@/src/components/pagine/NotaBozza";
 import { PaginaHero } from "@/src/components/pagine/PaginaHero";
+import {
+  PiattoIcona,
+  type PiattoIconaDati,
+} from "@/src/components/pagine/PiattoIcona";
 import { DarkSectionAccent } from "@/src/components/ui/DarkSectionAccent";
 import { Section } from "@/src/components/ui/Section";
 import { CONTATTI } from "@/src/lib/contatti";
 import { getCopyCocktailBar } from "@/src/lib/copy/cocktail-bar";
+import { campoLocalizzato, campoLocalizzatoOpzionale } from "@/src/lib/i18n/campi";
 import { isLocale, localizedPath, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
 import { alternatesPerPagina } from "@/src/lib/i18n/metadata";
@@ -56,10 +60,40 @@ export default async function CocktailBarPage({
   const copy = getCopyCocktailBar(locale);
   const supabase = await createClient();
 
-  const [selezione, orari] = await Promise.all([
+  const [selezione, orari, { data: drinkRow }] = await Promise.all([
     getSelezioneBar(supabase, locale),
     getOrariSito(supabase, locale),
+    supabase
+      .from("piatti")
+      .select("id, nome, nome_en, descrizione, descrizione_en, foto_url")
+      .ilike("nome", "%vizio%")
+      .eq("disponibile", true)
+      .order("ordine")
+      .limit(1)
+      .maybeSingle(),
   ]);
+
+  let drinkIcona: PiattoIconaDati | null = null;
+  if (drinkRow) {
+    const { data: badgeRows } = await supabase
+      .from("badge")
+      .select("testo, testo_en")
+      .eq("piatto_id", drinkRow.id);
+
+    drinkIcona = {
+      id: drinkRow.id,
+      nome: campoLocalizzato(drinkRow.nome, drinkRow.nome_en, locale),
+      descrizione: campoLocalizzatoOpzionale(
+        drinkRow.descrizione,
+        drinkRow.descrizione_en,
+        locale,
+      ),
+      foto_url: drinkRow.foto_url,
+      badges: (badgeRows ?? []).map((b) =>
+        campoLocalizzato(b.testo, b.testo_en, locale),
+      ),
+    };
+  }
 
   return (
     <main>
@@ -81,6 +115,33 @@ export default async function CocktailBarPage({
                 {p}
               </p>
             ))}
+          </div>
+        </Section>
+      </Reveal>
+
+      {/* Il drink icona: nome, descrizione, foto e badge letti dal
+          database (stesso pattern del Filetto alla Rossini su "La
+          carne", vedi PiattoIcona). Se il drink non c'è (rinominato,
+          non disponibile), restano occhiello/titolo/testo e basta —
+          niente scheda sopra il nulla. */}
+      <Reveal>
+        <Section tone="dark" className="relative overflow-hidden">
+          <DarkSectionAccent />
+          <div className="relative z-10">
+            <p className="mb-3 font-sans text-[10px] uppercase tracking-widest text-muted-dark">
+              {copy.icona.occhiello}
+            </p>
+            <h2 className="max-w-2xl font-serif text-2xl font-medium text-cream-text md:text-3xl">
+              {copy.icona.titolo}
+            </h2>
+            <p className="mt-4 max-w-2xl font-sans text-base leading-relaxed text-muted-dark">
+              {copy.icona.testo}
+            </p>
+            {drinkIcona && (
+              <div className="mt-8">
+                <PiattoIcona piatto={drinkIcona} />
+              </div>
+            )}
           </div>
         </Section>
       </Reveal>
@@ -132,7 +193,6 @@ export default async function CocktailBarPage({
               </p>
             ))}
           </div>
-          <NotaBozza testo={copy.daConfermare} locale={locale} />
         </Section>
       </Reveal>
 
