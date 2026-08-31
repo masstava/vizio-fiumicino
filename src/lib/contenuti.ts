@@ -46,7 +46,7 @@ export const GRUPPI_CONTENUTI: GruppoContenuti[] = [
         aiuto: "Poche parole, è il testo più grande della pagina.",
         lungo: true,
         fallback:
-          "Carne alla brace, cocktail d'autore, aperitivo fino a notte fonda.",
+          "Carne alla griglia, cocktail d'autore, aperitivo fino a notte fonda.",
         fallbackEn:
           "Grilled meat, signature cocktails, aperitivo until late.",
       },
@@ -60,17 +60,17 @@ export const GRUPPI_CONTENUTI: GruppoContenuti[] = [
       {
         chiave: "pilastro1.titolo",
         etichetta: "Primo punto — titolo",
-        fallback: "Carne alla brace",
-        fallbackEn: "Grilled over embers",
+        fallback: "Carne alla griglia",
+        fallbackEn: "Grilled meat",
       },
       {
         chiave: "pilastro1.testo",
         etichetta: "Primo punto — descrizione",
         lungo: true,
         fallback:
-          "Tagli selezionati, cotture lente sulla brace, contorni all'altezza. La sostanza al centro del piatto.",
+          "Tagli selezionati, cotture su pietra lavica, contorni all'altezza. La sostanza al centro del piatto.",
         fallbackEn:
-          "Selected cuts, slow cooking over embers, sides that keep up. Substance at the centre of the plate.",
+          "Selected cuts, cooked on volcanic stone, sides that keep up. Substance at the centre of the plate.",
       },
       {
         chiave: "pilastro2.titolo",

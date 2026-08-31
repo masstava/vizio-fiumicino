@@ -8,10 +8,11 @@ import type { Locale } from "@/src/lib/i18n/config";
 // pesce domina, la carne è ciò che distingue Vizio ed è oggi
 // sotto-comunicata. Questa pagina esiste per correggere quello.
 //
-// "nicchia" e "fuoco" sono testo definitivo: correzione editoriale
-// che sostituisce la bozza precedente. Le altre sezioni di questo
-// file (hero, icona, chiusura) restano bozza fino a una correzione
-// separata — non toccate da questo intervento.
+// L'intera pagina è ora testo definitivo: hero, nicchia, icona, fuoco
+// e chiusura. Zero frammenti di bozza residui — l'unico dato ancora
+// aperto è il blocco "daConfermare" qui sotto (provenienza/razze/
+// frollatura), che è un dato di filiera non ancora fornito, non
+// testo da scrivere.
 //
 // Nessun dato tecnico è inventato qui: provenienza, razze e tempi di
 // frollatura NON sono nella specifica né nel database, quindi restano
@@ -29,9 +30,9 @@ import type { Locale } from "@/src/lib/i18n/config";
 const it = {
   hero: {
     occhiello: "La carne",
-    titolo: "Qui il mare è fuori dalla porta. Dentro, c'è la brace.",
+    titolo: "La carne, secondo Vizio.",
     sottotitolo:
-      "A Fiumicino si mangia pesce, ed è giusto così. Ma se stasera hai voglia d'altro, sei nel posto giusto.",
+      "Tagli importanti, cotture su pietra lavica e piatti elaborati. Modi diversi di lavorarla, la stessa attenzione alla materia prima.",
   },
   nicchia: {
     titolo: "Una scelta controcorrente",
@@ -43,7 +44,7 @@ const it = {
     occhiello: "Il piatto icona",
     titolo: "Filetto alla Rossini",
     testo:
-      "Se dovessimo far assaggiare un solo piatto per spiegare chi siamo, sarebbe questo. Un classico che non si incontra quasi più: ricco senza essere pesante, scenografico senza essere finto.",
+      "Se dovessimo scegliere un solo piatto per raccontare il nostro modo di intendere la carne, sarebbe questo. Un grande classico che unisce materia prima, tecnica e cucina.",
   },
   fuoco: {
     titolo: "Come la trattiamo",
@@ -65,9 +66,9 @@ type CopyLaCarne = typeof it;
 const en: CopyLaCarne = {
   hero: {
     occhiello: "The meat",
-    titolo: "The sea is right outside. Inside, the embers are lit.",
+    titolo: "Meat, the Vizio way.",
     sottotitolo:
-      "Fiumicino eats fish, and rightly so. But if tonight you want something else, you're in the right place.",
+      "Serious cuts, volcanic-stone grilling, elaborate dishes. Different ways of working it, the same attention to the raw ingredient.",
   },
   nicchia: {
     titolo: "Against the current",
@@ -79,7 +80,7 @@ const en: CopyLaCarne = {
     occhiello: "The signature dish",
     titolo: "Fillet Rossini",
     testo:
-      "If we could serve one dish to explain who we are, this would be it. A classic you rarely meet any more: rich without being heavy, theatrical without being fake.",
+      "If we had to choose one dish to tell you how we think about meat, this would be it. A classic that brings together raw ingredient, technique and kitchen craft.",
   },
   fuoco: {
     titolo: "How we treat it",
@@ -91,8 +92,8 @@ const en: CopyLaCarne = {
   daConfermare:
     "[TO BE CONFIRMED: sourcing, breeds and ageing times — to be filled in with the venue's real data before publication]",
   chiusura: {
-    titolo: "The grill is on.",
-    testo: "The rest of the menu is one click away. A table, one call.",
+    titolo: "The grill is lit.",
+    testo: "The rest of the menu is a click away. The table, a phone call away.",
   },
 };
 
