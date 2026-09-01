@@ -23,7 +23,16 @@ import { SignOutButton } from "./SignOutButton";
 // non una finestra modale. Chi naviga da tastiera può uscirne
 // tabulando, e Esc lo chiude riportando il focus al pulsante che
 // l'ha aperto — così non si perde il punto in cui si era.
-export function AdminShell({ children }: { children: React.ReactNode }) {
+interface AdminShellProps {
+  children: React.ReactNode;
+  // Conteggi reali per i contatori opzionali della sidebar (§ Sidebar
+  // in DASHBOARD_DESIGN_SYSTEM.md), calcolati nel layout server-side.
+  // Ogni chiave è opzionale: una sezione senza contatore reale non ne
+  // passa uno, e SidebarNav semplicemente non mostra la pillola.
+  contatori?: { menu?: number };
+}
+
+export function AdminShell({ children, contatori }: AdminShellProps) {
   const [aperto, setAperto] = useState(false);
   const bottoneRef = useRef<HTMLButtonElement>(null);
   const pannelloRef = useRef<HTMLDivElement>(null);
@@ -124,7 +133,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <div className="flex-1 overflow-y-auto py-3">
           {/* Scegliere una voce chiude il pannello: su mobile resterebbe
               aperto sopra la pagina appena caricata. */}
-          <SidebarNav onNavigate={chiudi} />
+          <SidebarNav onNavigate={chiudi} contatori={contatori} />
         </div>
 
         <div className="border-t border-cream-text/10 px-6 py-5">

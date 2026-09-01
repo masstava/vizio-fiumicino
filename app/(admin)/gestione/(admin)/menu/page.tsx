@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { createClient } from "@/src/lib/supabase/server";
-import { Button } from "@/src/components/ui/Button";
 import { MenuListClient } from "./_components/MenuListClient";
+import { NuovoPiattoAction } from "./_components/NuovoPiattoAction";
 import type { MacroGroup, PiattoListItem } from "./_components/types";
 
 export const dynamic = "force-dynamic";
@@ -107,17 +106,7 @@ export default async function MenuPage() {
 
   return (
     <div className="p-8 md:p-12">
-      <div className="flex items-start justify-between gap-4 mb-2">
-        <div>
-          <p className="font-sans text-[10px] tracking-widest uppercase text-muted mb-3">
-            Gestione
-          </p>
-          <h1 className="font-serif text-4xl font-medium text-ink">Menu</h1>
-        </div>
-        <Link href="/gestione/menu/nuovo">
-          <Button variant="primary">+ Aggiungi piatto</Button>
-        </Link>
-      </div>
+      <NuovoPiattoAction />
 
       <div className="flex items-center gap-4 mb-8">
         <a

@@ -12,10 +12,19 @@ esplicitamente.
 - **Passaggio 1/6 — completato**: sistema di design di base + nuova
   shell (sidebar + topbar), applicata a tutto `/gestione/*`. Nessuna
   pagina toccata nel suo contenuto.
-- **Passaggi 2-6**: applicano queste regole al contenuto di ciascuna
-  sezione (menu, orari, eventi, prenotazioni, contenuti) — tabelle,
-  badge, pulsanti, ricerca e azione primaria nella topbar, rimozione
-  dell'intestazione ora ridondante nel corpo di ogni pagina.
+- **Passaggio 2/6 — completato**: editor piatti (`/gestione/menu`).
+  Lista a righe hairline invece di card, badge di stato cliccabile al
+  posto dell'interruttore, ricerca e "+ Nuovo piatto" spostati nella
+  topbar via portale (`TopbarSlot`), intestazione di pagina rimossa
+  (topbar ora distingue lista/nuovo/modifica), contatore sidebar
+  "Menu" popolato con il conteggio reale dei piatti disponibili.
+  Corretto anche un mismatch di hydration di dnd-kit emerso nel
+  passaggio 1 (causa: id generato da un contatore di modulo che non
+  sopravvive identico tra server e client — fix: id deterministico
+  passato a ogni `DndContext`). Nessuna modifica alla logica di
+  salvataggio/validazione/allergeni/badge/foto/prezzo.
+- **Passaggi 3-6**: applicano le stesse regole alle sezioni restanti
+  (orari, eventi, prenotazioni, contenuti).
 
 Vedi "Cosa NON è ancora stato fatto" in fondo per l'elenco preciso di
 ciò che i passaggi successivi devono ancora collegare.
@@ -98,10 +107,11 @@ continuare ad affidarsi all'override.
   (`border-l-[3px]`), testo e icona passano a `text-cream-text`. NON
   un blocco di sfondo pieno: la voce attiva si riconosce dalla barra e
   dal colore del testo, non da un riempimento.
-- Contatore opzionale a destra della voce, per sezioni con elementi in
-  sospeso — pillola tonda con numero, sfondo `--admin-brick`. **Non
-  popolato in questo passaggio**: vedi "Cosa NON è ancora stato
-  fatto".
+- Contatore opzionale a destra della voce — pillola tonda con numero,
+  sfondo `--admin-brick`. **"Menu" popolato** dal passaggio 2/6 (numero
+  reale di piatti con `disponibile = true`, calcolato nel layout
+  server-side e passato a `SidebarNav` via `AdminShell`). Le altre voci
+  restano senza contatore: vedi "Cosa NON è ancora stato fatto".
 - Comportamento responsive: **invariato** rispetto a prima del
   refactor — pannello a scomparsa sotto `md` (hamburger che diventa
   X, overlay che chiude al tocco, Esc che chiude e restituisce il
@@ -115,43 +125,65 @@ Sopra il contenuto di ogni pagina, dentro `<main>`:
 
 - Titolo pagina: 18px, peso 600, `--color-admin-text`.
 - Sottotitolo: 12.5px, `--color-admin-text-3`.
-- Ricerca: prevista dove la pagina ha una lista. **Non ancora
-  collegata a nessuna pagina** in questo passaggio.
+- Ricerca: prevista dove la pagina ha una lista. **Collegata per
+  `/gestione/menu`** dal passaggio 2/6 (ricerca libera per nome piatto).
+  Le altre sezioni restano da collegare.
 - Pulsanti azione: bordo/trasparente di default (secondario); pieno
   `--admin-brick` riservato a **una sola azione primaria per vista**
-  — mai due pulsanti pieni rossi visibili insieme. **Non ancora
-  collegati a nessuna pagina** in questo passaggio.
+  — mai due pulsanti pieni rossi visibili insieme. **"+ Nuovo piatto"
+  collegato** dal passaggio 2/6. Le altre sezioni restano da collegare.
 
 Titolo e sottotitolo sono ricavati dal percorso (`usePathname`), non
-passati dalla pagina — coerente col fatto che questo passaggio non
-tocca il contenuto di nessuna pagina. Ogni pagina mostra ancora la
-propria intestazione in linea (invariata): la duplicazione visiva
-temporanea (topbar + intestazione della pagina) è nota e attesa,
-elencata sotto in "Cosa NON è ancora stato fatto".
+passati dalla pagina — la topbar non conosce il contenuto di una
+pagina in anticipo. Dove la pagina deve invece portare un proprio
+controllo nella topbar (ricerca, azione primaria), lo fa con
+`TopbarSlot` (`src/components/admin/TopbarSlot.tsx`): un portale verso
+un nodo fisso (`#admin-topbar-slot`, reso da `AdminTopbar`) che lascia
+lo stato del controllo esattamente dove la pagina lo possiede già,
+spostando solo dove appare nel DOM. `order` sullo slot decide la
+posizione orizzontale, indipendente da quale portale monta per primo.
+Le pagine ancora non toccate mostrano ancora la propria intestazione
+in linea: la duplicazione visiva temporanea (topbar + intestazione
+della pagina) resta nota e attesa per quelle sezioni, elencata sotto in
+"Cosa NON è ancora stato fatto".
 
 ## Tabelle/liste dense
 
-Per i passaggi successivi, quando toccano le liste di ogni sezione
-(piatti, eventi, prenotazioni):
+Applicato per la prima volta in `/gestione/menu` (passaggio 2/6), da
+ripetere per le liste restanti (eventi, prenotazioni):
 
-- Righe con bordo hairline (`border-admin-line`), non card arrotondate
-  con ombra — più adatto a liste lunghe scorse velocemente.
-- Hover: leggero cambio di sfondo.
-- Riga selezionata: tinta `--admin-brick-wash`.
+- Righe con bordo hairline (`divide-y divide-admin-line` sul
+  contenitore), non card arrotondate con ombra — più adatto a liste
+  lunghe scorse velocemente.
+- Hover: leggero cambio di sfondo (`hover:bg-admin-canvas` sulla riga).
+- Riga selezionata: tinta `--admin-brick-wash` — non applicabile in
+  `/gestione/menu` (nessuna selezione multipla in quella lista); da
+  usare quando una lista futura introduce selezione.
 - Sfondo della tabella/pannello: `--color-admin-surface` (bianco), non
   `--color-admin-canvas` — la superficie della lista si stacca dal
   fondo pagina.
+- Il componente condiviso `DishRow` (usato anche dal sito pubblico) NON
+  è stato toccato: la resa hairline/hover vive nel contenitore admin
+  attorno ad esso (`AdminDishRow`/`SortableDishRow`), non nel
+  componente condiviso — così il menu pubblico resta invariato.
 
 ## Badge di stato
 
-Componente pronto: `src/components/admin/StatusBadge.tsx` — pillola
-con pallino colorato + testo (mai solo un colore di sfondo pieno, per
-chi non distingue i colori). Quattro toni: `verde`, `ambra`, `grigio`,
-`brick`. **Non ancora usato da nessuna pagina**: `/gestione/prenotazioni`
-oggi segnala lo stato con un colore di testo sul `<select>` di
-cambio-stato, non con questa pillola — il passaggio dedicato a quella
-pagina deciderà come e se sostituirlo, visto che lì lo stato è anche
-un CONTROLLO (si cambia da un menu a tendina), non solo una lettura.
+Due componenti distinti, stesso aspetto visivo:
+
+- `src/components/admin/StatusBadge.tsx` — di sola lettura (pillola
+  con pallino colorato + testo, mai solo un colore di sfondo pieno).
+  Quattro toni: `verde`, `ambra`, `grigio`, `brick`.
+- `src/components/admin/StatusToggle.tsx` — la stessa pillola dentro un
+  `<button role="switch" aria-checked>`: dove lo stato è anche un
+  CONTROLLO (si può cambiare cliccando), non solo una lettura. **Usato
+  dal passaggio 2/6** per "Disponibile"/"Esaurito" in `/gestione/menu`
+  (`verde`/`grigio`), al posto del vecchio interruttore a levetta —
+  stessa azione (`toggleDisponibile`), stesso aggiornamento ottimistico
+  con rollback, solo la resa è cambiata.
+- `/gestione/prenotazioni` **non ancora toccato**: oggi segnala lo
+  stato con un colore di testo su un `<select>` — il passaggio dedicato
+  a quella pagina deciderà se e come sostituirlo con `StatusToggle`.
 
 ## Pulsanti
 
@@ -166,27 +198,29 @@ un CONTROLLO (si cambia da un menu a tendina), non solo una lettura.
   passaggi è verificare, pagina per pagina, che non compaiano MAI due
   `variant="primary"` visibili nella stessa vista.
 
-## Cosa NON è ancora stato fatto (voci aperte per i passaggi 2-6)
+## Cosa NON è ancora stato fatto (voci aperte per i passaggi 3-6)
 
-- **Ricerca in topbar**: prevista dalla specifica, nessuno slot
-  collegato a una pagina — richiede filtrare i dati di quella pagina,
-  che è logica di quella pagina.
-- **Azione primaria in topbar**: idem — spostare qui il pulsante
-  "+ Nuovo piatto"/"+ Aggiungi evento" che oggi vive nel corpo di
-  ciascuna pagina è lavoro del passaggio dedicato a quella pagina.
-- **Contatore sidebar**: capacità pronta in `SidebarNav.tsx`
-  (`contatore?: number` per voce), nessun dato reale calcolato. Lo
-  stato "prenotazioni da confermare" non esiste nell'attuale modello
-  dati (`stato` è `confermata | cancellata | completata | no-show`,
-  nessuno stato "in attesa" da contare) — non è stato inventato uno
-  stato fittizio solo per riempire un numero.
-- **Restyling tabelle/liste dense**: da applicare pagina per pagina
-  (menu, eventi, prenotazioni).
+- **Ricerca in topbar**: collegata solo per `/gestione/menu`. Eventi e
+  prenotazioni restano da collegare — stesso meccanismo (`TopbarSlot`),
+  richiede solo che quella pagina esponga lo stato di ricerca già
+  proprio tramite il portale.
+- **Azione primaria in topbar**: idem — "+ Aggiungi evento" e
+  l'eventuale azione primaria di prenotazioni/orari/contenuti restano
+  nel corpo della pagina, da spostare nel passaggio dedicato a ciascuna.
+- **Contatore sidebar**: solo "Menu" è popolato (numero reale di piatti
+  disponibili). Le altre voci restano senza contatore: lo stato
+  "prenotazioni da confermare" non esiste nell'attuale modello dati
+  (`stato` è `confermata | cancellata | completata | no-show`, nessuno
+  stato "in attesa" da contare) — non è stato inventato uno stato
+  fittizio solo per riempire un numero.
+- **Restyling tabelle/liste dense**: fatto per `/gestione/menu`. Da
+  applicare ancora a eventi e prenotazioni.
 - **Badge di stato al posto del `<select>` colorato** in
-  `/gestione/prenotazioni`: da decidere nel passaggio dedicato.
-- **Duplicazione temporanea del titolo di pagina**: la topbar mostra
-  titolo/sottotitolo per percorso; ogni pagina mostra ANCORA la
-  propria intestazione in linea (eyebrow "Gestione" + `<h1>`),
-  invariata. Verrà rimossa quando quella pagina sarà toccata nel suo
-  passaggio dedicato — fino ad allora le due convivono, visivamente
-  ridondanti ma non rotte.
+  `/gestione/prenotazioni`: da decidere nel passaggio dedicato (schema
+  già pronto: `StatusToggle`, usato per la prima volta in
+  `/gestione/menu`).
+- **Duplicazione temporanea del titolo di pagina**: risolta per
+  `/gestione/menu` (lista, nuovo, modifica). Orari, eventi,
+  prenotazioni e contenuti mostrano ANCORA la propria intestazione in
+  linea (eyebrow "Gestione" + `<h1>`), invariata — verrà rimossa quando
+  quella pagina sarà toccata nel suo passaggio dedicato.

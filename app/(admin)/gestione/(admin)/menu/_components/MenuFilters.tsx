@@ -6,14 +6,12 @@ import type { MacroGroup } from "./types";
 
 interface MenuFiltersProps {
   groups: MacroGroup[];
-  search: string;
-  onSearchChange: (value: string) => void;
 }
 
 const fieldClass =
-  "min-h-11 md:min-h-0 bg-cream border border-ink/20 rounded-[2px] px-3 py-2 font-sans text-sm text-ink transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 focus-visible:border-bordeaux/50";
+  "min-h-11 md:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-2 font-sans text-sm text-admin-text transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
 
-export function MenuFilters({ groups, search, onSearchChange }: MenuFiltersProps) {
+export function MenuFilters({ groups }: MenuFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -47,7 +45,7 @@ export function MenuFilters({ groups, search, onSearchChange }: MenuFiltersProps
       <div>
         <label
           htmlFor="menu-filter-macro"
-          className="font-sans text-[10px] tracking-widest uppercase text-muted block mb-1.5"
+          className="font-sans text-[10px] tracking-widest uppercase text-admin-text-2 block mb-1.5"
         >
           Macro-categoria
         </label>
@@ -71,7 +69,7 @@ export function MenuFilters({ groups, search, onSearchChange }: MenuFiltersProps
       <div>
         <label
           htmlFor="menu-filter-categoria"
-          className="font-sans text-[10px] tracking-widest uppercase text-muted block mb-1.5"
+          className="font-sans text-[10px] tracking-widest uppercase text-admin-text-2 block mb-1.5"
         >
           Categoria
         </label>
@@ -88,23 +86,6 @@ export function MenuFilters({ groups, search, onSearchChange }: MenuFiltersProps
             </option>
           ))}
         </select>
-      </div>
-
-      <div className="flex-1 min-w-[220px]">
-        <label
-          htmlFor="menu-filter-search"
-          className="font-sans text-[10px] tracking-widest uppercase text-muted block mb-1.5"
-        >
-          Cerca piatto
-        </label>
-        <input
-          id="menu-filter-search"
-          type="search"
-          value={search}
-          onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Cerca per nome…"
-          className={`${fieldClass} w-full`}
-        />
       </div>
     </div>
   );

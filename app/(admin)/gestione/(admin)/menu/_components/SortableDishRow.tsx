@@ -30,7 +30,11 @@ export function SortableDishRow({ dish, onDelete }: SortableDishRowProps) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="flex items-stretch bg-cream">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="flex items-stretch bg-admin-surface hover:bg-admin-canvas transition-colors"
+    >
       <button
         type="button"
         {...attributes}

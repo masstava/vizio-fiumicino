@@ -18,6 +18,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { TopbarSlot } from "@/src/components/admin/TopbarSlot";
 import { AccordionSection } from "./AccordionSection";
 import { AdminDishRow } from "./AdminDishRow";
 import { SortableDishRow } from "./SortableDishRow";
@@ -25,6 +26,9 @@ import { MenuFilters } from "./MenuFilters";
 import { slugify } from "./slugify";
 import { deletePiatto, reorderPiatti } from "../_actions";
 import type { MacroGroup, PiattoListItem } from "./types";
+
+const fieldClass =
+  "min-h-11 md:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-2 font-sans text-sm text-admin-text transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
 
 interface MenuListClientProps {
   groups: MacroGroup[];
@@ -234,10 +238,30 @@ export function MenuListClient({ groups: initialGroups }: MenuListClientProps) {
     m.categorie.some((c) => c.piatti.length > 0),
   );
 
+  // Ricerca nella topbar (§ Topbar in DASHBOARD_DESIGN_SYSTEM.md): lo
+  // stato resta qui (dove viveva anche prima), solo l'input appare
+  // altrove nel DOM via portale — nessuna logica di filtro cambiata.
+  const searchSlot = (
+    <TopbarSlot order={1}>
+      <label htmlFor="menu-search" className="sr-only">
+        Cerca piatto
+      </label>
+      <input
+        id="menu-search"
+        type="search"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Cerca per nome…"
+        className={`${fieldClass} w-56`}
+      />
+    </TopbarSlot>
+  );
+
   if (!hasVisibleDish) {
     return (
       <div>
-        <MenuFilters groups={groups} search={search} onSearchChange={setSearch} />
+        {searchSlot}
+        <MenuFilters groups={groups} />
         <p className="font-sans text-sm text-muted">
           Nessun piatto trovato con i filtri attuali.
         </p>
@@ -247,7 +271,8 @@ export function MenuListClient({ groups: initialGroups }: MenuListClientProps) {
 
   return (
     <div>
-      <MenuFilters groups={groups} search={search} onSearchChange={setSearch} />
+      {searchSlot}
+      <MenuFilters groups={groups} />
 
       <div className="space-y-10">
         {visibleGroups.map((macro) => {
@@ -281,7 +306,7 @@ export function MenuListClient({ groups: initialGroups }: MenuListClientProps) {
                       }
                     >
                       {isSearching ? (
-                        <div>
+                        <div className="divide-y divide-admin-line overflow-hidden rounded-[2px] border border-admin-line bg-admin-surface">
                           {cat.piatti.map((dish) => (
                             <AdminDishRow
                               key={dish.id}
@@ -292,6 +317,13 @@ export function MenuListClient({ groups: initialGroups }: MenuListClientProps) {
                         </div>
                       ) : (
                         <DndContext
+                          // id deterministico (dall'id della categoria,
+                          // uguale lato server e lato client): senza,
+                          // dnd-kit assegna l'id "aria-describedby" del
+                          // draggable con un contatore in memoria di
+                          // modulo, diverso tra il render SSR e quello
+                          // del browser — un mismatch di hydration.
+                          id={`menu-dnd-${cat.id}`}
                           sensors={sensors}
                           collisionDetection={closestCenter}
                           onDragEnd={(event) =>
@@ -302,7 +334,7 @@ export function MenuListClient({ groups: initialGroups }: MenuListClientProps) {
                             items={cat.piatti.map((p) => p.id)}
                             strategy={verticalListSortingStrategy}
                           >
-                            <div>
+                            <div className="divide-y divide-admin-line overflow-hidden rounded-[2px] border border-admin-line bg-admin-surface">
                               {cat.piatti.map((dish) => (
                                 <SortableDishRow
                                   key={dish.id}
