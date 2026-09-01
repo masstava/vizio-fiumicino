@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { Switch } from "@/src/components/ui/Switch";
+import { StatusToggle } from "@/src/components/admin/StatusToggle";
 import { toggleAttivo, deleteEvento } from "../_actions";
 import { formatDataEvento } from "./formatDate";
 
@@ -43,14 +43,14 @@ export function EventiListClient({ eventi: initialEventi }: EventiListClientProp
 
   if (eventi.length === 0) {
     return (
-      <p className="font-sans text-sm text-muted">
+      <p className="font-sans text-sm text-admin-text-2">
         Nessun evento ancora. Usa &quot;+ Aggiungi evento&quot; per iniziare.
       </p>
     );
   }
 
   return (
-    <div>
+    <div className="divide-y divide-admin-line overflow-hidden rounded-[2px] border border-admin-line bg-admin-surface">
       {eventi.map((evento) => (
         <EventoRow
           key={evento.id}
@@ -92,32 +92,35 @@ function EventoRow({
   // anche quelli corti — quindi non si capiva quale evento si stesse
   // per modificare o eliminare. Da sm in su resta la riga di prima.
   return (
-    <div className="flex flex-col gap-3 py-4 border-b border-ink/10 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+    <div className="flex flex-col gap-3 px-4 py-4 hover:bg-admin-canvas transition-colors sm:flex-row sm:items-center sm:justify-between sm:gap-4">
       <div className="min-w-0">
-        <p className="font-serif text-lg font-medium text-ink sm:truncate">
+        <p className="font-serif text-lg font-medium text-admin-text sm:truncate">
           {evento.titolo}
         </p>
-        <p className="font-sans text-sm text-muted mt-0.5">
+        <p className="font-sans text-sm text-admin-text-2 mt-0.5">
           {dataLabel ?? "Ricorrente — nessuna data"}
         </p>
       </div>
       <div className="flex items-center gap-4 flex-shrink-0">
-        <Switch
+        <StatusToggle
           checked={attivo}
           onChange={handleToggle}
           disabled={isPending}
-          label={attivo ? "Attivo" : "Non attivo"}
+          tonoOn="verde"
+          testoOn="Attivo"
+          tonoOff="grigio"
+          testoOff="Non attivo"
         />
         <Link
           href={`/gestione/eventi/${evento.id}`}
-          className="inline-flex min-h-11 items-center font-sans text-sm text-bordeaux hover:opacity-70 transition-opacity md:min-h-0"
+          className="inline-flex min-h-11 items-center font-sans text-sm text-admin-brick hover:opacity-70 transition-opacity md:min-h-0"
         >
           Modifica
         </Link>
         <button
           type="button"
           onClick={onDelete}
-          className="inline-flex min-h-11 items-center font-sans text-sm text-muted hover:text-bordeaux transition-colors md:min-h-0"
+          className="inline-flex min-h-11 items-center font-sans text-sm text-admin-text-2 hover:text-admin-brick transition-colors md:min-h-0"
         >
           Elimina
         </button>

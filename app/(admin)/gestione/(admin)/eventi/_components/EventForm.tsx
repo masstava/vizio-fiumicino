@@ -25,7 +25,7 @@ interface EventFormProps {
 }
 
 const inputClass =
-  "w-full min-h-11 md:min-h-0 bg-cream border border-ink/20 rounded-[2px] px-3 py-2 font-sans text-sm text-ink placeholder:text-muted/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 focus-visible:border-bordeaux/50";
+  "w-full min-h-11 md:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-2 font-sans text-sm text-admin-text placeholder:text-admin-text-3 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
 
 export function EventForm({ mode, eventoId, initialData }: EventFormProps) {
   const router = useRouter();
@@ -155,7 +155,7 @@ export function EventForm({ mode, eventoId, initialData }: EventFormProps) {
           value={dataEvento}
           onChange={(e) => setDataEvento(e.target.value)}
         />
-        <p className="font-sans text-xs text-muted mt-1.5">
+        <p className="font-sans text-xs text-admin-text-2 mt-1.5">
           Lascia vuoto per eventi ricorrenti (es. &quot;Menu Experience&quot;).
         </p>
       </Field>
@@ -169,7 +169,7 @@ export function EventForm({ mode, eventoId, initialData }: EventFormProps) {
       </Field>
 
       <Field label="Campi extra nel form di prenotazione">
-        <p className="font-sans text-xs text-muted mb-2">
+        <p className="font-sans text-xs text-admin-text-2 mb-2">
           Domande in più mostrate solo a chi prenota per questo evento (es.
           &quot;Occasione speciale&quot;). Massimo {MASSIMO_CAMPI_EXTRA}.
         </p>
@@ -177,7 +177,7 @@ export function EventForm({ mode, eventoId, initialData }: EventFormProps) {
           {campiExtra.map((campo, index) => (
             <div
               key={index}
-              className="flex items-center gap-2 border-l-2 border-ink/10 pl-3 sm:border-l-0 sm:pl-0"
+              className="flex items-center gap-2 border-l-2 border-admin-line pl-3 sm:border-l-0 sm:pl-0"
             >
               <input
                 className={inputClass}
@@ -188,7 +188,7 @@ export function EventForm({ mode, eventoId, initialData }: EventFormProps) {
               <button
                 type="button"
                 onClick={() => rimuoviCampoExtra(index)}
-                className="inline-flex min-h-11 min-w-11 flex-shrink-0 items-center justify-center rounded-[2px] font-sans text-lg leading-none text-muted hover:text-bordeaux focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 sm:min-h-0"
+                className="inline-flex min-h-11 min-w-11 flex-shrink-0 items-center justify-center rounded-[2px] font-sans text-lg leading-none text-admin-text-2 hover:text-admin-brick focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 sm:min-h-0"
                 aria-label="Rimuovi campo extra"
               >
                 ×
@@ -196,7 +196,7 @@ export function EventForm({ mode, eventoId, initialData }: EventFormProps) {
             </div>
           ))}
           {campiExtraBloccato && (
-            <p className="font-sans text-xs text-cream-text bg-bordeaux border border-bordeaux inline-block px-2.5 py-1 rounded-[2px]">
+            <p className="font-sans text-xs text-admin-amber bg-admin-amber-wash border border-admin-amber/40 inline-block px-2.5 py-1 rounded-[2px]">
               Massimo {MASSIMO_CAMPI_EXTRA} campi extra. Rimuovine uno prima di
               aggiungerne un altro.
             </p>
@@ -204,14 +204,14 @@ export function EventForm({ mode, eventoId, initialData }: EventFormProps) {
           <button
             type="button"
             onClick={aggiungiCampoExtra}
-            className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-sm text-bordeaux hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 md:min-h-0"
+            className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-sm text-admin-brick hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 md:min-h-0"
           >
             + Aggiungi campo extra
           </button>
         </div>
       </Field>
 
-      {error && <p className="font-sans text-sm text-bordeaux">{error}</p>}
+      {error && <p className="font-sans text-sm text-admin-brick">{error}</p>}
 
       <div className="flex items-center gap-4 pt-2">
         <Button type="submit" variant="primary" disabled={saving}>
@@ -220,7 +220,7 @@ export function EventForm({ mode, eventoId, initialData }: EventFormProps) {
         <button
           type="button"
           onClick={() => router.push("/gestione/eventi")}
-          className="inline-flex min-h-11 items-center px-1 font-sans text-sm text-muted hover:text-ink transition-colors md:min-h-0 md:px-0"
+          className="inline-flex min-h-11 items-center px-1 font-sans text-sm text-admin-text-2 hover:text-admin-text transition-colors md:min-h-0 md:px-0"
         >
           Annulla
         </button>
@@ -240,7 +240,7 @@ function Field({
 }) {
   return (
     <div className={className}>
-      <label className="font-sans text-[10px] tracking-widest uppercase text-muted block mb-1.5">
+      <label className="font-sans text-[10px] tracking-widest uppercase text-admin-text-2 block mb-1.5">
         {label}
       </label>
       {children}

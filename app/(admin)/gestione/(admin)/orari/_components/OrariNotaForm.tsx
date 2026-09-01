@@ -6,7 +6,7 @@ import { Button } from "@/src/components/ui/Button";
 import { saveOrariConfig } from "../_actions";
 
 const inputClass =
-  "min-h-11 sm:min-h-0 bg-cream border border-ink/20 rounded-[2px] px-3 py-1.5 font-sans text-sm text-ink transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 focus-visible:border-bordeaux/50";
+  "min-h-11 sm:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-1.5 font-sans text-sm text-admin-text transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
 
 interface OrariNotaFormProps {
   initialNota: string | null;
@@ -49,24 +49,24 @@ export function OrariNotaForm({
 
   return (
     <div className="max-w-2xl">
-      <h2 className="mb-1 font-serif text-xl font-medium text-ink">
+      <h2 className="mb-1 font-serif text-xl font-medium text-admin-text">
         Orari temporanei
       </h2>
-      <p className="mb-5 font-sans text-sm text-muted">
+      <p className="mb-5 font-sans text-sm text-admin-text-2">
         Se gli orari qui sopra sono stagionali, scrivilo qui: la nota compare
         sul sito accanto agli orari. La data di validità serve solo come
         promemoria in questa pagina — non modifica gli orari da sola.
       </p>
 
       {scaduta && (
-        <p className="mb-5 rounded-[2px] border border-bordeaux/40 bg-bordeaux/5 px-3 py-2 font-sans text-sm text-bordeaux">
+        <p className="mb-5 rounded-[2px] border border-admin-amber/40 bg-admin-amber-wash px-3 py-2 font-sans text-sm text-admin-amber">
           Gli orari temporanei sono scaduti, verificali.
         </p>
       )}
 
       <div className="space-y-4">
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="orari-nota" className="font-sans text-xs text-muted">
+          <label htmlFor="orari-nota" className="font-sans text-xs text-admin-text-2">
             Nota (mostrata sul sito)
           </label>
           <input
@@ -83,7 +83,7 @@ export function OrariNotaForm({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="orari-valida" className="font-sans text-xs text-muted">
+          <label htmlFor="orari-valida" className="font-sans text-xs text-admin-text-2">
             Valida fino al (solo promemoria interno)
           </label>
           <input
@@ -99,7 +99,7 @@ export function OrariNotaForm({
         </div>
       </div>
 
-      {error && <p className="mt-4 font-sans text-sm text-bordeaux">{error}</p>}
+      {error && <p className="mt-4 font-sans text-sm text-admin-brick">{error}</p>}
 
       <div className="mt-6 flex items-center gap-4">
         <Button
@@ -111,7 +111,7 @@ export function OrariNotaForm({
           {saving ? "Salvataggio…" : "Salva nota"}
         </Button>
         {justSaved && (
-          <span className="font-sans text-sm text-muted">Nota salvata.</span>
+          <span className="font-sans text-sm text-admin-text-2">Nota salvata.</span>
         )}
       </div>
     </div>

@@ -29,7 +29,7 @@ interface AdminShellProps {
   // in DASHBOARD_DESIGN_SYSTEM.md), calcolati nel layout server-side.
   // Ogni chiave è opzionale: una sezione senza contatore reale non ne
   // passa uno, e SidebarNav semplicemente non mostra la pillola.
-  contatori?: { menu?: number };
+  contatori?: { menu?: number; eventi?: number };
 }
 
 export function AdminShell({ children, contatori }: AdminShellProps) {

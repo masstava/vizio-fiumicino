@@ -27,12 +27,6 @@ export default async function ModificaEventoPage({
 
   return (
     <div className="p-8 md:p-12">
-      <p className="font-sans text-[10px] tracking-widest uppercase text-muted mb-3">
-        Gestione · Eventi
-      </p>
-      <h1 className="font-serif text-4xl font-medium text-ink mb-8">
-        Modifica evento
-      </h1>
       <EventForm
         mode="edit"
         eventoId={evento.id}

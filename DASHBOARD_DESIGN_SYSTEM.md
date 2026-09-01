@@ -23,8 +23,19 @@ esplicitamente.
   sopravvive identico tra server e client — fix: id deterministico
   passato a ogni `DndContext`). Nessuna modifica alla logica di
   salvataggio/validazione/allergeni/badge/foto/prezzo.
-- **Passaggi 3-6**: applicano le stesse regole alle sezioni restanti
-  (orari, eventi, prenotazioni, contenuti).
+- **Passaggio 3/6 — completato**: editor orari (`/gestione/orari`) ed
+  editor eventi (`/gestione/eventi`). Orari: prospetto settimanale in
+  un pannello hairline (era già una pagina di sola modifica, senza
+  lista/ricerca/azione primaria in topbar — non applicabile qui), nota
+  scaduta ora in tono ambra. Eventi: lista a righe hairline, badge di
+  stato cliccabile (`StatusToggle`, come in Menu) al posto
+  dell'interruttore, "+ Nuovo evento" spostato in topbar via
+  `TopbarSlot`, intestazione duplicata rimossa, contatore sidebar
+  "Eventi" popolato (eventi attivi non ancora passati, ricorrenti
+  compresi). Nessuna modifica a save_orari/save_evento, al guard dei 3
+  campi extra o a "applica a tutti i giorni".
+- **Passaggi 4-6**: applicano le stesse regole alle sezioni restanti
+  (prenotazioni, contenuti).
 
 Vedi "Cosa NON è ancora stato fatto" in fondo per l'elenco preciso di
 ciò che i passaggi successivi devono ancora collegare.
@@ -149,16 +160,19 @@ della pagina) resta nota e attesa per quelle sezioni, elencata sotto in
 
 ## Tabelle/liste dense
 
-Applicato per la prima volta in `/gestione/menu` (passaggio 2/6), da
-ripetere per le liste restanti (eventi, prenotazioni):
+Applicato a `/gestione/menu` (passaggio 2/6) e `/gestione/eventi`
+(passaggio 3/6, stesso schema); anche il prospetto settimanale di
+`/gestione/orari` riusa lo stesso pannello pur non essendo una lista
+di record indipendenti (coerenza visiva, § Orari sopra). Da applicare
+ancora a prenotazioni:
 
 - Righe con bordo hairline (`divide-y divide-admin-line` sul
   contenitore), non card arrotondate con ombra — più adatto a liste
   lunghe scorse velocemente.
 - Hover: leggero cambio di sfondo (`hover:bg-admin-canvas` sulla riga).
-- Riga selezionata: tinta `--admin-brick-wash` — non applicabile in
-  `/gestione/menu` (nessuna selezione multipla in quella lista); da
-  usare quando una lista futura introduce selezione.
+- Riga selezionata: tinta `--admin-brick-wash` — non applicabile a
+  menu/orari/eventi (nessuna selezione multipla in nessuna di queste
+  liste); da usare quando una lista futura introduce selezione.
 - Sfondo della tabella/pannello: `--color-admin-surface` (bianco), non
   `--color-admin-canvas` — la superficie della lista si stacca dal
   fondo pagina.
@@ -178,9 +192,14 @@ Due componenti distinti, stesso aspetto visivo:
   `<button role="switch" aria-checked>`: dove lo stato è anche un
   CONTROLLO (si può cambiare cliccando), non solo una lettura. **Usato
   dal passaggio 2/6** per "Disponibile"/"Esaurito" in `/gestione/menu`
-  (`verde`/`grigio`), al posto del vecchio interruttore a levetta —
-  stessa azione (`toggleDisponibile`), stesso aggiornamento ottimistico
-  con rollback, solo la resa è cambiata.
+  e **dal passaggio 3/6** per "Attivo"/"Non attivo" in
+  `/gestione/eventi` (entrambi `verde`/`grigio`), al posto del vecchio
+  interruttore a levetta — stessa azione (`toggleDisponibile`/
+  `toggleAttivo`), stesso aggiornamento ottimistico con rollback, solo
+  la resa è cambiata. Gli interruttori dentro un FORM (non una riga di
+  lista) restano `Switch`: "Chiuso" per giorno in `/gestione/orari`,
+  "Stato" nel form evento — sono un campo da compilare insieme al
+  resto, non lo stato di sola-azione di una riga.
 - `/gestione/prenotazioni` **non ancora toccato**: oggi segnala lo
   stato con un colore di testo su un `<select>` — il passaggio dedicato
   a quella pagina deciderà se e come sostituirlo con `StatusToggle`.
@@ -198,29 +217,31 @@ Due componenti distinti, stesso aspetto visivo:
   passaggi è verificare, pagina per pagina, che non compaiano MAI due
   `variant="primary"` visibili nella stessa vista.
 
-## Cosa NON è ancora stato fatto (voci aperte per i passaggi 3-6)
+## Cosa NON è ancora stato fatto (voci aperte per i passaggi 4-6)
 
-- **Ricerca in topbar**: collegata solo per `/gestione/menu`. Eventi e
-  prenotazioni restano da collegare — stesso meccanismo (`TopbarSlot`),
-  richiede solo che quella pagina esponga lo stato di ricerca già
-  proprio tramite il portale.
-- **Azione primaria in topbar**: idem — "+ Aggiungi evento" e
-  l'eventuale azione primaria di prenotazioni/orari/contenuti restano
-  nel corpo della pagina, da spostare nel passaggio dedicato a ciascuna.
-- **Contatore sidebar**: solo "Menu" è popolato (numero reale di piatti
-  disponibili). Le altre voci restano senza contatore: lo stato
-  "prenotazioni da confermare" non esiste nell'attuale modello dati
-  (`stato` è `confermata | cancellata | completata | no-show`, nessuno
-  stato "in attesa" da contare) — non è stato inventato uno stato
-  fittizio solo per riempire un numero.
-- **Restyling tabelle/liste dense**: fatto per `/gestione/menu`. Da
-  applicare ancora a eventi e prenotazioni.
+- **Ricerca in topbar**: collegata solo per `/gestione/menu` (l'unica,
+  fra le sezioni fatte finora, con una lista abbastanza lunga da
+  giustificarla — eventi non ne aveva bisogno, orari non è una lista).
+  Prenotazioni resta da valutare nel suo passaggio dedicato.
+- **Azione primaria in topbar**: fatta per menu ("+ Nuovo piatto") ed
+  eventi ("+ Nuovo evento"). L'eventuale azione primaria di
+  prenotazioni/contenuti resta nel corpo della pagina, da spostare nel
+  passaggio dedicato a ciascuna. Orari non ha un'azione primaria di
+  questo tipo (è una pagina di sola modifica, non una lista con
+  "+ Nuovo…") — non applicabile.
+- **Contatore sidebar**: "Menu" ed "Eventi" sono popolati. Orari e
+  Contenuti sono pagine singole (non ha senso un contatore lì).
+  Prenotazioni resta senza: lo stato "da confermare" non esiste
+  nell'attuale modello dati (`stato` è `confermata | cancellata |
+  completata | no-show`, nessuno stato "in attesa" da contare) — non è
+  stato inventato uno stato fittizio solo per riempire un numero.
+- **Restyling tabelle/liste dense**: fatto per menu ed eventi. Da
+  applicare ancora a prenotazioni.
 - **Badge di stato al posto del `<select>` colorato** in
   `/gestione/prenotazioni`: da decidere nel passaggio dedicato (schema
-  già pronto: `StatusToggle`, usato per la prima volta in
-  `/gestione/menu`).
-- **Duplicazione temporanea del titolo di pagina**: risolta per
-  `/gestione/menu` (lista, nuovo, modifica). Orari, eventi,
-  prenotazioni e contenuti mostrano ANCORA la propria intestazione in
-  linea (eyebrow "Gestione" + `<h1>`), invariata — verrà rimossa quando
-  quella pagina sarà toccata nel suo passaggio dedicato.
+  già pronto e riusato due volte: `StatusToggle`).
+- **Duplicazione temporanea del titolo di pagina**: risolta per menu,
+  orari ed eventi. Prenotazioni e contenuti mostrano ANCORA la propria
+  intestazione in linea (eyebrow "Gestione" + `<h1>`), invariata —
+  verrà rimossa quando quella pagina sarà toccata nel suo passaggio
+  dedicato.

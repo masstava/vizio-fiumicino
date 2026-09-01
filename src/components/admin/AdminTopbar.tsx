@@ -24,7 +24,9 @@ const VOCI: { match: (p: string) => boolean; titolo: string; sottotitolo: string
   { match: (p) => p === "/gestione/menu", titolo: "Menu", sottotitolo: "Piatti, categorie e disponibilità" },
   { match: (p) => p.startsWith("/gestione/contenuti"), titolo: "Testi della home", sottotitolo: "Contenuti editabili della pagina iniziale" },
   { match: (p) => p.startsWith("/gestione/orari"), titolo: "Orari", sottotitolo: "Fasce orarie e note di apertura" },
-  { match: (p) => p.startsWith("/gestione/eventi"), titolo: "Eventi", sottotitolo: "Calendario e schede evento" },
+  { match: (p) => p === "/gestione/eventi/nuovo", titolo: "Nuovo evento", sottotitolo: "Aggiungi un evento al calendario" },
+  { match: (p) => p.startsWith("/gestione/eventi/"), titolo: "Modifica evento", sottotitolo: "Modifica i dati dell'evento" },
+  { match: (p) => p === "/gestione/eventi", titolo: "Eventi", sottotitolo: "Calendario e schede evento" },
   { match: (p) => p.startsWith("/gestione/prenotazioni"), titolo: "Prenotazioni", sottotitolo: "Agenda e capienza del giorno" },
 ];
 

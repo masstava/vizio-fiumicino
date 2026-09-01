@@ -50,7 +50,7 @@ function buildInitialDays(initialOrari: OrarioGiornoRow[]): DayState[] {
 // di prima — qui si guardano sette giorni insieme, e allargare le
 // righe renderebbe l'insieme meno leggibile.
 const inputClass =
-  "min-h-11 sm:min-h-0 bg-cream border border-ink/20 rounded-[2px] px-3 py-1.5 font-sans text-sm text-ink transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 focus-visible:border-bordeaux/50 disabled:opacity-40";
+  "min-h-11 sm:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-1.5 font-sans text-sm text-admin-text transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50 disabled:opacity-40";
 
 export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] }) {
   const [days, setDays] = useState<DayState[]>(() => buildInitialDays(initialOrari));
@@ -184,15 +184,15 @@ export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] })
 
   return (
     <div className="max-w-2xl">
-      <div>
+      <div className="divide-y divide-admin-line overflow-hidden rounded-[2px] border border-admin-line bg-admin-surface">
         {days.map((day, dayIndex) => (
           <div
             key={day.giorno_settimana}
-            className="py-4 border-b border-ink/10"
+            className="px-4 py-4 hover:bg-admin-canvas transition-colors"
           >
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <span className="font-sans text-sm font-medium text-ink w-24 flex-shrink-0">
+                <span className="font-sans text-sm font-medium text-admin-text w-24 flex-shrink-0">
                   {day.nome}
                 </span>
                 <Switch
@@ -204,7 +204,7 @@ export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] })
               <button
                 type="button"
                 onClick={() => applyToAllDays(dayIndex)}
-                className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-xs text-muted transition-colors hover:text-bordeaux focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 sm:min-h-0"
+                className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-xs text-admin-text-2 transition-colors hover:text-admin-brick focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 sm:min-h-0"
               >
                 Applica a tutti i giorni
               </button>
@@ -225,7 +225,7 @@ export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] })
                     <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
                       <label
                         htmlFor={`${fascia.key}-apertura`}
-                        className="font-sans text-xs text-muted"
+                        className="font-sans text-xs text-admin-text-2"
                       >
                         Apertura
                       </label>
@@ -244,7 +244,7 @@ export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] })
                     <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
                       <label
                         htmlFor={`${fascia.key}-chiusura`}
-                        className="font-sans text-xs text-muted"
+                        className="font-sans text-xs text-admin-text-2"
                       >
                         Chiusura
                       </label>
@@ -264,7 +264,7 @@ export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] })
                       <button
                         type="button"
                         onClick={() => removeFascia(dayIndex, fasciaIndex)}
-                        className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[2px] font-sans text-lg leading-none text-muted hover:text-bordeaux focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 sm:min-h-0 sm:min-w-0 sm:px-1"
+                        className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[2px] font-sans text-lg leading-none text-admin-text-2 hover:text-admin-brick focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 sm:min-h-0 sm:min-w-0 sm:px-1"
                         aria-label="Rimuovi fascia oraria"
                       >
                         ×
@@ -281,7 +281,7 @@ export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] })
                 <button
                   type="button"
                   onClick={() => addFascia(dayIndex)}
-                  className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-xs text-bordeaux hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 sm:min-h-0"
+                  className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-xs text-admin-brick hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 sm:min-h-0"
                 >
                   + Aggiungi fascia oraria
                 </button>
@@ -292,7 +292,7 @@ export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] })
       </div>
 
       {error && (
-        <p className="font-sans text-sm text-bordeaux mt-4">{error}</p>
+        <p className="font-sans text-sm text-admin-brick mt-4">{error}</p>
       )}
 
       <div className="flex items-center gap-4 mt-6">
@@ -305,15 +305,15 @@ export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] })
           {saving ? "Salvataggio…" : "Salva orari"}
         </Button>
         {justSaved && (
-          <span className="font-sans text-sm text-muted">Orari salvati.</span>
+          <span className="font-sans text-sm text-admin-text-2">Orari salvati.</span>
         )}
       </div>
 
-      <div className="mt-10 pt-6 border-t border-ink/10">
-        <p className="font-sans text-[10px] tracking-widest uppercase text-muted mb-2">
+      <div className="mt-10 pt-6 border-t border-admin-line">
+        <p className="font-sans text-[10px] tracking-widest uppercase text-admin-text-2 mb-2">
           Anteprima footer sito
         </p>
-        <p className="font-serif text-base text-ink italic">{previewText}</p>
+        <p className="font-serif text-base text-admin-text italic">{previewText}</p>
       </div>
     </div>
   );

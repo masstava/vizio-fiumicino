@@ -99,14 +99,9 @@ export default async function OrariPage() {
 
   return (
     <div className="p-8 md:p-12">
-      <p className="font-sans text-[10px] tracking-widest uppercase text-muted mb-3">
-        Gestione
-      </p>
-      <h1 className="font-serif text-4xl font-medium text-ink mb-8">Orari</h1>
-
       <OrariForm initialOrari={orari} />
 
-      <div className="mt-12 pt-8 border-t border-ink/10">
+      <div className="mt-12 pt-8 border-t border-admin-line">
         <OrariNotaForm
           initialNota={config?.nota ?? null}
           initialValidaFinoAl={config?.valida_fino_al ?? null}
@@ -114,11 +109,11 @@ export default async function OrariPage() {
         />
       </div>
 
-      <div className="mt-12 pt-8 border-t border-ink/10 max-w-2xl">
-        <h2 className="font-serif text-xl font-medium text-ink mb-1">
+      <div className="mt-12 pt-8 border-t border-admin-line max-w-2xl">
+        <h2 className="font-serif text-xl font-medium text-admin-text mb-1">
           Esporta PDF
         </h2>
-        <p className="font-sans text-sm text-muted mb-5">
+        <p className="font-sans text-sm text-admin-text-2 mb-5">
           Genera un cartello PDF con gli orari attuali. I campi sotto sono
           opzionali e non vengono salvati.
         </p>
