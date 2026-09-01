@@ -5,7 +5,7 @@ import { Button } from "@/src/components/ui/Button";
 import { salvaCapienzaGiorno } from "../_actions";
 
 const inputClass =
-  "min-h-11 sm:min-h-0 w-24 sm:w-28 flex-shrink-0 bg-cream border border-ink/20 rounded-[2px] px-3 py-1.5 font-sans text-sm text-ink transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 focus-visible:border-bordeaux/50";
+  "min-h-11 sm:min-h-0 w-24 sm:w-28 flex-shrink-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-1.5 font-sans text-sm text-admin-text transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
 
 interface CapienzaPanelProps {
   data: string;
@@ -62,7 +62,7 @@ export function CapienzaPanel({
 
   if (fasce.length === 0) {
     return (
-      <p className="font-sans text-sm text-muted">
+      <p className="font-sans text-sm text-admin-text-2">
         Il locale è chiuso questo giorno — nessuna fascia da configurare.
       </p>
     );
@@ -70,13 +70,13 @@ export function CapienzaPanel({
 
   return (
     <div>
-      <p className="font-sans text-xs text-muted mb-4 max-w-2xl">
+      <p className="font-sans text-xs text-admin-text-2 mb-4 max-w-2xl">
         Lascia vuoto per nessun tetto (sempre disponibile). Un numero limita i
         coperti prenotabili per quella fascia — lo stesso limite verificato
         dal form pubblico.
       </p>
 
-      <div className="max-w-md">
+      <div className="max-w-md divide-y divide-admin-line overflow-hidden rounded-[2px] border border-admin-line bg-admin-surface">
         {fasce.map((fascia) => {
           const limite = valori[fascia]?.trim() ? Number(valori[fascia]) : null;
           const occ = occupati[fascia] ?? 0;
@@ -89,10 +89,10 @@ export function CapienzaPanel({
             // torna la riga singola di prima.
             <div
               key={fascia}
-              className="flex flex-col gap-1 py-2 border-b border-ink/10 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+              className="flex flex-col gap-1 px-4 py-2.5 hover:bg-admin-canvas transition-colors sm:flex-row sm:items-center sm:justify-between sm:gap-4"
             >
               <div className="flex items-center gap-4">
-                <span className="font-mono text-sm text-ink w-16 flex-shrink-0">
+                <span className="font-mono text-sm text-admin-text w-16 flex-shrink-0">
                   {fascia}
                 </span>
                 <input
@@ -106,7 +106,7 @@ export function CapienzaPanel({
                 />
               </div>
               {limite != null && (
-                <span className="font-sans text-xs text-muted pl-[80px] sm:flex-1 sm:pl-0 sm:text-right">
+                <span className="font-sans text-xs text-admin-text-2 pl-[80px] sm:flex-1 sm:pl-0 sm:text-right">
                   {occ}/{limite} occupati
                   {occ >= limite ? " — pieno" : ` — ${limite - occ} residui`}
                 </span>
@@ -116,14 +116,14 @@ export function CapienzaPanel({
         })}
       </div>
 
-      {error && <p className="font-sans text-sm text-bordeaux mt-4">{error}</p>}
+      {error && <p className="font-sans text-sm text-admin-brick mt-4">{error}</p>}
 
       <div className="flex items-center gap-4 mt-6">
         <Button type="button" variant="primary" onClick={handleSave} disabled={saving}>
           {saving ? "Salvataggio…" : "Salva capienza"}
         </Button>
         {justSaved && (
-          <span className="font-sans text-sm text-muted">Capienza salvata.</span>
+          <span className="font-sans text-sm text-admin-text-2">Capienza salvata.</span>
         )}
       </div>
     </div>

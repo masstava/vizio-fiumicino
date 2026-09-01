@@ -13,7 +13,7 @@ import {
 import { cn } from "@/src/lib/utils";
 
 type NavItem = { label: string; href: string; Icon: typeof IconDashboard; contatoreKey?: keyof Contatori };
-type Contatori = { menu?: number; eventi?: number };
+type Contatori = { menu?: number; eventi?: number; prenotazioni?: number };
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/gestione", Icon: IconDashboard },
@@ -21,13 +21,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Testi della home", href: "/gestione/contenuti", Icon: IconTesti },
   { label: "Orari", href: "/gestione/orari", Icon: IconOrari },
   { label: "Eventi", href: "/gestione/eventi", Icon: IconEventi, contatoreKey: "eventi" },
-  { label: "Prenotazioni", href: "/gestione/prenotazioni", Icon: IconPrenotazioni },
-  // Le voci senza "contatoreKey" restano senza pillola: nessun dato
-  // reale ancora disponibile per loro (es. "prenotazioni da
-  // confermare" non esiste nel modello dati — stato è confermata/
-  // cancellata/completata/no-show, nessuno stato "in attesa" da
-  // contare). Inventare un numero solo per riempire la voce sarebbe
-  // fabbricare un significato che i dati non hanno.
+  { label: "Prenotazioni", href: "/gestione/prenotazioni", Icon: IconPrenotazioni, contatoreKey: "prenotazioni" },
 ];
 
 export function SidebarNav({

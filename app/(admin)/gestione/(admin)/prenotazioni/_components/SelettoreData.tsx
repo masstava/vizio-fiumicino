@@ -3,7 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const inputClass =
-  "min-h-11 md:min-h-0 bg-cream border border-ink/20 rounded-[2px] px-3 py-2 font-sans text-sm text-ink transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 focus-visible:border-bordeaux/50";
+  "min-h-11 md:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-2 font-sans text-sm text-admin-text transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
 
 export function SelettoreData({ data, oggi }: { data: string; oggi: string }) {
   const router = useRouter();
@@ -23,7 +23,7 @@ export function SelettoreData({ data, oggi }: { data: string; oggi: string }) {
       <div>
         <label
           htmlFor="prenotazioni-data"
-          className="font-sans text-[10px] tracking-widest uppercase text-muted block mb-1.5"
+          className="font-sans text-[10px] tracking-widest uppercase text-admin-text-2 block mb-1.5"
         >
           Data
         </label>
@@ -39,7 +39,7 @@ export function SelettoreData({ data, oggi }: { data: string; oggi: string }) {
         <button
           type="button"
           onClick={() => vaiA(oggi)}
-          className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-sm text-bordeaux hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 md:min-h-0"
+          className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-sm text-admin-brick hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 md:min-h-0"
         >
           Torna a oggi
         </button>
