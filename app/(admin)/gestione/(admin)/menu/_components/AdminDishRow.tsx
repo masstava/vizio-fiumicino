@@ -52,14 +52,14 @@ export function AdminDishRow({ dish, onDelete }: AdminDishRowProps) {
         <div className="flex items-center gap-4">
           <Link
             href={`/gestione/menu/${dish.id}`}
-            className="inline-flex min-h-11 items-center font-sans text-sm text-bordeaux hover:opacity-70 transition-opacity md:min-h-0"
+            className="inline-flex min-h-11 items-center font-sans text-sm text-admin-brick hover:opacity-70 transition-opacity md:min-h-0"
           >
             Modifica
           </Link>
           <button
             type="button"
             onClick={onDelete}
-            className="inline-flex min-h-11 items-center font-sans text-sm text-muted hover:text-bordeaux transition-colors md:min-h-0"
+            className="inline-flex min-h-11 items-center font-sans text-sm text-admin-text-2 hover:text-admin-brick transition-colors md:min-h-0"
           >
             Elimina
           </button>

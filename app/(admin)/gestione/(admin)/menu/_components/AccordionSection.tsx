@@ -39,7 +39,7 @@ export function AccordionSection({
           strokeWidth={2}
           strokeLinecap="round"
           strokeLinejoin="round"
-          className={`h-3 w-3 shrink-0 text-muted transition-transform duration-150 ${
+          className={`h-3 w-3 shrink-0 text-admin-text-2 transition-transform duration-150 ${
             open ? "rotate-180" : ""
           }`}
         >

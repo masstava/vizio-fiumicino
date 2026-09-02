@@ -8,12 +8,9 @@ export default async function GestionePage() {
 
   return (
     <div className="p-8 md:p-12">
-      <p className="font-sans text-[10px] tracking-widest uppercase text-muted mb-3">
-        Dashboard
-      </p>
-      <h1 className="font-serif text-4xl font-medium text-ink">Bentornato</h1>
+      <p className="font-serif text-2xl font-medium text-admin-text">Bentornato</p>
       {user?.email && (
-        <p className="font-sans text-sm text-muted mt-2">{user.email}</p>
+        <p className="font-sans text-sm text-admin-text-2 mt-2">{user.email}</p>
       )}
     </div>
   );

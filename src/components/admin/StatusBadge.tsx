@@ -5,11 +5,11 @@ import { cn } from "@/src/lib/utils";
 // di sfondo pieno (chi non distingue i colori deve poter leggere lo
 // stato dal testo, non solo intuirlo dal colore).
 //
-// Componente pronto ma non ancora usato da nessuna pagina in questo
-// passaggio (1/6, solo shell): /gestione/prenotazioni oggi segnala lo
-// stato con un colore di testo sul <select> di cambio-stato, non con
-// questa pillola — restyling rimandato al passaggio dedicato a quella
-// pagina, per non toccare la logica del cambio-stato in questo giro.
+// Usato direttamente qui per gli stati di sola lettura, e come
+// mattone visivo di StatusToggle (stato binario, dentro un
+// <button role="switch">). StatusSelect (stato a N valori) riusa lo
+// stesso TONI esportato qui sotto invece di tenerne una copia propria:
+// un'unica lista di colori, aggiornarla in un solo punto.
 export type StatusBadgeTono = "verde" | "ambra" | "grigio" | "brick";
 
 // Classi scritte per intero, mai costruite con replace()/template a
@@ -17,7 +17,10 @@ export type StatusBadgeTono = "verde" | "ambra" | "grigio" | "brick";
 // stringhe letterali, non eseguendo JavaScript — una classe montata
 // concatenando pezzi (es. "text-".replace(...)) non verrebbe mai
 // generata e la pillola perderebbe silenziosamente il suo colore.
-const TONI: Record<StatusBadgeTono, { testo: string; sfondo: string; pallino: string }> = {
+export const TONI_STATUS: Record<
+  StatusBadgeTono,
+  { testo: string; sfondo: string; pallino: string }
+> = {
   verde: { testo: "text-admin-green", sfondo: "bg-admin-green-wash", pallino: "bg-admin-green" },
   ambra: { testo: "text-admin-amber", sfondo: "bg-admin-amber-wash", pallino: "bg-admin-amber" },
   grigio: { testo: "text-admin-gray", sfondo: "bg-admin-gray-wash", pallino: "bg-admin-gray" },
@@ -33,7 +36,7 @@ export function StatusBadge({
   children: React.ReactNode;
   className?: string;
 }) {
-  const t = TONI[tono];
+  const t = TONI_STATUS[tono];
   return (
     <span
       className={cn(

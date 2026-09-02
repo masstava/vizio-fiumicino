@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/src/lib/supabase/server";
 import { MenuListClient } from "./_components/MenuListClient";
 import { NuovoPiattoAction } from "./_components/NuovoPiattoAction";
@@ -113,7 +114,7 @@ export default async function MenuPage() {
           href="/api/pdf/menu?lang=it"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-sans text-sm text-bordeaux hover:opacity-70 transition-opacity"
+          className="font-sans text-sm text-admin-brick hover:opacity-70 transition-opacity"
         >
           Scarica PDF menu (IT)
         </a>
@@ -121,22 +122,28 @@ export default async function MenuPage() {
           href="/api/pdf/menu?lang=en"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-sans text-sm text-bordeaux hover:opacity-70 transition-opacity"
+          className="font-sans text-sm text-admin-brick hover:opacity-70 transition-opacity"
         >
           Download menu PDF (EN)
         </a>
       </div>
 
+      {/* La selezione si gestisce in Gestione sito → Home dal
+          passaggio 5/6: qui restano solo gli avvisi, non più
+          l'indicazione di un toggle che non esiste più su questa
+          pagina. */}
       {anteprimaCount === 0 && (
-        <p className="font-sans text-sm text-dark bg-gold/25 border border-gold rounded-[2px] px-3 py-2 mb-6 max-w-2xl">
+        <p className="font-sans text-sm text-admin-amber bg-admin-amber-wash border border-admin-amber/40 rounded-[2px] px-3 py-2 mb-6 max-w-2xl">
           Nessun piatto selezionato per l&apos;anteprima della home: al momento
-          la home mostra una scelta automatica (i primi piatti per ordine).
-          Apri un piatto e attiva &quot;Mostra nell&apos;anteprima home&quot; per
-          decidere tu cosa mostrare.
+          la home mostra una scelta automatica (i primi piatti per ordine).{" "}
+          <Link href="/gestione/contenuti" className="underline hover:opacity-70">
+            Scegli tu cosa mostrare in Gestione sito → Home
+          </Link>
+          .
         </p>
       )}
       {anteprimaCount != null && anteprimaCount > 8 && (
-        <p className="font-sans text-sm text-dark bg-gold/25 border border-gold rounded-[2px] px-3 py-2 mb-6 max-w-2xl">
+        <p className="font-sans text-sm text-admin-amber bg-admin-amber-wash border border-admin-amber/40 rounded-[2px] px-3 py-2 mb-6 max-w-2xl">
           Sono {anteprimaCount} i piatti selezionati per l&apos;anteprima della
           home: oltre gli 8 diventa una lista invece di una selezione.
         </p>

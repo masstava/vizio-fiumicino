@@ -1,12 +1,14 @@
 "use client";
 
 import { cn } from "@/src/lib/utils";
-import type { StatusBadgeTono } from "./StatusBadge";
+import { TONI_STATUS, type StatusBadgeTono } from "./StatusBadge";
 
 // Stessa pillola-pallino di StatusBadge/StatusToggle, ma per uno stato
 // con PIÙ di due valori (qui: le 4 prenotazioni reali) — StatusToggle
 // resta binario di proposito (§ Badge di stato in
 // DASHBOARD_DESIGN_SYSTEM.md), qui serve scegliere fra N opzioni.
+// Riusa TONI_STATUS di StatusBadge.tsx invece di una copia propria: un
+// solo posto dove i quattro colori sono definiti.
 //
 // Sotto, resta un <select> nativo — tastiera, screen reader e lista
 // delle opzioni funzionano esattamente come un select qualunque. Sopra,
@@ -15,12 +17,6 @@ import type { StatusBadgeTono } from "./StatusBadge";
 // Il select è nella stessa posizione della pillola ma invisibile
 // (opacity-0, non display:none): resta nell'albero di accessibilità e
 // cattura click/tastiera, la pillola sotto è solo la sua veste visiva.
-const TONI: Record<StatusBadgeTono, { testo: string; sfondo: string; pallino: string }> = {
-  verde: { testo: "text-admin-green", sfondo: "bg-admin-green-wash", pallino: "bg-admin-green" },
-  ambra: { testo: "text-admin-amber", sfondo: "bg-admin-amber-wash", pallino: "bg-admin-amber" },
-  grigio: { testo: "text-admin-gray", sfondo: "bg-admin-gray-wash", pallino: "bg-admin-gray" },
-  brick: { testo: "text-admin-brick", sfondo: "bg-admin-brick-wash", pallino: "bg-admin-brick" },
-};
 
 export interface StatusSelectOption<T extends string> {
   valore: T;
@@ -44,7 +40,7 @@ export function StatusSelect<T extends string>({
   className?: string;
 }) {
   const corrente = options.find((o) => o.valore === value) ?? options[0];
-  const t = TONI[corrente.tono];
+  const t = TONI_STATUS[corrente.tono];
 
   return (
     <div className={cn("relative inline-flex items-center rounded-full", className)}>

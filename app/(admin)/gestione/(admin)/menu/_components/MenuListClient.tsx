@@ -207,7 +207,7 @@ export function MenuListClient({ groups: initialGroups }: MenuListClientProps) {
 
   if (!hasAnyDish) {
     return (
-      <p className="font-sans text-sm text-muted">
+      <p className="font-sans text-sm text-admin-text-2">
         Nessun piatto ancora. Usa &quot;+ Aggiungi piatto&quot; per iniziare.
       </p>
     );
@@ -262,7 +262,7 @@ export function MenuListClient({ groups: initialGroups }: MenuListClientProps) {
       <div>
         {searchSlot}
         <MenuFilters groups={groups} />
-        <p className="font-sans text-sm text-muted">
+        <p className="font-sans text-sm text-admin-text-2">
           Nessun piatto trovato con i filtri attuali.
         </p>
       </div>
@@ -284,9 +284,9 @@ export function MenuListClient({ groups: initialGroups }: MenuListClientProps) {
               key={macro.id}
               open={openSections.has(macroKey(macro.id))}
               onToggle={() => toggleSection(macroKey(macro.id))}
-              headerClassName="mb-4 pb-2 border-b border-ink/15"
+              headerClassName="mb-4 pb-2 border-b border-admin-line"
               header={
-                <h2 className="font-serif text-xl font-medium text-ink">{macro.nome}</h2>
+                <h2 className="font-serif text-xl font-medium text-admin-text">{macro.nome}</h2>
               }
             >
               <div className="space-y-6 pt-1">
@@ -300,7 +300,7 @@ export function MenuListClient({ groups: initialGroups }: MenuListClientProps) {
                       onToggle={() => toggleSection(categoriaKey(cat.id))}
                       headerClassName="mb-1"
                       header={
-                        <p className="font-sans text-[10px] tracking-widest uppercase text-muted">
+                        <p className="font-sans text-[10px] tracking-widest uppercase text-admin-text-2">
                           {cat.nome} ({cat.piatti.length})
                         </p>
                       }

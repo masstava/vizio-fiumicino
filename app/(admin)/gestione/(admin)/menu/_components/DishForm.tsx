@@ -48,7 +48,7 @@ const DARK_MACRO_NAMES = new Set(["Bar & Cocktail", "Experience"]);
 // almeno 44px per essere centrati col dito. Da md in su restano come
 // prima, per non alterare la densità del form su desktop.
 const inputClass =
-  "w-full min-h-11 md:min-h-0 bg-cream border border-ink/20 rounded-[2px] px-3 py-2 font-sans text-sm text-ink placeholder:text-muted/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 focus-visible:border-bordeaux/50";
+  "w-full min-h-11 md:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-2 font-sans text-sm text-admin-text placeholder:text-admin-text-3 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
 
 export function DishForm({
   mode,
@@ -314,12 +314,12 @@ export function DishForm({
               onChange={(e) => setPrezzo(e.target.value)}
             />
           </Field>
-          <label className="flex min-h-11 items-center gap-2 pb-2.5 font-sans text-sm text-ink whitespace-nowrap md:min-h-0">
+          <label className="flex min-h-11 items-center gap-2 pb-2.5 font-sans text-sm text-admin-text whitespace-nowrap md:min-h-0">
             <input
               type="checkbox"
               checked={prezzoVariabile}
               onChange={(e) => setPrezzoVariabile(e.target.checked)}
-              className="w-4 h-4 accent-bordeaux rounded-[2px]"
+              className="w-4 h-4 accent-admin-brick rounded-[2px]"
             />
             Prezzo al kg/hg
           </label>
@@ -349,13 +349,13 @@ export function DishForm({
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
-                className="min-h-11 font-sans text-xs text-muted file:mr-3 file:min-h-11 file:rounded-[2px] file:border file:border-ink/20 file:bg-cream file:px-3 file:font-sans file:text-xs file:text-ink md:min-h-0 md:file:min-h-0 md:file:py-1"
+                className="min-h-11 font-sans text-xs text-admin-text-2 file:mr-3 file:min-h-11 file:rounded-[2px] file:border file:border-admin-line file:bg-admin-surface file:px-3 file:font-sans file:text-xs file:text-admin-text md:min-h-0 md:file:min-h-0 md:file:py-1"
               />
               {(fotoUrl || fotoFile) && (
                 <button
                   type="button"
                   onClick={removeFoto}
-                  className="inline-flex min-h-11 items-center rounded-[2px] text-left font-sans text-xs text-bordeaux hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 md:min-h-0"
+                  className="inline-flex min-h-11 items-center rounded-[2px] text-left font-sans text-xs text-admin-brick hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 md:min-h-0"
                 >
                   Rimuovi foto
                 </button>
@@ -366,17 +366,17 @@ export function DishForm({
 
         {/* Allergeni */}
         <Field label="Allergeni">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 border border-ink/10 rounded-[2px] p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 border border-admin-line rounded-[2px] p-4">
             {allergeniList.map((a) => (
               <label
                 key={a.id}
-                className="flex min-h-11 items-center gap-2 font-sans text-sm text-ink md:min-h-0"
+                className="flex min-h-11 items-center gap-2 font-sans text-sm text-admin-text md:min-h-0"
               >
                 <input
                   type="checkbox"
                   checked={allergeniSelected.has(a.id)}
                   onChange={() => toggleAllergene(a.id)}
-                  className="w-4 h-4 accent-bordeaux rounded-[2px] flex-shrink-0"
+                  className="w-4 h-4 accent-admin-brick rounded-[2px] flex-shrink-0"
                 />
                 <span>
                   {a.id} — {a.nome_it}
@@ -397,7 +397,7 @@ export function DishForm({
                 // sequenza indistinta di campi e "×".
                 <div
                 key={index}
-                className="flex flex-col gap-2 border-l-2 border-ink/10 pl-3 sm:flex-row sm:items-center sm:border-l-0 sm:pl-0"
+                className="flex flex-col gap-2 border-l-2 border-admin-line pl-3 sm:flex-row sm:items-center sm:border-l-0 sm:pl-0"
               >
                 <input
                   className={inputClass}
@@ -416,7 +416,7 @@ export function DishForm({
                 <button
                   type="button"
                   onClick={() => removeBadge(index)}
-                  className="inline-flex min-h-11 min-w-11 flex-shrink-0 items-center justify-center self-end rounded-[2px] font-sans text-lg leading-none text-muted hover:text-bordeaux focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 sm:min-h-0 sm:self-auto"
+                  className="inline-flex min-h-11 min-w-11 flex-shrink-0 items-center justify-center self-end rounded-[2px] font-sans text-lg leading-none text-admin-text-2 hover:text-admin-brick focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 sm:min-h-0 sm:self-auto"
                   aria-label="Rimuovi badge"
                 >
                   ×
@@ -426,7 +426,7 @@ export function DishForm({
             <button
               type="button"
               onClick={addBadge}
-              className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-sm text-bordeaux hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 md:min-h-0"
+              className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-sm text-admin-brick hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 md:min-h-0"
             >
               + Aggiungi badge
             </button>
@@ -449,19 +449,19 @@ export function DishForm({
         {mode === "edit" && (
           <Field label="Home">
             <div className="space-y-1">
-              <p className="font-sans text-sm text-ink">
+              <p className="font-sans text-sm text-admin-text">
                 {inEvidenza
                   ? "Attualmente in evidenza in home."
                   : "Non è tra i piatti in evidenza in home."}
               </p>
-              <p className="font-sans text-sm text-ink">
+              <p className="font-sans text-sm text-admin-text">
                 {anteprimaHome
                   ? "In anteprima menu in home."
                   : "Non è nell'anteprima menu in home."}
               </p>
               <Link
                 href="/gestione/contenuti"
-                className="inline-flex min-h-11 items-center font-sans text-sm text-bordeaux hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 md:min-h-0"
+                className="inline-flex min-h-11 items-center font-sans text-sm text-admin-brick hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 md:min-h-0"
               >
                 Gestisci in Gestione sito →
               </Link>
@@ -469,7 +469,7 @@ export function DishForm({
           </Field>
         )}
 
-        {error && <p className="font-sans text-sm text-bordeaux">{error}</p>}
+        {error && <p className="font-sans text-sm text-admin-brick">{error}</p>}
 
         <div className="flex items-center gap-4 pt-2">
           <Button type="submit" variant="primary" disabled={saving}>
@@ -482,16 +482,20 @@ export function DishForm({
           <button
             type="button"
             onClick={() => router.push("/gestione/menu")}
-            className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-sm text-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 md:min-h-0"
+            className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-sm text-admin-text-2 transition-colors hover:text-admin-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 md:min-h-0"
           >
             Annulla
           </button>
         </div>
       </div>
 
-      {/* Colonna anteprima */}
+      {/* Colonna anteprima: riproduce l'aspetto REALE del sito
+          pubblico (tono chiaro/scuro secondo la macro-categoria),
+          quindi usa di proposito i token del sito pubblico
+          (bg-dark/bg-cream/text-ink), non quelli admin-* — cambiarli
+          falsificherebbe l'anteprima. */}
       <div className="lg:sticky lg:top-8">
-        <p className="font-sans text-[10px] tracking-widest uppercase text-muted mb-3">
+        <p className="font-sans text-[10px] tracking-widest uppercase text-admin-text-2 mb-3">
           Anteprima menu
         </p>
         <div
@@ -520,7 +524,7 @@ function Field({
 }) {
   return (
     <div className={className}>
-      <label className="font-sans text-[10px] tracking-widest uppercase text-muted block mb-1.5">
+      <label className="font-sans text-[10px] tracking-widest uppercase text-admin-text-2 block mb-1.5">
         {label}
       </label>
       {children}

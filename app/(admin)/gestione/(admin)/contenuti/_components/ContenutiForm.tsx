@@ -7,7 +7,7 @@ import { GRUPPI_CONTENUTI } from "@/src/lib/contenuti";
 import { saveContenuti } from "../_actions";
 
 const inputClass =
-  "w-full min-h-11 md:min-h-0 bg-cream border border-ink/20 rounded-[2px] px-3 py-2 font-sans text-sm text-ink placeholder:text-muted/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 focus-visible:border-bordeaux/50";
+  "w-full min-h-11 md:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-2 font-sans text-sm text-admin-text placeholder:text-admin-text-3 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
 
 // Solo campi di testo etichettati in italiano: nessuna chiave
 // tecnica a schermo, nessun editor di layout, nessun drag-and-drop.
@@ -56,13 +56,13 @@ export function ContenutiForm({
       {GRUPPI_CONTENUTI.map((gruppo) => (
         <section
           key={gruppo.titolo}
-          className="mb-10 pb-8 border-b border-ink/10"
+          className="mb-10 pb-8 border-b border-admin-line"
         >
-          <h2 className="font-serif text-xl font-medium text-ink mb-1">
+          <h2 className="font-serif text-xl font-medium text-admin-text mb-1">
             {gruppo.titolo}
           </h2>
           {gruppo.descrizione && (
-            <p className="font-sans text-sm text-muted mb-5">
+            <p className="font-sans text-sm text-admin-text-2 mb-5">
               {gruppo.descrizione}
             </p>
           )}
@@ -72,12 +72,12 @@ export function ContenutiForm({
               <div key={campo.chiave} className="flex flex-col gap-1.5">
                 <label
                   htmlFor={campo.chiave}
-                  className="font-sans text-xs font-medium text-ink"
+                  className="font-sans text-xs font-medium text-admin-text"
                 >
                   {campo.etichetta}
                 </label>
                 {campo.aiuto && (
-                  <p className="font-sans text-xs text-muted">{campo.aiuto}</p>
+                  <p className="font-sans text-xs text-admin-text-2">{campo.aiuto}</p>
                 )}
                 {campo.lungo ? (
                   <textarea
@@ -99,7 +99,7 @@ export function ContenutiForm({
                   />
                 )}
                 {campo.fallback && (
-                  <p className="font-sans text-xs text-muted/80">
+                  <p className="font-sans text-xs text-admin-text-3">
                     Se lasci vuoto, il sito mostra il testo attuale.
                   </p>
                 )}
@@ -109,7 +109,7 @@ export function ContenutiForm({
                     ricade sull'italiano qui sopra. Un campo può
                     restare vuoto senza rompere nulla. */}
                 <div className="mt-1 flex items-start gap-2">
-                  <span className="mt-2 font-sans text-[10px] font-medium tracking-widest text-muted">
+                  <span className="mt-2 font-sans text-[10px] font-medium tracking-widest text-admin-text-2">
                     EN
                   </span>
                   {campo.lungo ? (
@@ -140,7 +140,7 @@ export function ContenutiForm({
         </section>
       ))}
 
-      {error && <p className="font-sans text-sm text-bordeaux mb-4">{error}</p>}
+      {error && <p className="font-sans text-sm text-admin-brick mb-4">{error}</p>}
 
       <div className="flex items-center gap-4">
         <Button
@@ -152,7 +152,7 @@ export function ContenutiForm({
           {saving ? "Salvataggio…" : "Salva testi"}
         </Button>
         {justSaved && (
-          <span className="font-sans text-sm text-muted">Testi salvati.</span>
+          <span className="font-sans text-sm text-admin-text-2">Testi salvati.</span>
         )}
       </div>
     </div>

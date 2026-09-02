@@ -99,7 +99,7 @@ export function DettaglioPrenotazionePanel({
           <>
             <div className="flex items-start justify-between gap-4 border-b border-admin-line px-6 py-5">
               <div className="min-w-0">
-                <p className="font-sans text-[10px] tracking-widest uppercase text-admin-text-3 mb-1">
+                <p className="font-sans text-[10px] tracking-widest uppercase text-admin-text-2 mb-1">
                   {dataLabel} · {rigaVisualizzata.fascia}
                 </p>
                 <h2 className="font-serif text-xl font-medium text-admin-text truncate">
@@ -120,7 +120,7 @@ export function DettaglioPrenotazionePanel({
 
             <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
               <div>
-                <p className="font-sans text-[10px] tracking-widest uppercase text-admin-text-3 mb-1.5">
+                <p className="font-sans text-[10px] tracking-widest uppercase text-admin-text-2 mb-1.5">
                   Stato
                 </p>
                 <StatusSelect
@@ -151,7 +151,7 @@ export function DettaglioPrenotazionePanel({
 function Campo({ etichetta, valore }: { etichetta: string; valore: string }) {
   return (
     <div>
-      <dt className="font-sans text-[10px] tracking-widest uppercase text-admin-text-3 mb-0.5">
+      <dt className="font-sans text-[10px] tracking-widest uppercase text-admin-text-2 mb-0.5">
         {etichetta}
       </dt>
       <dd className="font-sans text-sm text-admin-text">{valore}</dd>
