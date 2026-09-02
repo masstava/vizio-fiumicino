@@ -17,6 +17,7 @@ import { campoLocalizzato, campoLocalizzatoOpzionale } from "@/src/lib/i18n/camp
 import { isLocale, localizedPath, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
 import { alternatesPerPagina } from "@/src/lib/i18n/metadata";
+import { getMediaPagina } from "@/src/lib/media-pagine";
 import { getOrariSito } from "@/src/lib/orari-sito";
 import { getSelezioneBar } from "@/src/lib/selezione-bar";
 import { createClient } from "@/src/lib/supabase/server";
@@ -60,7 +61,7 @@ export default async function CocktailBarPage({
   const copy = getCopyCocktailBar(locale);
   const supabase = await createClient();
 
-  const [selezione, orari, { data: drinkRow }] = await Promise.all([
+  const [selezione, orari, { data: drinkRow }, immagineHero] = await Promise.all([
     getSelezioneBar(supabase, locale),
     getOrariSito(supabase, locale),
     supabase
@@ -71,6 +72,7 @@ export default async function CocktailBarPage({
       .order("ordine")
       .limit(1)
       .maybeSingle(),
+    getMediaPagina(supabase, "cocktail-bar"),
   ]);
 
   let drinkIcona: PiattoIconaDati | null = null;
@@ -102,6 +104,7 @@ export default async function CocktailBarPage({
         occhiello={copy.hero.occhiello}
         titolo={copy.hero.titolo}
         sottotitolo={copy.hero.sottotitolo}
+        immagineUrl={immagineHero?.tipo === "immagine" ? immagineHero.url : null}
       />
 
       <Reveal>

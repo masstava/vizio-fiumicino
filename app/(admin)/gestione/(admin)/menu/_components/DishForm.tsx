@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { cn } from "@/src/lib/utils";
 import { createClient } from "@/src/lib/supabase/client";
@@ -38,9 +39,6 @@ interface DishFormProps {
   piattoId?: string;
   categorieGrouped: CategoriaGroupOption[];
   allergeniList: AllergeneOption[];
-  otherEvidenzaCount: number;
-  /** Quanti ALTRI piatti sono già selezionati per l'anteprima home. */
-  otherAnteprimaCount: number;
   initialData?: DishFormInitialData;
 }
 
@@ -57,8 +55,6 @@ export function DishForm({
   piattoId,
   categorieGrouped,
   allergeniList,
-  otherEvidenzaCount,
-  otherAnteprimaCount,
   initialData,
 }: DishFormProps) {
   const router = useRouter();
@@ -93,21 +89,15 @@ export function DishForm({
   const [badges, setBadges] = useState<BadgeInput[]>(
     initialData?.badges ?? [],
   );
-  const [inEvidenza, setInEvidenza] = useState(
-    initialData?.in_evidenza ?? false,
-  );
-  const [inEvidenzaOrdine, setInEvidenzaOrdine] = useState(
-    initialData?.in_evidenza_ordine ?? 0,
-  );
-  const [anteprimaHome, setAnteprimaHome] = useState(
-    initialData?.anteprima_home ?? false,
-  );
-  const [anteprimaHomeOrdine, setAnteprimaHomeOrdine] = useState(
-    initialData?.anteprima_home_ordine ?? 0,
-  );
-  const [evidenzaBlockedMessage, setEvidenzaBlockedMessage] = useState<
-    string | null
-  >(null);
+  // "In evidenza"/"Anteprima home" non si modificano più da qui (si
+  // gestiscono in Gestione sito → Home, § passaggio 5b): questi
+  // restano di sola lettura, letti una volta da initialData e passati
+  // invariati a savePiatto — così salvare un piatto da questo form non
+  // cambia la sua selezione in home, che vive altrove.
+  const inEvidenza = initialData?.in_evidenza ?? false;
+  const inEvidenzaOrdine = initialData?.in_evidenza_ordine ?? 0;
+  const anteprimaHome = initialData?.anteprima_home ?? false;
+  const anteprimaHomeOrdine = initialData?.anteprima_home_ordine ?? 0;
 
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -144,25 +134,6 @@ export function DishForm({
     allergeni: Array.from(allergeniSelected),
     badges: badges.map((b) => b.testo).filter((t) => t.trim().length > 0),
   };
-
-  const showEvidenzaWarning = inEvidenza && otherEvidenzaCount >= 3;
-
-  // Oltre 8 l'anteprima smette di essere una selezione e ridiventa un
-  // elenco — che è il problema che il flag serviva a risolvere.
-  // Avviso soltanto: nessun blocco, la soglia non è una regola rigida.
-  const totaleAnteprima = otherAnteprimaCount + (anteprimaHome ? 1 : 0);
-  const showAnteprimaWarning = anteprimaHome && totaleAnteprima > 8;
-
-  function handleToggleEvidenza(next: boolean) {
-    if (next && otherEvidenzaCount >= 3) {
-      setEvidenzaBlockedMessage(
-        "Massimo 3 piatti in evidenza in home. Disattivane uno prima di aggiungerne un altro.",
-      );
-      return;
-    }
-    setEvidenzaBlockedMessage(null);
-    setInEvidenza(next);
-  }
 
   function toggleAllergene(id: number) {
     setAllergeniSelected((prev) => {
@@ -471,74 +442,32 @@ export function DishForm({
           />
         </Field>
 
-        {/* In evidenza */}
-        <Field label="Home">
-          <div className="space-y-2">
-            <Switch
-              checked={inEvidenza}
-              onChange={handleToggleEvidenza}
-              label="In evidenza in home"
-            />
-            {evidenzaBlockedMessage && (
-              <p className="font-sans text-xs text-cream-text bg-bordeaux border border-bordeaux inline-block px-2.5 py-1 rounded-[2px]">
-                {evidenzaBlockedMessage}
+        {/* In evidenza / anteprima home: sola lettura da qui — si
+            gestiscono in Gestione sito → Home. Solo in modifica: un
+            piatto nuovo non può ancora comparire in home (il
+            selettore lì sceglie fra i piatti già esistenti). */}
+        {mode === "edit" && (
+          <Field label="Home">
+            <div className="space-y-1">
+              <p className="font-sans text-sm text-ink">
+                {inEvidenza
+                  ? "Attualmente in evidenza in home."
+                  : "Non è tra i piatti in evidenza in home."}
               </p>
-            )}
-            {inEvidenza && (
-              <div className="flex items-center gap-2 pl-1">
-                <label className="font-sans text-xs text-muted">Ordine</label>
-                <input
-                  type="number"
-                  min="0"
-                  className={cn(inputClass, "w-20")}
-                  value={inEvidenzaOrdine}
-                  onChange={(e) => setInEvidenzaOrdine(Number(e.target.value))}
-                />
-              </div>
-            )}
-            {showEvidenzaWarning && (
-              <p className="font-sans text-xs text-dark bg-gold/25 border border-gold inline-block px-2.5 py-1 rounded-[2px]">
-                Attenzione: solo i primi 3 per ordine verranno mostrati nello
-                slider.
+              <p className="font-sans text-sm text-ink">
+                {anteprimaHome
+                  ? "In anteprima menu in home."
+                  : "Non è nell'anteprima menu in home."}
               </p>
-            )}
-
-            <div className="pt-3 mt-1 border-t border-ink/10 space-y-2">
-              <Switch
-                checked={anteprimaHome}
-                onChange={setAnteprimaHome}
-                label="Mostra nell'anteprima home"
-              />
-              <p className="font-sans text-xs text-muted">
-                Diverso da &quot;in evidenza&quot;: questo decide quali piatti
-                compaiono nell&apos;anteprima del menu (o dei cocktail) in home.
-              </p>
-              {anteprimaHome && (
-                <div className="flex items-center gap-2 pl-1">
-                  <label className="font-sans text-xs text-muted">Ordine</label>
-                  <input
-                    type="number"
-                    min="0"
-                    className={cn(inputClass, "w-20")}
-                    value={anteprimaHomeOrdine}
-                    onChange={(e) =>
-                      setAnteprimaHomeOrdine(Number(e.target.value))
-                    }
-                  />
-                  <span className="font-sans text-xs text-muted">
-                    il primo della lista è il piatto grande in cima
-                  </span>
-                </div>
-              )}
-              {showAnteprimaWarning && (
-                <p className="font-sans text-xs text-dark bg-gold/25 border border-gold inline-block px-2.5 py-1 rounded-[2px]">
-                  Sono {totaleAnteprima} i piatti selezionati per l&apos;anteprima
-                  home: oltre gli 8 diventa una lista invece di una selezione.
-                </p>
-              )}
+              <Link
+                href="/gestione/contenuti"
+                className="inline-flex min-h-11 items-center font-sans text-sm text-bordeaux hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 md:min-h-0"
+              >
+                Gestisci in Gestione sito →
+              </Link>
             </div>
-          </div>
-        </Field>
+          </Field>
+        )}
 
         {error && <p className="font-sans text-sm text-bordeaux">{error}</p>}
 

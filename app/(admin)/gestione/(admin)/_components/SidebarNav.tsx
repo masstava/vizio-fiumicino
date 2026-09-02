@@ -13,12 +13,12 @@ import {
 import { cn } from "@/src/lib/utils";
 
 type NavItem = { label: string; href: string; Icon: typeof IconDashboard; contatoreKey?: keyof Contatori };
-type Contatori = { menu?: number; eventi?: number; prenotazioni?: number };
+type Contatori = { menu?: number; eventi?: number; prenotazioni?: number; gestioneSito?: number };
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/gestione", Icon: IconDashboard },
   { label: "Menu", href: "/gestione/menu", Icon: IconMenu, contatoreKey: "menu" },
-  { label: "Testi della home", href: "/gestione/contenuti", Icon: IconTesti },
+  { label: "Gestione sito", href: "/gestione/contenuti", Icon: IconTesti, contatoreKey: "gestioneSito" },
   { label: "Orari", href: "/gestione/orari", Icon: IconOrari },
   { label: "Eventi", href: "/gestione/eventi", Icon: IconEventi, contatoreKey: "eventi" },
   { label: "Prenotazioni", href: "/gestione/prenotazioni", Icon: IconPrenotazioni, contatoreKey: "prenotazioni" },

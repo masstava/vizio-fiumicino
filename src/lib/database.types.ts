@@ -263,6 +263,30 @@ export type Database = {
         }
         Relationships: []
       }
+      media_pagine: {
+        Row: {
+          aggiornata_il: string
+          pagina: string
+          slot: string
+          tipo: string
+          url: string | null
+        }
+        Insert: {
+          aggiornata_il?: string
+          pagina: string
+          slot?: string
+          tipo?: string
+          url?: string | null
+        }
+        Update: {
+          aggiornata_il?: string
+          pagina?: string
+          slot?: string
+          tipo?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
       orari: {
         Row: {
           apertura: string | null

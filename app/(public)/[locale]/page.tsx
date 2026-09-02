@@ -13,6 +13,7 @@ import { SiteHeader } from "@/src/components/home/SiteHeader";
 import { SocialProof } from "@/src/components/home/SocialProof";
 import { ThreePillars } from "@/src/components/home/ThreePillars";
 import { getAnteprimaHome } from "@/src/lib/anteprima-home";
+import { getMediaPagina } from "@/src/lib/media-pagine";
 import { campoLocalizzato, campoLocalizzatoOpzionale } from "@/src/lib/i18n/campi";
 import { isLocale, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
@@ -88,11 +89,14 @@ export default async function Home({
     day: "2-digit",
   }).format(new Date());
 
-  // Primo livello: sei letture che non dipendono l'una dall'altra,
-  // quindi partono insieme. Prima erano sei await in fila e la pagina
-  // pagava la somma delle latenze invece della più lenta: undici
-  // andate e ritorno in sequenza contando anche le dipendenti sotto.
-  // La home è force-dynamic, quindi succedeva a ogni richiesta.
+  // Primo livello: sette letture che non dipendono l'una dall'altra,
+  // quindi partono insieme (la settima, il video hero, si è aggiunta
+  // qui nel passaggio 5b — mai attesa da sola in sequenza, per lo
+  // stesso motivo per cui esiste questo Promise.all). Prima erano sei
+  // await in fila e la pagina pagava la somma delle latenze invece
+  // della più lenta: undici andate e ritorno in sequenza contando
+  // anche le dipendenti sotto. La home è force-dynamic, quindi
+  // succedeva a ogni richiesta.
   const [
     evidenza,
     anteprima,
@@ -100,6 +104,7 @@ export default async function Home({
     { data: orariConfig },
     { data: contenutiRows },
     { data: prossimoEvento },
+    video,
   ] = await Promise.all([
     // Ramo completo (tre letture, profondità 2): vedi leggiInEvidenza.
     leggiInEvidenza(supabase),
@@ -140,6 +145,10 @@ export default async function Home({
       .order("data_evento")
       .limit(1)
       .maybeSingle(),
+
+    // Video hero impostato da /gestione/contenuti. Assente → Hero
+    // ricade sul video fisso di sempre (vedi Hero.tsx).
+    getMediaPagina(supabase, "home"),
   ]);
 
   const evidenzaBadgeByPiatto = new Map<string, string>();
@@ -197,7 +206,7 @@ export default async function Home({
       {/* Header ed hero non sono avvolti in Reveal di proposito: sono
           sopra la piega, e farli partire invisibili sposterebbe l'LCP. */}
       <SiteHeader locale={locale} />
-      <Hero headline={testi["hero.headline"]} locale={locale} />
+      <Hero headline={testi["hero.headline"]} locale={locale} video={video} />
 
       <Reveal>
         <ThreePillars testi={testi} locale={locale} />

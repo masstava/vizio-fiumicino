@@ -21,9 +21,7 @@ export default async function ModificaPiattoPage({
     { data: allergeniLinks },
     { data: badgeLinks },
     { data: evidenzaRow },
-    { count: otherEvidenzaCount },
     { data: anteprimaRow },
-    { count: otherAnteprimaCount },
   ] = await Promise.all([
     supabase.from("piatti").select("*").eq("id", id).maybeSingle(),
     supabase.from("categorie_macro").select("id, nome, ordine").order("ordine"),
@@ -34,24 +32,19 @@ export default async function ModificaPiattoPage({
     supabase.from("allergeni").select("id, nome_it").order("id"),
     supabase.from("piatti_allergeni").select("allergene_id").eq("piatto_id", id),
     supabase.from("badge").select("testo, testo_en").eq("piatto_id", id),
+    // Solo per l'indicatore di sola lettura: il conteggio degli ALTRI
+    // piatti selezionati non serve più qui, si gestisce (e si guarda)
+    // in Gestione sito → Home.
     supabase
       .from("piatti_in_evidenza")
       .select("ordine")
       .eq("piatto_id", id)
       .maybeSingle(),
     supabase
-      .from("piatti_in_evidenza")
-      .select("piatto_id", { count: "exact", head: true })
-      .neq("piatto_id", id),
-    supabase
       .from("piatti_anteprima_home")
       .select("ordine")
       .eq("piatto_id", id)
       .maybeSingle(),
-    supabase
-      .from("piatti_anteprima_home")
-      .select("piatto_id", { count: "exact", head: true })
-      .neq("piatto_id", id),
   ]);
 
   if (!piatto) notFound();
@@ -71,8 +64,6 @@ export default async function ModificaPiattoPage({
         piattoId={piatto.id}
         categorieGrouped={categorieGrouped}
         allergeniList={allergeni ?? []}
-        otherEvidenzaCount={otherEvidenzaCount ?? 0}
-        otherAnteprimaCount={otherAnteprimaCount ?? 0}
         initialData={{
           categoria_id: piatto.categoria_id,
           nome: piatto.nome,

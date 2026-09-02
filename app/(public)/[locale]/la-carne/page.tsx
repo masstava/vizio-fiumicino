@@ -17,6 +17,7 @@ import { campoLocalizzato, campoLocalizzatoOpzionale } from "@/src/lib/i18n/camp
 import { isLocale, localizedPath, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
 import { alternatesPerPagina } from "@/src/lib/i18n/metadata";
+import { getMediaPagina } from "@/src/lib/media-pagine";
 import { getOrariSito } from "@/src/lib/orari-sito";
 import { createClient } from "@/src/lib/supabase/server";
 
@@ -59,7 +60,7 @@ export default async function LaCarnePage({
   const copy = getCopyLaCarne(locale);
   const supabase = await createClient();
 
-  const [{ data: piattoRow }, orari] = await Promise.all([
+  const [{ data: piattoRow }, orari, immagineHero] = await Promise.all([
     supabase
       .from("piatti")
       .select("id, nome, nome_en, descrizione, descrizione_en, foto_url")
@@ -69,6 +70,7 @@ export default async function LaCarnePage({
       .limit(1)
       .maybeSingle(),
     getOrariSito(supabase, locale),
+    getMediaPagina(supabase, "la-carne"),
   ]);
 
   let piattoIcona: PiattoIconaDati | null = null;
@@ -100,6 +102,7 @@ export default async function LaCarnePage({
         occhiello={copy.hero.occhiello}
         titolo={copy.hero.titolo}
         sottotitolo={copy.hero.sottotitolo}
+        immagineUrl={immagineHero?.tipo === "immagine" ? immagineHero.url : null}
       />
 
       {/* Il racconto della nicchia su fondo chiaro: dopo due blocchi

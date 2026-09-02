@@ -5,10 +5,13 @@ import { ImagePlaceholder } from "@/src/components/ui/ImagePlaceholder";
 import { RECENSIONI } from "@/src/lib/contatti";
 import { localizedPath, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
+import type { MediaPagina } from "@/src/lib/media-pagine";
 
 // Video reale del locale, ospitato su Supabase Storage (bucket
 // pubblico "sito-media", non è un piatto quindi non passa dalla
-// tabella piatti/foto_url).
+// tabella piatti/foto_url). Valore di riserva: usato quando
+// /gestione/contenuti non ha (ancora) impostato un video per
+// pagina="home" — vedi la prop "video" sotto.
 //
 // Mostrato su TUTTE le dimensioni, mobile compreso: inizialmente era
 // limitato al desktop per non far scaricare un file pesante su 4G, ma
@@ -39,11 +42,20 @@ const HERO_VIDEO_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/objec
 export function Hero({
   headline,
   locale,
+  video,
 }: {
   headline: string;
   locale: Locale;
+  /**
+   * Video impostato da /gestione/contenuti (scheda "Foto delle
+   * pagine"). Assente o di tipo diverso da "video" → ricade sul video
+   * fisso di sempre (HERO_VIDEO_URL): un dato mancante o sbagliato non
+   * deve mai rompere l'hero, solo farlo tornare a come era prima.
+   */
+  video?: MediaPagina | null;
 }) {
   const t = getDizionario(locale);
+  const videoSrc = video?.tipo === "video" ? video.url : HERO_VIDEO_URL;
   return (
     <section className="relative flex min-h-[85vh] items-end overflow-hidden bg-dark text-cream-text md:min-h-[92vh]">
       <ImagePlaceholder
@@ -60,7 +72,7 @@ export function Hero({
         preload="metadata"
         aria-hidden="true"
       >
-        <source src={HERO_VIDEO_URL} type="video/mp4" />
+        <source src={videoSrc} type="video/mp4" />
       </video>
       <div className="absolute inset-0 bg-gradient-to-t from-dark via-dark/70 to-dark/10" />
 

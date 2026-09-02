@@ -11,6 +11,7 @@ import { formatDataEvento, getEventiFuturi } from "@/src/lib/eventi-sito";
 import { isLocale, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
 import { alternatesPerPagina } from "@/src/lib/i18n/metadata";
+import { getMediaPagina } from "@/src/lib/media-pagine";
 import { getOrariSito } from "@/src/lib/orari-sito";
 import { createClient } from "@/src/lib/supabase/server";
 
@@ -51,10 +52,11 @@ export default async function ExperienceEventiPage({
   const copy = getCopyExperience(locale);
   const supabase = await createClient();
 
-  // Due letture indipendenti: partono insieme.
-  const [eventi, orari] = await Promise.all([
+  // Tre letture indipendenti: partono insieme.
+  const [eventi, orari, immagineHero] = await Promise.all([
     getEventiFuturi(supabase, locale),
     getOrariSito(supabase, locale),
+    getMediaPagina(supabase, "experience-eventi"),
   ]);
 
   return (
@@ -64,6 +66,7 @@ export default async function ExperienceEventiPage({
         occhiello={copy.hero.occhiello}
         titolo={copy.hero.titolo}
         sottotitolo={copy.hero.sottotitolo}
+        immagineUrl={immagineHero?.tipo === "immagine" ? immagineHero.url : null}
       />
 
       {/* Menu degustazione */}

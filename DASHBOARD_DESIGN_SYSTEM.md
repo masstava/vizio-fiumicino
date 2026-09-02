@@ -57,8 +57,57 @@ esplicitamente.
   forzare il remount dello stato locale) e il focus non entrava nel
   pannello di dettaglio all'apertura (due effetti in corsa nello stesso
   commit — corretto aggiungendo la dipendenza mancante).
-- **Passaggi 5-6**: applicano le stesse regole alle sezioni restanti
-  (contenuti, rifiniture finali).
+- **Passaggio 5/6 — completato**, in due parti. **5a (solo schema)**:
+  tabella `media_pagine` (chiave pagina+slot, colonna `tipo`
+  immagine/video, RLS lettura pubblica/scrittura auth) e bucket
+  Storage `sito-media` — riuso del nome già referenziato dal codice
+  pubblico per il video hero, non un bucket nuovo (vedi
+  `supabase/migrations/20260901000000_media_pagine.sql` per il
+  ragionamento completo e la diagnosi di dove vivono oggi le immagini
+  delle pagine). **5b (interfaccia + collegamento reale)**: nuova
+  sezione "Gestione sito" (sostituisce "Testi della home" in sidebar),
+  tre schede — rotte vere, non stato client, ognuna con la propria
+  intestazione in topbar (`contenuti/_components/SchedeGestioneSito.tsx`):
+  - **Home** (`/gestione/contenuti`): selezione piatti/drink per la
+    home a griglie di slot cliccabili — "Piatti in evidenza" (3 slot
+    fissi) e "Anteprima menu in home" (fino a 8, cresce con un solo
+    "+" finale). Un pannello di ricerca a comparsa laterale
+    (`SelezionaPiattoPanel.tsx`, stessa divulgazione non-modale del
+    dettaglio prenotazione: Esc chiude e restituisce il focus, nessun
+    focus trap) sceglie il piatto. Sostituisce i toggle "in evidenza"/
+    "anteprima home" del passaggio 2, ora rimossi dall'editor piatti
+    (`DishForm.tsx`) — lì resta solo un indicatore di sola lettura, con
+    link qui, e i valori restano invariati nel payload di
+    `savePiatto`.
+  - **Foto delle pagine** (`/gestione/contenuti/foto`): una riga per
+    ciascuno dei 5 slot reali (home = video, le altre 4 = immagine).
+    Caricare un file è l'unica azione: scrive subito su Storage
+    (bucket `sito-media`) e in `media_pagine`, nessun pulsante "salva"
+    separato.
+  - **Testi** (`/gestione/contenuti/testi`): l'editor di
+    `contenuti_sito` già esistente, solo spostato qui — nessuna
+    funzionalità persa.
+
+  Collegamento reale al sito pubblico: `Hero.tsx` (home) e
+  `PaginaHero.tsx` (le 4 pagine editoriali) leggono ora `media_pagine`,
+  con fallback bit-per-bit al comportamento di prima quando la riga è
+  assente o l'url è nullo — verificato in entrambe le direzioni. La
+  lettura si aggiunge al `Promise.all` già esistente di ogni pagina
+  (quello della home, in particolare, era già stato corretto una volta
+  per lo stesso motivo — Fase 18): verificato che resti un solo giro
+  parallelo, non un giro sequenziale in più.
+
+  Contatore sidebar "Gestione sito": quanti dei 5 slot foto/video sono
+  ancora vuoti (0-5) — un numero che segnala un'azione da fare, come
+  gli altri contatori di questa dashboard.
+
+  Un bug trovato e corretto durante la verifica prima del commit: il
+  pannello di ricerca piatti non restituiva il focus al pulsante "+"
+  che l'aveva aperto (mancava la stessa cattura di
+  `document.activeElement` già usata in `PrenotazioniListClient.tsx`
+  del passaggio 4) — corretto allineando i due pannelli allo stesso
+  schema.
+- **Passaggio 6/6**: rifiniture finali di chiusura del refactor.
 
 Vedi "Cosa NON è ancora stato fatto" in fondo per l'elenco preciso di
 ciò che i passaggi successivi devono ancora collegare.
@@ -145,12 +194,13 @@ continuare ad affidarsi all'override.
   sfondo `--admin-brick`. Popolati: "Menu" (piatti con `disponibile =
   true`, passaggio 2/6), "Eventi" (eventi attivi non ancora passati,
   passaggio 3/6), "Prenotazioni" (prenotazioni di oggi non cancellate,
-  passaggio 4/6) — tutti calcolati nel layout server-side con una
-  singola `Promise.all` e passati a `SidebarNav` via `AdminShell`.
-  "Oggi" per il contatore prenotazioni/eventi è sempre nel fuso di Roma
-  (`oggiEOraRoma()`, § Verifica passaggio 4/6), non la data UTC del
-  server. Orari e Testi della home restano senza contatore: sono
-  pagine singole, un conteggio non avrebbe senso lì.
+  passaggio 4/6), "Gestione sito" (quanti dei 5 slot foto/video sono
+  ancora vuoti, passaggio 5/6) — tutti calcolati nel layout server-side
+  con una singola `Promise.all` e passati a `SidebarNav` via
+  `AdminShell`. "Oggi" per il contatore prenotazioni/eventi è sempre
+  nel fuso di Roma (`oggiEOraRoma()`, § Verifica passaggio 4/6), non la
+  data UTC del server. Orari resta senza contatore: è una pagina
+  singola, un conteggio non avrebbe senso lì.
 - Comportamento responsive: **invariato** rispetto a prima del
   refactor — pannello a scomparsa sotto `md` (hamburger che diventa
   X, overlay che chiude al tocco, Esc che chiude e restituisce il
@@ -190,6 +240,21 @@ in linea: la duplicazione visiva temporanea (topbar + intestazione
 della pagina) resta nota e attesa per quelle sezioni, elencata sotto in
 "Cosa NON è ancora stato fatto".
 
+## Schede (tab)
+
+Introdotte nel passaggio 5/6 per "Gestione sito" (`/gestione/contenuti`,
+tre schede: Home, Foto delle pagine, Testi) — primo caso in questa
+dashboard di una sezione con più viste equivalenti sotto lo stesso
+nome di sidebar. Rotte vere (`/gestione/contenuti`,
+`/gestione/contenuti/foto`, `/gestione/contenuti/testi`), non stato
+client: ogni scheda ha una propria voce in `AdminTopbar`, l'URL resta
+condivisibile e il tasto indietro del browser funziona come ci si
+aspetta. Striscia di schede (`contenuti/_components/SchedeGestioneSito.tsx`)
+con indicatore a bordo inferiore di 2px in `--admin-brick` sulla scheda
+attiva — stesso principio della barra laterale della sidebar (un
+indicatore lineare, non un riempimento). Se una sezione futura avesse
+bisogno delle stesse schede, questo componente è il riferimento.
+
 ## Tabelle/liste dense
 
 Applicato a `/gestione/menu` (passaggio 2/6), `/gestione/eventi` e
@@ -217,6 +282,16 @@ di record indipendenti (coerenza visiva, § Orari sopra).
   `<button>`, il controllo di stato è un elemento FRATELLO fuori da
   quel bottone, mai annidato dentro — un controllo interattivo dentro
   un `<button>` è HTML non valido e produce comportamento indefinito.
+  Lo stesso pannello non-modale (Esc chiude e restituisce il focus a
+  chi l'ha aperto — catturato con `document.activeElement` al momento
+  dell'apertura, non un ref fisso, perché più pulsanti diversi possono
+  aprirlo; focus che entra all'apertura; nessun focus trap) è stato
+  riusato nel passaggio 5/6 per il pannello di ricerca piatti in
+  Gestione sito → Home (`SelezionaPiattoPanel.tsx`) — un bug nella
+  prima versione (il focus non tornava al pulsante "+" alla chiusura,
+  mancava la cattura di `document.activeElement`) è stato trovato e
+  corretto in verifica prima del commit, allineandolo esattamente allo
+  schema di `PrenotazioniListClient.tsx`.
 
 ## Badge di stato
 
@@ -260,31 +335,36 @@ testo, mai solo un colore di sfondo pieno):
   passaggi è verificare, pagina per pagina, che non compaiano MAI due
   `variant="primary"` visibili nella stessa vista.
 
-## Cosa NON è ancora stato fatto (voci aperte per i passaggi 5-6)
+## Cosa NON è ancora stato fatto (voci aperte per il passaggio 6/6)
 
 - **Ricerca in topbar**: fatta per menu (nome piatto) e prenotazioni
-  (nome/telefono). Contenuti resta da valutare nel suo passaggio
-  dedicato; orari ed eventi non ne hanno bisogno (non applicabile, non
-  dimenticata).
+  (nome/telefono). Non pertinente altrove: orari ed eventi non ne
+  hanno bisogno, Gestione sito non ha una lista da cercare (è due
+  griglie di slot e un caricamento file).
 - **Azione primaria in topbar**: fatta per menu ("+ Nuovo piatto") ed
-  eventi ("+ Nuovo evento"). Prenotazioni non ha un'azione di questo
-  tipo (non applicabile: una prenotazione la crea il cliente dal sito,
-  non lo staff da qui). L'eventuale azione primaria di contenuti resta
-  da valutare. Orari non ne ha bisogno (non applicabile).
-- **Contatore sidebar**: "Menu", "Eventi" e "Prenotazioni" sono
-  popolati — tutte le sezioni con un conteggio sensato ora ce l'hanno.
-  Orari e Contenuti restano senza: sono pagine singole, un contatore
-  lì non avrebbe un referente reale.
+  eventi ("+ Nuovo evento"). Non pertinente altrove: prenotazioni non
+  ha un'azione di questo tipo (una prenotazione la crea il cliente dal
+  sito, non lo staff da qui), Gestione sito nemmeno (si salva dentro
+  ogni scheda, non si "crea" una scheda nuova), orari non ne ha
+  bisogno.
+- **Contatore sidebar**: "Menu", "Eventi", "Prenotazioni" e "Gestione
+  sito" sono popolati — tutte le sezioni con un conteggio sensato ora
+  ce l'hanno. Orari resta senza: è una pagina singola, un contatore lì
+  non avrebbe un referente reale.
 - **Restyling tabelle/liste dense**: fatto per menu, eventi e
-  prenotazioni (più i pannelli-form di orari e capienza, per coerenza
-  visiva). Nessuna lista nota resta da convertire.
+  prenotazioni (più i pannelli-form di orari, capienza e Gestione
+  sito, per coerenza visiva). Nessuna lista nota resta da convertire.
 - **Pannello di dettaglio (slide-over)**: introdotto in
-  `/gestione/prenotazioni` (passaggio 4/6, dal prototipo). Non
-  applicato altrove: menu ed eventi usano ancora una pagina dedicata
-  per modificare un record (`/gestione/menu/[id]`,
-  `/gestione/eventi/[id]`) — un pattern diverso ma già esistente e
-  funzionante, non nella specifica di nessun passaggio finora cambiarlo.
-- **Duplicazione temporanea del titolo di pagina**: risolta per menu,
-  orari, eventi e prenotazioni. Solo Contenuti mostra ANCORA la propria
-  intestazione in linea (eyebrow "Gestione" + `<h1>`), invariata —
-  verrà rimossa nel suo passaggio dedicato.
+  `/gestione/prenotazioni` (passaggio 4/6, dal prototipo) e riusato in
+  Gestione sito → Home per la ricerca piatti (passaggio 5/6). Non
+  applicato a menu/eventi: usano ancora una pagina dedicata per
+  modificare un record (`/gestione/menu/[id]`, `/gestione/eventi/[id]`)
+  — un pattern diverso ma già esistente e funzionante, non nella
+  specifica di nessun passaggio finora cambiarlo.
+- **Duplicazione temporanea del titolo di pagina**: risolta ovunque —
+  menu, orari, eventi, prenotazioni e le tre schede di Gestione sito
+  mostrano tutte il titolo/sottotitolo dalla topbar, nessuna
+  intestazione di pagina duplicata resta da rimuovere.
+- **Toggle "in evidenza"/"anteprima home" nell'editor piatti**: rimossi
+  dal passaggio 5/6 (ora si gestiscono in Gestione sito → Home);
+  `DishForm.tsx` mostra solo un indicatore di sola lettura con link.

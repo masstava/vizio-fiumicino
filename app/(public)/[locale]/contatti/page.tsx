@@ -13,6 +13,7 @@ import { getCopyContatti } from "@/src/lib/copy/contatti";
 import { isLocale, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
 import { alternatesPerPagina } from "@/src/lib/i18n/metadata";
+import { getMediaPagina } from "@/src/lib/media-pagine";
 import { getOrariSito } from "@/src/lib/orari-sito";
 import { createClient } from "@/src/lib/supabase/server";
 
@@ -40,8 +41,7 @@ export async function generateMetadata({
 // orari dalla stessa lettura usata dal footer (getOrariSito). Duplicare
 // anche solo il numero di telefono qui violerebbe il principio NAP.
 //
-// Una sola lettura dal database, quindi niente Promise.all: non c'è
-// nulla da mettere in parallelo.
+// Due letture indipendenti (orari e l'immagine hero): partono insieme.
 export default async function ContattiPage({
   params,
 }: {
@@ -53,7 +53,10 @@ export default async function ContattiPage({
   const copy = getCopyContatti(locale);
   const supabase = await createClient();
 
-  const orari = await getOrariSito(supabase, locale);
+  const [orari, immagineHero] = await Promise.all([
+    getOrariSito(supabase, locale),
+    getMediaPagina(supabase, "contatti"),
+  ]);
   const orariDefiniti = orari.settimana.some((g) => !g.chiuso);
 
   return (
@@ -63,6 +66,7 @@ export default async function ContattiPage({
         occhiello={copy.hero.occhiello}
         titolo={copy.hero.titolo}
         sottotitolo={copy.hero.sottotitolo}
+        immagineUrl={immagineHero?.tipo === "immagine" ? immagineHero.url : null}
       />
 
       {/* Dove siamo: mappa e indicazioni */}
