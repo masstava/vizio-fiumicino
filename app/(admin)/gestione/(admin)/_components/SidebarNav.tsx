@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  IconCoupon,
   IconDashboard,
   IconEventi,
   IconMenu,
@@ -22,6 +23,13 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Orari", href: "/gestione/orari", Icon: IconOrari },
   { label: "Eventi", href: "/gestione/eventi", Icon: IconEventi, contatoreKey: "eventi" },
   { label: "Prenotazioni", href: "/gestione/prenotazioni", Icon: IconPrenotazioni, contatoreKey: "prenotazioni" },
+  // Nessun contatore: a differenza di menu/eventi/prenotazioni, non
+  // c'è qui un singolo numero che segnali senza ambiguità "un'azione
+  // da fare" (un coupon campagna può restare valido ed essere
+  // riscattato più volte, non esiste un equivalente reale di
+  // "disponibile" o "di oggi") — stesso trattamento già riservato a
+  // Orari, pagina singola senza un referente per un conteggio.
+  { label: "Coupon", href: "/gestione/coupon", Icon: IconCoupon },
 ];
 
 export function SidebarNav({

@@ -30,6 +30,9 @@ const VOCI: { match: (p: string) => boolean; titolo: string; sottotitolo: string
   { match: (p) => p.startsWith("/gestione/eventi/"), titolo: "Modifica evento", sottotitolo: "Modifica i dati dell'evento" },
   { match: (p) => p === "/gestione/eventi", titolo: "Eventi", sottotitolo: "Calendario e schede evento" },
   { match: (p) => p.startsWith("/gestione/prenotazioni"), titolo: "Prenotazioni", sottotitolo: "Agenda e capienza del giorno" },
+  { match: (p) => p === "/gestione/coupon/nuovo", titolo: "Nuovo coupon campagna", sottotitolo: "Crea un coupon condiviso per una campagna" },
+  { match: (p) => p === "/gestione/coupon/analytics", titolo: "Coupon", sottotitolo: "Emessi e riscattati, per tipo e periodo" },
+  { match: (p) => p.startsWith("/gestione/coupon"), titolo: "Coupon", sottotitolo: "Iscrizioni newsletter e coupon campagna" },
 ];
 
 function vociPagina(pathname: string) {

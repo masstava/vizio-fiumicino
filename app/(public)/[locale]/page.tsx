@@ -251,7 +251,7 @@ export default async function Home({
         />
       </Reveal>
       <Reveal>
-        <Newsletter locale={locale} />
+        <Newsletter locale={locale} offerta={testi["newsletter.offerta"]} />
       </Reveal>
 
       <Footer

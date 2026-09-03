@@ -125,6 +125,22 @@ export const GRUPPI_CONTENUTI: GruppoContenuti[] = [
       },
     ],
   },
+  {
+    titolo: "Offerta newsletter",
+    descrizione:
+      "Il testo mostrato sopra il modulo di iscrizione alla newsletter, in home.",
+    campi: [
+      {
+        chiave: "newsletter.offerta",
+        etichetta: "Testo dell'offerta",
+        lungo: true,
+        fallback:
+          "Iscriviti alla newsletter: -10% sulla tua prima visita, senza spesa minima, più l'accesso in anteprima alle nostre serate a tema.",
+        fallbackEn:
+          "Sign up for our newsletter: -10% on your first visit, no minimum spend, plus early access to our themed evenings.",
+      },
+    ],
+  },
 ];
 
 export const CHIAVI_CONTENUTI = GRUPPI_CONTENUTI.flatMap((g) =>

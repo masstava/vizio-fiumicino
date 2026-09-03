@@ -70,10 +70,14 @@ const it = {
   },
   newsletter: {
     titolo: "Resta aggiornato",
-    testo:
-      "Iscriviti alla newsletter: -10% sulla tua prima visita, senza spesa minima, più l'accesso in anteprima alle nostre serate a tema.",
     emailLabel: "Indirizzo email",
     emailPlaceholder: "La tua email",
+    invio: "Iscrizione in corso…",
+    erroreGenerico: "Non è stato possibile completare l'iscrizione. Riprova più tardi.",
+    erroreLimite: "Troppi tentativi in poco tempo. Aspetta qualche minuto e riprova.",
+    fattoTitolo: "Iscrizione completata",
+    codiceEtichetta: "Il tuo codice sconto",
+    comeUsarlo: "Mostralo in cassa alla tua prossima visita.",
   },
   lingua: {
     etichetta: "Lingua",
@@ -232,6 +236,10 @@ const it = {
     confermaRiferimento: "Riferimento",
     confermaRiepilogoTitolo: "Riepilogo",
     nuovaPrenotazione: "Fai un'altra prenotazione",
+
+    iscrizioneNewsletterTitolo: "Vuoi anche il -10% sulla tua prima visita?",
+    iscrizioneNewsletterTesto:
+      "Iscriviti alla newsletter: sconto sulla prima visita e accesso in anteprima alle serate a tema.",
   },
   emailPrenotazione: {
     oggetto: (riferimento: string) => `Prenotazione confermata — rif. ${riferimento}`,
@@ -253,6 +261,15 @@ const it = {
     contattaci: "Se pensi sia un errore o hai domande, contattaci.",
     prenotaTesto: "Vuoi prenotare di nuovo?",
     prenotaLink: "Prenota un tavolo",
+    firma: "A presto,",
+  },
+  emailNewsletter: {
+    oggetto: "Benvenuto nella newsletter di Vizio Bistrot",
+    saluto: (nome: string | null) => (nome ? `Ciao ${nome},` : "Ciao,"),
+    corpoIntro: "grazie per esserti iscritto alla nostra newsletter. Ecco il tuo codice sconto:",
+    labelCodice: "Codice sconto",
+    comeUsarlo: "Mostralo in cassa alla tua prossima visita: -10% sul conto, senza spesa minima.",
+    anteprimaSerate: "Riceverai anche un'anteprima delle nostre serate a tema, prima di tutti gli altri.",
     firma: "A presto,",
   },
   paginaGestisci: {
@@ -396,10 +413,14 @@ const en: Dizionario = {
   },
   newsletter: {
     titolo: "Stay in the loop",
-    testo:
-      "Sign up for our newsletter: -10% on your first visit, no minimum spend, plus early access to our themed evenings.",
     emailLabel: "Email address",
     emailPlaceholder: "Your email",
+    invio: "Signing up…",
+    erroreGenerico: "We couldn't complete the sign-up. Please try again later.",
+    erroreLimite: "Too many attempts in a short time. Wait a few minutes and try again.",
+    fattoTitolo: "You're signed up",
+    codiceEtichetta: "Your discount code",
+    comeUsarlo: "Show it at the till on your next visit.",
   },
   lingua: {
     etichetta: "Language",
@@ -552,6 +573,10 @@ const en: Dizionario = {
     confermaRiferimento: "Reference",
     confermaRiepilogoTitolo: "Summary",
     nuovaPrenotazione: "Make another booking",
+
+    iscrizioneNewsletterTitolo: "Want -10% on your first visit too?",
+    iscrizioneNewsletterTesto:
+      "Sign up for our newsletter: a discount on your first visit and early access to themed evenings.",
   },
   emailPrenotazione: {
     oggetto: (riferimento: string) => `Booking confirmed — ref. ${riferimento}`,
@@ -573,6 +598,15 @@ const en: Dizionario = {
     contattaci: "If you think this is a mistake or have questions, get in touch.",
     prenotaTesto: "Want to book again?",
     prenotaLink: "Book a table",
+    firma: "See you soon,",
+  },
+  emailNewsletter: {
+    oggetto: "Welcome to the Vizio Bistrot newsletter",
+    saluto: (nome: string | null) => (nome ? `Hi ${nome},` : "Hi,"),
+    corpoIntro: "thanks for signing up to our newsletter. Here's your discount code:",
+    labelCodice: "Discount code",
+    comeUsarlo: "Show it at the till on your next visit: -10% off the bill, no minimum spend.",
+    anteprimaSerate: "You'll also get early access to our themed evenings, ahead of everyone else.",
     firma: "See you soon,",
   },
   paginaGestisci: {

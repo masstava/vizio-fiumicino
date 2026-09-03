@@ -13,6 +13,7 @@ import {
   type EsitoFascia,
 } from "@/src/lib/prenotazioni/disponibilita";
 import { creaPrenotazione, leggiCapienzaGiorno } from "../_actions";
+import { iscrivitiNewsletter } from "@/src/lib/newsletter/actions";
 
 const inputClass =
   "w-full min-h-11 md:min-h-0 bg-cream border border-ink/20 rounded-[2px] px-3 py-2 font-sans text-sm text-ink placeholder:text-muted/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux/60 focus-visible:border-bordeaux/50";
@@ -33,6 +34,7 @@ function aggiungiGiorni(dataISO: string, giorni: number): string {
 
 interface Riepilogo {
   nome: string;
+  email: string;
   data: string;
   fascia: string;
   coperti: number;
@@ -80,6 +82,19 @@ export function PrenotaForm({
   const [confermata, setConfermata] = useState<
     { id: string; riepilogo: Riepilogo } | null
   >(null);
+
+  // Invito post-prenotazione a iscriversi alla newsletter — §5:
+  // email/nome precompilati da quanto appena inserito nel form sopra,
+  // ma serve un click deliberato su "Iscrivimi" (mai automatico, mai
+  // una casella pre-spuntata). Stato indipendente da "confermata": la
+  // prenotazione è già conclusa a questo punto, l'iscrizione è
+  // un'azione facoltativa separata.
+  const [nlNome, setNlNome] = useState("");
+  const [nlEmail, setNlEmail] = useState("");
+  const [nlSitoWeb, setNlSitoWeb] = useState("");
+  const [nlStato, setNlStato] = useState<"idle" | "inviando" | "fatto" | "errore">("idle");
+  const [nlCodice, setNlCodice] = useState<string | null>(null);
+  const [nlErrore, setNlErrore] = useState<string | null>(null);
 
   const orariGiorno = useMemo(
     () => (data ? orariSelezionabili(settimana, data, dataOdierna, oraAttuale) : []),
@@ -162,7 +177,12 @@ export function PrenotaForm({
       });
 
       if (esito.ok) {
-        setConfermata({ id: esito.id, riepilogo: { nome: nome.trim(), data, fascia, coperti } });
+        setConfermata({
+          id: esito.id,
+          riepilogo: { nome: nome.trim(), email: email.trim(), data, fascia, coperti },
+        });
+        setNlNome(nome.trim());
+        setNlEmail(email.trim());
         return;
       }
 
@@ -196,6 +216,40 @@ export function PrenotaForm({
     setExtra({});
     setSitoWeb("");
     setErrore(null);
+    setNlNome("");
+    setNlEmail("");
+    setNlSitoWeb("");
+    setNlStato("idle");
+    setNlCodice(null);
+    setNlErrore(null);
+  }
+
+  async function handleIscrizioneNewsletter() {
+    if (!nlEmail.trim() || nlStato === "inviando") return;
+    setNlStato("inviando");
+    setNlErrore(null);
+    try {
+      const esito = await iscrivitiNewsletter({
+        email: nlEmail.trim(),
+        nome: nlNome.trim() || null,
+        locale,
+        honeypot: nlSitoWeb,
+      });
+
+      if (esito.ok) {
+        setNlCodice(esito.codice);
+        setNlStato("fatto");
+      } else if (esito.motivo === "RATE_LIMITED") {
+        setNlErrore(t.newsletter.erroreLimite);
+        setNlStato("errore");
+      } else {
+        setNlErrore(t.newsletter.erroreGenerico);
+        setNlStato("errore");
+      }
+    } catch {
+      setNlErrore(t.newsletter.erroreGenerico);
+      setNlStato("errore");
+    }
   }
 
   if (confermata) {
@@ -240,6 +294,80 @@ export function PrenotaForm({
             </div>
           </dl>
         </div>
+
+        {nlStato === "fatto" ? (
+          <div className="mt-6 rounded-[2px] border border-ink/15 p-5">
+            <p className="font-sans text-base text-ink">{t.newsletter.fattoTitolo}</p>
+            <p className="mt-3 font-sans text-[10px] uppercase tracking-widest text-muted">
+              {t.newsletter.codiceEtichetta}
+            </p>
+            <p className="mt-1 font-mono text-lg font-bold text-bordeaux">{nlCodice}</p>
+            <p className="mt-3 font-sans text-sm text-muted">{t.newsletter.comeUsarlo}</p>
+          </div>
+        ) : (
+          <div className="mt-6 rounded-[2px] border border-ink/15 p-5">
+            <p className="font-sans text-base text-ink">
+              {t.paginaPrenota.iscrizioneNewsletterTitolo}
+            </p>
+            <p className="mt-1 font-sans text-sm text-muted">
+              {t.paginaPrenota.iscrizioneNewsletterTesto}
+            </p>
+
+            {/* Honeypot: stesso pattern del form sopra — invisibile e
+                fuori dall'ordine di tabulazione per un utente reale. */}
+            <div aria-hidden="true" className="absolute -left-[9999px] top-auto h-0 w-0 overflow-hidden">
+              <label htmlFor="pr-nl-sito-web">Sito web</label>
+              <input
+                id="pr-nl-sito-web"
+                name="sito-web"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                value={nlSitoWeb}
+                onChange={(e) => setNlSitoWeb(e.target.value)}
+              />
+            </div>
+
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div>
+                <label htmlFor="pr-nl-nome" className={labelClass}>
+                  {t.paginaPrenota.campoNome}
+                </label>
+                <input
+                  id="pr-nl-nome"
+                  type="text"
+                  value={nlNome}
+                  onChange={(e) => setNlNome(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label htmlFor="pr-nl-email" className={labelClass}>
+                  {t.paginaPrenota.campoEmail}
+                </label>
+                <input
+                  id="pr-nl-email"
+                  type="email"
+                  value={nlEmail}
+                  onChange={(e) => setNlEmail(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+            </div>
+
+            {nlErrore && <p className="mt-2 font-sans text-sm text-bordeaux">{nlErrore}</p>}
+
+            <Button
+              type="button"
+              variant="primary"
+              className="mt-4"
+              disabled={nlStato === "inviando" || !nlEmail.trim()}
+              onClick={handleIscrizioneNewsletter}
+            >
+              {nlStato === "inviando" ? t.newsletter.invio : t.cta.iscriviti}
+            </Button>
+          </div>
+        )}
 
         <button
           type="button"

@@ -66,3 +66,12 @@ export function IconPrenotazioni({ className }: IconProps) {
     </svg>
   );
 }
+
+export function IconCoupon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className={className ?? BASE} aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M2.75 8.25a1.5 1.5 0 0 0 0 3.5v2a1 1 0 0 0 1 1h12.5a1 1 0 0 0 1-1v-2a1.5 1.5 0 0 1 0-3.5v-2a1 1 0 0 0-1-1H3.75a1 1 0 0 0-1 1v2z" />
+      <path strokeLinecap="round" d="M8 5.25v9.5" strokeDasharray="1.6 1.6" />
+    </svg>
+  );
+}

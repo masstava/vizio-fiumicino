@@ -215,6 +215,71 @@ export type Database = {
         }
         Relationships: []
       }
+      coupon: {
+        Row: {
+          attivo: boolean
+          codice: string
+          creato_il: string
+          descrizione: string | null
+          email: string | null
+          id: string
+          tipo: string
+          utilizzo_massimo: number | null
+          valido_al: string | null
+          valido_dal: string | null
+        }
+        Insert: {
+          attivo?: boolean
+          codice: string
+          creato_il?: string
+          descrizione?: string | null
+          email?: string | null
+          id?: string
+          tipo: string
+          utilizzo_massimo?: number | null
+          valido_al?: string | null
+          valido_dal?: string | null
+        }
+        Update: {
+          attivo?: boolean
+          codice?: string
+          creato_il?: string
+          descrizione?: string | null
+          email?: string | null
+          id?: string
+          tipo?: string
+          utilizzo_massimo?: number | null
+          valido_al?: string | null
+          valido_dal?: string | null
+        }
+        Relationships: []
+      }
+      coupon_utilizzi: {
+        Row: {
+          coupon_id: string
+          id: string
+          utilizzato_il: string
+        }
+        Insert: {
+          coupon_id: string
+          id?: string
+          utilizzato_il?: string
+        }
+        Update: {
+          coupon_id?: string
+          id?: string
+          utilizzato_il?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupon_utilizzi_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupon"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       eventi: {
         Row: {
           attivo: boolean
@@ -242,6 +307,24 @@ export type Database = {
           id?: string
           titolo?: string
           titolo_en?: string | null
+        }
+        Relationships: []
+      }
+      limite_richieste_newsletter: {
+        Row: {
+          creata_il: string
+          id: number
+          ip: string
+        }
+        Insert: {
+          creata_il?: string
+          id?: number
+          ip: string
+        }
+        Update: {
+          creata_il?: string
+          id?: number
+          ip?: string
         }
         Relationships: []
       }
@@ -564,6 +647,10 @@ export type Database = {
           token_gestione: string
         }[]
       }
+      iscriviti_newsletter: {
+        Args: { p_email: string }
+        Returns: string
+      }
       prenotazione_da_token: {
         Args: { p_token: string }
         Returns: {
@@ -584,6 +671,10 @@ export type Database = {
       reorder_piatti: {
         Args: { p_categoria_id: string; p_ordini: Json }
         Returns: undefined
+      }
+      riscatta_coupon: {
+        Args: { p_codice: string }
+        Returns: Json
       }
       save_evento: {
         Args: {
@@ -621,6 +712,10 @@ export type Database = {
         Returns: string
       }
       verifica_limite_richieste: {
+        Args: { p_ip: string }
+        Returns: boolean
+      }
+      verifica_limite_richieste_newsletter: {
         Args: { p_ip: string }
         Returns: boolean
       }
