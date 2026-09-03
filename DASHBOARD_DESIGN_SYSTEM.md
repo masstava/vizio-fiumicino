@@ -102,6 +102,7 @@ sfondo `--admin-brick`, calcolato server-side in `layout.tsx` (una
 | Orari | no | Pagina singola, un conteggio non avrebbe un referente reale |
 | Eventi | sì | Eventi attivi non ancora passati (i ricorrenti, senza data, contano sempre) |
 | Prenotazioni | sì | Prenotazioni di oggi, non cancellate |
+| Coupon | no | Nessun singolo numero segnala senza ambiguità "un'azione da fare" (un coupon campagna resta valido e riscattabile più volte, non esiste un equivalente reale di "disponibile" o "di oggi") — stesso trattamento di Orari |
 
 **"Oggi" è sempre nel fuso di Roma** (`oggiEOraRoma()`, da
 `src/lib/prenotazioni/disponibilita.ts`), mai la data UTC del server —
@@ -144,16 +145,24 @@ pagina ha più un'intestazione propria duplicata nel corpo.
 ## Schede (tab)
 
 Per una sezione con più viste equivalenti sotto lo stesso nome di
-sidebar (oggi: "Gestione sito" — Home, Foto delle pagine, Testi).
-Rotte vere (`/gestione/contenuti`, `/gestione/contenuti/foto`,
-`/gestione/contenuti/testi`), non stato client: ogni scheda ha una
-propria voce in `AdminTopbar`, l'URL resta condivisibile e il tasto
-indietro del browser funziona come ci si aspetta. Striscia di schede
-(`contenuti/_components/SchedeGestioneSito.tsx`) con indicatore a
-bordo inferiore di 2px in `--admin-brick` sulla scheda attiva — stesso
-principio della barra laterale della sidebar (un indicatore lineare,
-non un riempimento). Riusare questo componente per qualunque altra
-sezione che avrà bisogno delle stesse schede.
+sidebar (oggi: "Gestione sito" — Home, Foto delle pagine, Testi; e
+"Coupon" — Lista, Analytics). Rotte vere (`/gestione/contenuti`,
+`/gestione/contenuti/foto`, `/gestione/contenuti/testi`;
+`/gestione/coupon`, `/gestione/coupon/analytics`), non stato client:
+ogni scheda ha una propria voce in `AdminTopbar`, l'URL resta
+condivisibile e il tasto indietro del browser funziona come ci si
+aspetta. Striscia di schede (`contenuti/_components/SchedeGestioneSito.tsx`,
+`coupon/_components/SchedeCoupon.tsx` — stesso componente-tipo, non
+condiviso: due sezioni indipendenti con le proprie rotte) con
+indicatore a bordo inferiore di 2px in `--admin-brick` sulla scheda
+attiva — stesso principio della barra laterale della sidebar (un
+indicatore lineare, non un riempimento). Riusare questo pattern per
+qualunque altra sezione che avrà bisogno delle stesse schede.
+
+Un'azione (es. "+ Nuovo coupon campagna", "+ Nuovo evento") NON è una
+scheda anche quando la sezione ne ha già altre: resta un pulsante
+primario in topbar verso una pagina dedicata — le schede sono per
+viste equivalenti sullo stesso dato, non per un modulo di creazione.
 
 ## Tabelle/liste dense
 
