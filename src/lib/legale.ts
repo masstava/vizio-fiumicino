@@ -46,4 +46,4 @@ export const GARANTE = {
  * cambiata anche quando non è vero, e renderebbe impossibile
  * accorgersi di una modifica reale.
  */
-export const AGGIORNAMENTO_INFORMATIVE = "2026-08-26";
+export const AGGIORNAMENTO_INFORMATIVE = "2026-09-04";

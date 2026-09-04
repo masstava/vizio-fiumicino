@@ -12,10 +12,10 @@ import type { Locale } from "@/src/lib/i18n/config";
 // sessionStorage. Senza esprimere una scelta il sito non scrive
 // nulla; dopo la scelta scrive le due voci elencate in §3.
 //
-// Dove la verifica non è possibile adesso — i cookie che GA4 o Brevo
-// imposteranno una volta integrati — il testo lo dichiara invece di
-// elencare nomi presi altrove: un elenco plausibile ma non verificato
-// sembra preciso e non lo è.
+// Dove la verifica non è possibile adesso — i cookie che GA4 imposterà
+// una volta integrato — il testo lo dichiara invece di elencare nomi
+// presi altrove: un elenco plausibile ma non verificato sembra preciso
+// e non lo è.
 //
 // AGGIORNAMENTO 2026-08-26: rimossa la voce "TheFork — widget di
 // prenotazione" (già dichiarata "non presente sul sito"). Il sistema
@@ -36,6 +36,19 @@ import type { Locale } from "@/src/lib/i18n/config";
 // l'informativa con gli interruttori deve trovare le stesse parole,
 // quindi vince ciò che l'utente vede. In inglese entrambi dicevano
 // già "Analytics".
+//
+// AGGIORNAMENTO 2026-09-04 (correzione testi legali dopo audit
+// esterno): rimossa la voce "4.2 Brevo — modulo newsletter". Non è un
+// refuso da correggere con un nome diverso: il modulo newsletter oggi
+// invia i dati a una Server Action nostra, che chiama una RPC
+// Supabase e poi Resend per l'email di benvenuto — TUTTO lato server.
+// Il browser di chi si iscrive non contatta mai né Brevo né Resend
+// direttamente, quindi non c'è più (e non c'è mai stato, a conti
+// fatti) alcun cookie di terza parte legato alla newsletter da
+// descrivere in QUESTO documento — il trattamento dei dati da parte
+// di Resend è correttamente in Privacy Policy §3.1/§6/§7, non qui.
+// Stesso trattamento già dato a TheFork il 2026-08-26: sottosezione
+// rimossa, non svuotata. Google Maps scende da §4.3 a §4.2.
 // =============================================================
 
 const it: Informativa = {
@@ -166,6 +179,11 @@ const it: Informativa = {
           testo:
             "Le terze parti impostano cookie propri, secondo le proprie informative, sulle quali non abbiamo controllo. Dove l'integrazione non è ancora avvenuta non elenchiamo nomi che non abbiamo potuto verificare.",
         },
+        {
+          tipo: "p",
+          testo:
+            "Il modulo di iscrizione alla newsletter non compare in questo elenco: l'iscrizione, la generazione del codice sconto e l'invio dell'email di benvenuto avvengono interamente lato server (una Server Action del nostro sito, poi Resend per l'invio). Il tuo browser non contatta alcun servizio terzo per iscriverti, e non viene impostato alcun cookie di terze parti per questo. Il trattamento dei dati da parte di Resend è descritto nella Privacy Policy, non qui, perché riguarda i dati che ci lasci, non il tuo browser.",
+        },
       ],
       sottosezioni: [
         {
@@ -179,17 +197,7 @@ const it: Informativa = {
           ],
         },
         {
-          titolo: "4.2 Brevo — modulo newsletter",
-          blocchi: [
-            {
-              tipo: "p",
-              testo:
-                "L'invio della newsletter sarà affidato a Brevo. Se il modulo di iscrizione imposti cookie tecnici propri è da verificare in fase di implementazione: al momento il modulo presente sul sito non è collegato ad alcun servizio.",
-            },
-          ],
-        },
-        {
-          titolo: "4.3 Google Maps — mappa della pagina Contatti",
+          titolo: "4.2 Google Maps — mappa della pagina Contatti",
           blocchi: [
             {
               tipo: "p",
@@ -414,6 +422,11 @@ const en: Informativa = {
           testo:
             "Third parties set their own cookies under their own notices, over which we have no control. Where integration has not yet happened, we don't list names we haven't been able to verify.",
         },
+        {
+          tipo: "p",
+          testo:
+            "The newsletter sign-up form does not appear in this list: subscribing, generating the discount code and sending the welcome email all happen entirely server-side (a Server Action on our site, then Resend for delivery). Your browser never contacts any third-party service to subscribe, and no third-party cookie is set because of it. How Resend processes your data is described in the Privacy Policy, not here, because that concerns the data you give us, not your browser.",
+        },
       ],
       sottosezioni: [
         {
@@ -427,17 +440,7 @@ const en: Informativa = {
           ],
         },
         {
-          titolo: "4.2 Brevo — newsletter form",
-          blocchi: [
-            {
-              tipo: "p",
-              testo:
-                "Newsletter delivery will be handled by Brevo. Whether the subscription form sets technical cookies of its own is to be verified at implementation time: the form currently on the site is not connected to any service.",
-            },
-          ],
-        },
-        {
-          titolo: "4.3 Google Maps — the map on the Contact page",
+          titolo: "4.2 Google Maps — the map on the Contact page",
           blocchi: [
             {
               tipo: "p",

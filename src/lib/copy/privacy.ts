@@ -43,6 +43,46 @@ import type { Locale } from "@/src/lib/i18n/config";
 // dice invece di lasciarlo intendere: Vercel Analytics (§3.4) e
 // Google Analytics 4 (§3.5). Verificato: nessuno dei due è fra le
 // dipendenze del progetto né importato nel codice.
+//
+// Aggiornamento 2026-09-04 (correzione testi legali dopo audit
+// esterno):
+//
+//  - Regione del database: "Francoforte" era sbagliato. Verificato
+//    tecnicamente sul pannello Supabase: la regione reale è UE
+//    eu-west-3 (Parigi). Corretto in §6 e §7.
+//
+//  - §2.1 e §3.1: il modulo newsletter non è più "non collegato a
+//    nulla" — è collegato dal 2026-09 a un sistema reale (Server
+//    Action → RPC iscriviti_newsletter → tabella coupon, tipo
+//    'newsletter' → codice sconto generato → email di benvenuto via
+//    Resend). Brevo non è mai stato realmente integrato ed è stato
+//    sostituito da questa scelta: ogni riferimento a Brevo è rimosso,
+//    non solo corretto.
+//
+//  - §2.1, punto onestà strutturale: nel database, la riga che
+//    registra un'iscrizione E il coupon che ne deriva sono la STESSA
+//    riga (tabella coupon, colonna email) — non due trattamenti con
+//    un'archiviazione distinta. Il testo lo dice esplicitamente
+//    invece di descrivere un'"iscrizione newsletter" come se fosse
+//    concettualmente separata da un coupon, quando nel sistema non lo
+//    è. Separare le due cose a livello di schema è una decisione
+//    tecnica a parte, non presa qui: se e quando accadrà, questo
+//    paragrafo andrà rivisto di conseguenza.
+//
+//  - §3.1, disiscrizione: la versione precedente prometteva "il link
+//    di disiscrizione presente in ogni email", che non esiste — l'email
+//    di benvenuto attuale non contiene alcun link di unsubscribe, e
+//    coupon non ha un campo che registri una revoca. Corretto per
+//    descrivere il meccanismo VERO oggi disponibile (scrivere ai
+//    recapiti indicati), non uno automatico che non c'è. Un vero
+//    meccanismo di disiscrizione (link nell'email + stato nel
+//    database) resta da costruire: quando esisterà, questo paragrafo
+//    andrà aggiornato per descriverlo.
+//
+//  - §6, §7: Resend sostituisce Brevo come responsabile per le email
+//    di benvenuto newsletter — non una voce nuova, la STESSA voce già
+//    presente per le email di prenotazione, perché è lo stesso
+//    fornitore usato per entrambe le finalità.
 // =============================================================
 
 const it: Informativa = {
@@ -90,7 +130,7 @@ const it: Informativa = {
             {
               tipo: "p",
               testo:
-                "Il modulo newsletter presente sul sito non è al momento collegato ad alcun servizio di invio e non trasmette nulla: l'iscrizione sarà attiva quando lo indicheremo qui.",
+                "Iscrivendoti alla newsletter, il modulo invia il tuo indirizzo email (e il nome, se lo indichi) al nostro sistema, che genera un codice sconto personale e lo registra insieme al tuo indirizzo email nella nostra base dati (infrastruttura Supabase — vedi §4 e §6). Nel nostro sistema l'iscrizione alla newsletter e il coupon che ne deriva sono la stessa registrazione, non due trattamenti distinti con un'archiviazione separata: non esiste un elenco iscritti a parte dal coupon che ricevi. Un'email di benvenuto con il codice ti viene inviata tramite Resend (vedi §3.1 e §6).",
             },
           ],
         },
@@ -144,7 +184,12 @@ const it: Informativa = {
             {
               tipo: "p",
               testo:
-                "Base giuridica: consenso (art. 6.1.a). L'invio è affidato a Brevo SAS. Il consenso è revocabile in qualsiasi momento, con il link di disiscrizione presente in ogni email o scrivendoci: la revoca non tocca la liceità di quanto fatto prima.",
+                "Base giuridica: consenso (art. 6.1.a). L'iscrizione e la generazione del codice sconto sono gestite direttamente dal nostro sistema (§2.1); l'invio dell'email di benvenuto è affidato a Resend.",
+            },
+            {
+              tipo: "p",
+              testo:
+                "Il consenso è revocabile in qualsiasi momento: al momento la revoca non avviene tramite un link automatico nell'email, ma scrivendo ai recapiti indicati al punto 1 e segnalando l'indirizzo da cancellare. La revoca non tocca la liceità di quanto fatto prima della richiesta.",
             },
           ],
         },
@@ -240,7 +285,7 @@ const it: Informativa = {
           tipo: "definizioni",
           voci: [
             {
-              termine: "Iscrizione alla newsletter",
+              termine: "Iscrizione alla newsletter (e coupon associato)",
               descrizione: "Fino alla revoca del consenso.",
             },
             {
@@ -288,7 +333,7 @@ const it: Informativa = {
             {
               termine: "Supabase Inc. — responsabile",
               descrizione:
-                "Infrastruttura della base dati dei contenuti del sito. Regione Unione europea (Francoforte).",
+                "Infrastruttura della base dati dei contenuti del sito. Regione Unione europea, eu-west-3 (Parigi).",
             },
             {
               termine: "Vercel Inc. — responsabile",
@@ -301,13 +346,9 @@ const it: Informativa = {
                 "Google Analytics 4 e mappa della pagina Contatti, entrambi subordinati al tuo consenso.",
             },
             {
-              termine: "Brevo SAS — responsabile",
-              descrizione: "Invio della newsletter, quando sarà attiva. Sede in Francia.",
-            },
-            {
               termine: "Resend, Inc. — responsabile",
               descrizione:
-                "Invio delle email di conferma delle prenotazioni e delle eventuali comunicazioni relative a una loro cancellazione. Sede negli Stati Uniti.",
+                "Invio delle email di conferma delle prenotazioni, delle eventuali comunicazioni relative a una loro cancellazione, e delle email di benvenuto per l'iscrizione alla newsletter. Sede negli Stati Uniti.",
             },
           ],
         },
@@ -324,12 +365,12 @@ const it: Informativa = {
         {
           tipo: "p",
           testo:
-            "Anche Resend, Inc., il fornitore usato per l'invio delle email di conferma e delle eventuali comunicazioni di cancellazione delle prenotazioni, ha sede negli Stati Uniti.",
+            "Anche Resend, Inc., il fornitore usato per l'invio delle email di conferma e delle eventuali comunicazioni di cancellazione delle prenotazioni, e delle email di benvenuto della newsletter, ha sede negli Stati Uniti.",
         },
         {
           tipo: "p",
           testo:
-            "La base dati Supabase è configurata sulla regione dell'Unione europea (Francoforte), il che riduce al minimo i trasferimenti; non è però escluso un accesso dall'estero da parte dell'assistenza tecnica del fornitore, coperto dalle medesime garanzie.",
+            "La base dati Supabase è configurata sulla regione dell'Unione europea eu-west-3 (Parigi), il che riduce al minimo i trasferimenti; non è però escluso un accesso dall'estero da parte dell'assistenza tecnica del fornitore, coperto dalle medesime garanzie.",
         },
         {
           tipo: "p",
@@ -468,7 +509,7 @@ const en: Informativa = {
             {
               tipo: "p",
               testo:
-                "The newsletter form on the site is not currently connected to any sending service and transmits nothing: subscription will be active when we say so here.",
+                "When you subscribe to the newsletter, the form sends your email address (and your name, if you give it) to our system, which generates a personal discount code and records it together with your email address in our database (Supabase infrastructure — see §4 and §6). In our system, the newsletter subscription and the resulting coupon are the same record, not two separate treatments with separate storage: there is no subscriber list kept apart from the coupon you receive. A welcome email with the code is sent to you through Resend (see §3.1 and §6).",
             },
           ],
         },
@@ -522,7 +563,12 @@ const en: Informativa = {
             {
               tipo: "p",
               testo:
-                "Legal basis: consent (Art. 6(1)(a)). Delivery is handled by Brevo SAS. Consent can be withdrawn at any time, using the unsubscribe link in every email or by writing to us: withdrawal does not affect the lawfulness of processing carried out beforehand.",
+                "Legal basis: consent (Art. 6(1)(a)). Subscription and the discount code generation are handled directly by our system (§2.1); the welcome email is sent through Resend.",
+            },
+            {
+              tipo: "p",
+              testo:
+                "Consent can be withdrawn at any time: withdrawal currently does not happen through an automatic link in the email, but by writing to the contacts given in point 1 and telling us which address to remove. Withdrawal does not affect the lawfulness of processing carried out before the request.",
             },
           ],
         },
@@ -618,7 +664,7 @@ const en: Informativa = {
           tipo: "definizioni",
           voci: [
             {
-              termine: "Newsletter subscription",
+              termine: "Newsletter subscription (and its coupon)",
               descrizione: "Until consent is withdrawn.",
             },
             {
@@ -661,7 +707,7 @@ const en: Informativa = {
             {
               termine: "Supabase Inc. — processor",
               descrizione:
-                "Database infrastructure for the site's content. European Union region (Frankfurt).",
+                "Database infrastructure for the site's content. European Union region, eu-west-3 (Paris).",
             },
             {
               termine: "Vercel Inc. — processor",
@@ -674,13 +720,9 @@ const en: Informativa = {
                 "Google Analytics 4 and the map on the Contact page, both subject to your consent.",
             },
             {
-              termine: "Brevo SAS — processor",
-              descrizione: "Newsletter delivery, once active. Based in France.",
-            },
-            {
               termine: "Resend, Inc. — processor",
               descrizione:
-                "Sending booking confirmation emails and any communications relating to a cancellation. Based in the United States.",
+                "Sending booking confirmation emails, any communications relating to a cancellation, and newsletter welcome emails. Based in the United States.",
             },
           ],
         },
@@ -697,12 +739,12 @@ const en: Informativa = {
         {
           tipo: "p",
           testo:
-            "Resend, Inc., the supplier used for sending booking confirmation emails and any cancellation-related communications, is also based in the United States.",
+            "Resend, Inc., the supplier used for sending booking confirmation emails, any cancellation-related communications, and newsletter welcome emails, is also based in the United States.",
         },
         {
           tipo: "p",
           testo:
-            "The Supabase database is configured on the European Union region (Frankfurt), which keeps transfers to a minimum; access from abroad by the supplier's technical support cannot be ruled out, and is covered by the same safeguards.",
+            "The Supabase database is configured on the European Union region eu-west-3 (Paris), which keeps transfers to a minimum; access from abroad by the supplier's technical support cannot be ruled out, and is covered by the same safeguards.",
         },
         {
           tipo: "p",
