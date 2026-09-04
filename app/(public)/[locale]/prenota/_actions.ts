@@ -1,26 +1,11 @@
 "use server";
 
-import { headers } from "next/headers";
 import { createClient } from "@/src/lib/supabase/server";
 import type { ArgomentiRpc, ArgomentiRpcStretti } from "@/src/lib/supabase/rpc";
 import type { Locale } from "@/src/lib/i18n/config";
 import type { RigaCapienza } from "@/src/lib/prenotazioni/disponibilita";
 import type { RispostaExtra } from "@/src/lib/prenotazioni/evento-contesto";
 import { inviaEmailPrenotazione } from "@/src/lib/prenotazioni/email";
-
-/**
- * IP del chiamante secondo l'intestazione che Vercel imposta sulle
- * richieste in ingresso. In locale, senza un proxy davanti, questa
- * intestazione è tipicamente assente: si ritorna null, e
- * verifica_limite_richieste tratta un IP assente lasciando passare la
- * richiesta invece di bloccarla — vedi il commento nella migration
- * 20260830010000 sul perché non deve poter negare una prenotazione
- * per un dettaglio infrastrutturale.
- */
-async function ipChiamante(): Promise<string | null> {
-  const elenco = (await headers()).get("x-forwarded-for");
-  return elenco?.split(",")[0]?.trim() || null;
-}
 
 // =============================================================
 // Disponibilità
@@ -88,10 +73,14 @@ export type CreaPrenotazioneEsito =
  * dire saltare la verifica di capienza e il lucchetto che la rende
  * atomica sotto richieste simultanee.
  *
- * Due difese anti-abuso precedono la creazione vera (Audit tecnico
- * #2, punto 2): l'honeypot, e il limite di richieste per IP. Nessuna
- * delle due tocca il database delle prenotazioni — bloccano prima,
- * non dopo.
+ * Due difese anti-abuso precedono la scrittura vera (Audit tecnico #2,
+ * punto 2): l'honeypot qui sotto, e il limite di richieste per IP —
+ * quest'ultimo però non è più un controllo separato fatto da questa
+ * action: vive DENTRO crea_prenotazione stessa (§ audit di sicurezza
+ * esterno, migration 20260904000000), altrimenti chi chiamasse la RPC
+ * direttamente via PostgREST, saltando questa Server Action, salterebbe
+ * anche il controllo. L'IP non è più nemmeno un parametro passato da
+ * qui: la funzione lo deriva da sola lato server.
  */
 export async function creaPrenotazione(
   input: CreaPrenotazioneInput,
@@ -109,28 +98,6 @@ export async function creaPrenotazione(
   }
 
   const supabase = await createClient();
-
-  const ip = await ipChiamante();
-  // Tipizzato con ArgomentiRpc: p_ip è legittimamente null quando
-  // l'header X-Forwarded-For è assente (vedi ipChiamante sopra).
-  const argomentiLimite: ArgomentiRpc<"verifica_limite_richieste"> = { p_ip: ip };
-  const { data: consentito, error: erroreLimite } = await supabase.rpc(
-    "verifica_limite_richieste",
-    argomentiLimite as ArgomentiRpcStretti<"verifica_limite_richieste">,
-  );
-
-  if (erroreLimite) {
-    // Un errore nel CONTROLLO non deve impedire una prenotazione
-    // legittima: si prosegue (fail-open), loggando per non perdere
-    // visibilità sul fatto che il controllo stesso non ha funzionato.
-    console.error("[creaPrenotazione] verifica limite richieste fallita:", erroreLimite);
-  } else if (consentito === false) {
-    return {
-      ok: false,
-      capienzaEsaurita: false,
-      messaggio: "RATE_LIMITED",
-    };
-  }
 
   // Tipizzato con ArgomentiRpc: il generatore emette gli argomenti
   // delle funzioni sempre non-nullable, ma qui email, note, evento_id
@@ -160,6 +127,9 @@ export async function creaPrenotazione(
   if (error) {
     if (error.message === "CAPIENZA_ESAURITA") {
       return { ok: false, capienzaEsaurita: true };
+    }
+    if (error.message === "RATE_LIMITATO") {
+      return { ok: false, capienzaEsaurita: false, messaggio: "RATE_LIMITED" };
     }
     return { ok: false, capienzaEsaurita: false, messaggio: error.message };
   }

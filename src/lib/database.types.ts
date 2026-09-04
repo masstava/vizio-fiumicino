@@ -647,6 +647,10 @@ export type Database = {
           token_gestione: string
         }[]
       }
+      ip_chiamante: {
+        Args: Record<string, never>
+        Returns: string
+      }
       iscriviti_newsletter: {
         Args: { p_email: string }
         Returns: string
@@ -712,11 +716,11 @@ export type Database = {
         Returns: string
       }
       verifica_limite_richieste: {
-        Args: { p_ip: string }
+        Args: Record<string, never>
         Returns: boolean
       }
       verifica_limite_richieste_newsletter: {
-        Args: { p_ip: string }
+        Args: Record<string, never>
         Returns: boolean
       }
     }
