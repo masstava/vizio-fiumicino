@@ -219,11 +219,13 @@ export type Database = {
         Row: {
           attivo: boolean
           codice: string
+          consenso_revocato_il: string | null
           creato_il: string
           descrizione: string | null
           email: string | null
           id: string
           tipo: string
+          token_disiscrizione: string | null
           utilizzo_massimo: number | null
           valido_al: string | null
           valido_dal: string | null
@@ -231,11 +233,13 @@ export type Database = {
         Insert: {
           attivo?: boolean
           codice: string
+          consenso_revocato_il?: string | null
           creato_il?: string
           descrizione?: string | null
           email?: string | null
           id?: string
           tipo: string
+          token_disiscrizione?: string | null
           utilizzo_massimo?: number | null
           valido_al?: string | null
           valido_dal?: string | null
@@ -243,11 +247,13 @@ export type Database = {
         Update: {
           attivo?: boolean
           codice?: string
+          consenso_revocato_il?: string | null
           creato_il?: string
           descrizione?: string | null
           email?: string | null
           id?: string
           tipo?: string
+          token_disiscrizione?: string | null
           utilizzo_massimo?: number | null
           valido_al?: string | null
           valido_dal?: string | null
@@ -647,13 +653,20 @@ export type Database = {
           token_gestione: string
         }[]
       }
+      disiscriviti_newsletter: {
+        Args: { p_token: string }
+        Returns: Json
+      }
       ip_chiamante: {
         Args: Record<string, never>
         Returns: string
       }
       iscriviti_newsletter: {
         Args: { p_email: string }
-        Returns: string
+        Returns: {
+          codice: string
+          token_disiscrizione: string
+        }[]
       }
       prenotazione_da_token: {
         Args: { p_token: string }

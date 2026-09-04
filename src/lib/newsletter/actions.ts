@@ -62,7 +62,7 @@ export async function iscrivitiNewsletter(
   const supabase = await createClient();
 
   const argomenti: ArgomentiRpc<"iscriviti_newsletter"> = { p_email: email };
-  const { data: codice, error } = await supabase.rpc(
+  const { data, error } = await supabase.rpc(
     "iscriviti_newsletter",
     argomenti as ArgomentiRpcStretti<"iscriviti_newsletter">,
   );
@@ -75,8 +75,9 @@ export async function iscrivitiNewsletter(
     return { ok: false, motivo: "GENERICO" };
   }
 
-  if (!codice) {
-    console.error("[iscrivitiNewsletter] rpc senza codice restituito", { email });
+  const riga = data?.[0];
+  if (!riga) {
+    console.error("[iscrivitiNewsletter] rpc senza riga restituita", { email });
     return { ok: false, motivo: "GENERICO" };
   }
 
@@ -86,11 +87,12 @@ export async function iscrivitiNewsletter(
   await inviaEmailBenvenutoNewsletter({
     email,
     nome: input.nome?.trim() || null,
-    codice,
+    codice: riga.codice,
+    tokenDisiscrizione: riga.token_disiscrizione,
     locale: input.locale,
   });
 
-  return { ok: true, codice };
+  return { ok: true, codice: riga.codice };
 }
 
 const ALFABETO_FITTIZIO = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";

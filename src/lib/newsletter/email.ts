@@ -1,6 +1,7 @@
 import { clientResend, MITTENTE_PRENOTAZIONI } from "@/src/lib/email/resend";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
-import type { Locale } from "@/src/lib/i18n/config";
+import { localizedPath, type Locale } from "@/src/lib/i18n/config";
+import { SITE_URL } from "@/src/lib/site-url";
 
 // =============================================================
 // Email di benvenuto newsletter
@@ -17,6 +18,14 @@ export interface DatiEmailBenvenutoNewsletter {
   /** Solo per personalizzare il saluto — non persistito in coupon. */
   nome: string | null;
   codice: string;
+  /**
+   * Token DEDICATO alla disiscrizione, diverso dal codice sconto —
+   * quest'ultimo è pensato per essere condiviso/mostrato in cassa, il
+   * token no: deve restare noto solo al diretto interessato, altrimenti
+   * chiunque riceva il codice condiviso potrebbe disiscrivere il
+   * titolare originale (vedi la migration 20260905000000).
+   */
+  tokenDisiscrizione: string;
   locale: Locale;
 }
 
@@ -33,13 +42,14 @@ export async function inviaEmailBenvenutoNewsletter(
   }
 
   const t = getDizionario(dati.locale).emailNewsletter;
+  const linkDisiscrizione = `${SITE_URL}${localizedPath("/disiscrivi-newsletter", dati.locale)}?token=${dati.tokenDisiscrizione}`;
 
   try {
     const { error } = await resend.emails.send({
       from: MITTENTE_PRENOTAZIONI,
       to: dati.email,
       subject: t.oggetto,
-      html: htmlEmailBenvenuto(dati, t),
+      html: htmlEmailBenvenuto(dati, t, linkDisiscrizione),
     });
 
     if (error) {
@@ -57,6 +67,7 @@ export async function inviaEmailBenvenutoNewsletter(
 function htmlEmailBenvenuto(
   dati: DatiEmailBenvenutoNewsletter,
   t: ReturnType<typeof getDizionario>["emailNewsletter"],
+  linkDisiscrizione: string,
 ): string {
   return `
     <div style="background:#f7f2e9;padding:32px 16px;font-family:Georgia,'Times New Roman',serif;">
@@ -75,6 +86,12 @@ function htmlEmailBenvenuto(
           <p style="margin:0;color:#6b6b6b;font-size:13px;line-height:1.5;">${escapeHtml(t.anteprimaSerate)}</p>
 
           <p style="margin:28px 0 0;color:#1a1a1a;font-size:14px;">${escapeHtml(t.firma)}<br>Vizio Bistrot</p>
+        </div>
+        <div style="padding:16px 28px;border-top:1px solid #e5ddcf;">
+          <p style="margin:0;color:#9a9890;font-size:11px;line-height:1.5;">
+            ${escapeHtml(t.disiscrizioneTesto)}
+            <a href="${linkDisiscrizione}" style="color:#9a9890;text-decoration:underline;">${escapeHtml(t.disiscrizioneLink)}</a>
+          </p>
         </div>
       </div>
     </div>`;

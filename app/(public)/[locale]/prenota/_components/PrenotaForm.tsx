@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/src/components/ui/Button";
+import { DarkSectionAccent } from "@/src/components/ui/DarkSectionAccent";
 import type { GiornoOrario } from "@/src/lib/dominio";
 import type { Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
@@ -296,76 +297,90 @@ export function PrenotaForm({
         </div>
 
         {nlStato === "fatto" ? (
-          <div className="mt-6 rounded-[2px] border border-ink/15 p-5">
-            <p className="font-sans text-base text-ink">{t.newsletter.fattoTitolo}</p>
-            <p className="mt-3 font-sans text-[10px] uppercase tracking-widest text-muted">
-              {t.newsletter.codiceEtichetta}
-            </p>
-            <p className="mt-1 font-mono text-lg font-bold text-bordeaux">{nlCodice}</p>
-            <p className="mt-3 font-sans text-sm text-muted">{t.newsletter.comeUsarlo}</p>
+          <div className="relative isolate mt-6 overflow-hidden rounded-[2px] bg-dark p-5">
+            <DarkSectionAccent />
+            <div className="relative">
+              <p className="font-sans text-base text-cream-text">{t.newsletter.fattoTitolo}</p>
+              <p className="mt-3 font-sans text-[10px] uppercase tracking-widest text-muted-dark">
+                {t.newsletter.codiceEtichetta}
+              </p>
+              <p className="mt-1 font-mono text-lg font-bold text-gold">{nlCodice}</p>
+              <p className="mt-3 font-sans text-sm text-muted-dark">{t.newsletter.comeUsarlo}</p>
+            </div>
           </div>
         ) : (
-          <div className="mt-6 rounded-[2px] border border-ink/15 p-5">
-            <p className="font-sans text-base text-ink">
-              {t.paginaPrenota.iscrizioneNewsletterTitolo}
-            </p>
-            <p className="mt-1 font-sans text-sm text-muted">
-              {t.paginaPrenota.iscrizioneNewsletterTesto}
-            </p>
+          <div className="relative isolate mt-6 overflow-hidden rounded-[2px] bg-dark p-5">
+            <DarkSectionAccent />
+            <div className="relative">
+              <div className="mb-1 flex items-baseline gap-3">
+                <span className="font-serif text-4xl font-medium text-gold">-10%</span>
+                <p className="font-sans text-base text-cream-text">
+                  {t.paginaPrenota.iscrizioneNewsletterTitolo}
+                </p>
+              </div>
+              <p className="font-sans text-sm text-muted-dark">
+                {t.paginaPrenota.iscrizioneNewsletterTesto}
+              </p>
 
-            {/* Honeypot: stesso pattern del form sopra — invisibile e
-                fuori dall'ordine di tabulazione per un utente reale. */}
-            <div aria-hidden="true" className="absolute -left-[9999px] top-auto h-0 w-0 overflow-hidden">
-              <label htmlFor="pr-nl-sito-web">Sito web</label>
-              <input
-                id="pr-nl-sito-web"
-                name="sito-web"
-                type="text"
-                tabIndex={-1}
-                autoComplete="off"
-                value={nlSitoWeb}
-                onChange={(e) => setNlSitoWeb(e.target.value)}
-              />
-            </div>
-
-            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div>
-                <label htmlFor="pr-nl-nome" className={labelClass}>
-                  {t.paginaPrenota.campoNome}
-                </label>
+              {/* Honeypot: stesso pattern del form sopra — invisibile e
+                  fuori dall'ordine di tabulazione per un utente reale. */}
+              <div aria-hidden="true" className="absolute -left-[9999px] top-auto h-0 w-0 overflow-hidden">
+                <label htmlFor="pr-nl-sito-web">Sito web</label>
                 <input
-                  id="pr-nl-nome"
+                  id="pr-nl-sito-web"
+                  name="sito-web"
                   type="text"
-                  value={nlNome}
-                  onChange={(e) => setNlNome(e.target.value)}
-                  className={inputClass}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={nlSitoWeb}
+                  onChange={(e) => setNlSitoWeb(e.target.value)}
                 />
               </div>
-              <div>
-                <label htmlFor="pr-nl-email" className={labelClass}>
-                  {t.paginaPrenota.campoEmail}
-                </label>
-                <input
-                  id="pr-nl-email"
-                  type="email"
-                  value={nlEmail}
-                  onChange={(e) => setNlEmail(e.target.value)}
-                  className={inputClass}
-                />
+
+              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="pr-nl-nome" className="block mb-1.5 font-sans text-xs font-medium text-cream-text">
+                    {t.paginaPrenota.campoNome}
+                  </label>
+                  <input
+                    id="pr-nl-nome"
+                    type="text"
+                    value={nlNome}
+                    onChange={(e) => setNlNome(e.target.value)}
+                    className="w-full min-h-11 md:min-h-0 bg-dark/60 border border-cream-text/25 rounded-[2px] px-3 py-2 font-sans text-sm text-cream-text transition-colors focus:outline-none focus:border-gold/60"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="pr-nl-email" className="block mb-1.5 font-sans text-xs font-medium text-cream-text">
+                    {t.paginaPrenota.campoEmail}
+                  </label>
+                  <input
+                    id="pr-nl-email"
+                    type="email"
+                    value={nlEmail}
+                    onChange={(e) => setNlEmail(e.target.value)}
+                    className="w-full min-h-11 md:min-h-0 bg-dark/60 border border-cream-text/25 rounded-[2px] px-3 py-2 font-sans text-sm text-cream-text transition-colors focus:outline-none focus:border-gold/60"
+                  />
+                </div>
               </div>
+
+              {nlErrore && (
+                <p className="mt-2 rounded-[2px] border border-bordeaux/40 bg-bordeaux/15 px-3 py-2 font-sans text-sm text-cream-text">
+                  {nlErrore}
+                </p>
+              )}
+
+              <Button
+                type="button"
+                variant="primary"
+                className="mt-4"
+                disabled={nlStato === "inviando" || !nlEmail.trim()}
+                onClick={handleIscrizioneNewsletter}
+              >
+                {nlStato === "inviando" ? t.newsletter.invio : t.newsletter.bottoneIscrizione}
+              </Button>
+              <p className="mt-3 font-sans text-xs text-muted-dark">{t.newsletter.rassicurazione}</p>
             </div>
-
-            {nlErrore && <p className="mt-2 font-sans text-sm text-bordeaux">{nlErrore}</p>}
-
-            <Button
-              type="button"
-              variant="primary"
-              className="mt-4"
-              disabled={nlStato === "inviando" || !nlEmail.trim()}
-              onClick={handleIscrizioneNewsletter}
-            >
-              {nlStato === "inviando" ? t.newsletter.invio : t.cta.iscriviti}
-            </Button>
           </div>
         )}
 
