@@ -91,7 +91,7 @@ const it = {
   menu: {
     titoloPagina: "Il menu",
     descrizionePagina:
-      "Carne alla griglia, cucina di stagione, cocktail e cantina. I prezzi sono per porzione; alcune voci variano secondo il pescato e il taglio del giorno.",
+      "Carne alla griglia, cucina di stagione, cocktail e cantina. I prezzi sono per porzione, salvo alcune voci prezzate al etto.",
     legendaTitolo: "Legenda allergeni",
     legendaNota:
       "I numeri accanto ai piatti corrispondono agli allergeni indicati qui sotto. Per intolleranze o allergie parlane con il personale di sala.",
@@ -454,7 +454,7 @@ const en: Dizionario = {
   menu: {
     titoloPagina: "The menu",
     descrizionePagina:
-      "Grilled meat, seasonal cooking, cocktails and cellar. Prices are per portion; some items vary with the day's catch and cut.",
+      "Grilled meat, seasonal cooking, cocktails and cellar. Prices are per portion, except for a few items priced by weight.",
     legendaTitolo: "Allergen key",
     legendaNota:
       "The numbers next to each dish match the allergens listed below. For intolerances or allergies, please speak to a member of staff.",

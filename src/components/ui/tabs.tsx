@@ -20,7 +20,14 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      "flex items-center gap-6 overflow-x-auto border-b border-border",
+      // overflow-y-hidden esplicito, non solo "niente scritto": per
+      // spec CSS, se un asse è auto/scroll/hidden e l'altro resta
+      // "visible" (il default), il browser computa "visible" come se
+      // fosse "auto" — un solo pixel di differenza fra scrollHeight e
+      // clientHeight (arrotondamento tipico con un bordo sotto)
+      // bastava a far comparire una barra verticale su una barra di
+      // sole quattro voci, che non ne ha mai avuto bisogno.
+      "flex items-center gap-6 overflow-x-auto overflow-y-hidden border-b border-border",
       className,
     )}
     {...props}
