@@ -1,0 +1,92 @@
+name: Supabase — migrazioni database
+
+# Solo manuale: nessuna esecuzione automatica su push/PR. Le migration
+# toccano il database reale del locale, non un ambiente di test — va
+# lanciato di proposito, dalla tab "Actions" di GitHub, mai da un
+# terminale locale (vedi le istruzioni di configurazione nel repo).
+on:
+  workflow_dispatch:
+    inputs:
+      azione:
+        description: >-
+          push = applica al database reale le migration presenti nel
+          repo ma non ancora registrate · repair = registra una o più
+          migration come già applicate, SENZA eseguirle (serve per
+          l'allineamento iniziale, quando le migration erano già state
+          applicate a mano dal pannello SQL prima di adottare questo
+          workflow)
+        required: true
+        type: choice
+        options:
+          - push
+          - repair
+        default: push
+      versioni_repair:
+        description: >-
+          Solo per "repair": una o più versioni da registrare come già
+          applicate, separate da uno spazio (es. "20260817000000
+          20260817010000"). La versione è il prefisso numerico del nome
+          file di ogni migration, prima del primo "_". Ignorato per "push".
+        required: false
+        type: string
+
+# Il workflow legge solo il codice già nel repo: non serve scrivere nulla
+# nel repository stesso.
+permissions:
+  contents: read
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+    steps:
+      - name: Checkout del repository
+        uses: actions/checkout@v4
+
+      - name: Installa la CLI Supabase
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Collega il progetto Supabase
+        run: |
+          supabase link \
+            --project-ref "$SUPABASE_PROJECT_REF" \
+            --password "$SUPABASE_DB_PASSWORD"
+
+      - name: "push — applica le migration non ancora registrate"
+        if: ${{ inputs.azione == 'push' }}
+        run: |
+          supabase db push \
+            --project-ref "$SUPABASE_PROJECT_REF" \
+            --password "$SUPABASE_DB_PASSWORD"
+
+      - name: "repair — registra come già applicate, senza eseguirle"
+        if: ${{ inputs.azione == 'repair' }}
+        env:
+          VERSIONI_REPAIR: ${{ inputs.versioni_repair }}
+        run: |
+          if [ -z "$VERSIONI_REPAIR" ]; then
+            echo "::error::Il campo 'versioni_repair' è obbligatorio quando azione=repair."
+            exit 1
+          fi
+
+          # Solo cifre e spazi ammessi: l'input finisce non tra
+          # virgolette nel comando sotto (la CLI vuole più argomenti
+          # separati, non una stringa sola) — questo controllo esclude
+          # qualunque carattere di shell prima che l'espansione avvenga.
+          if [[ ! "$VERSIONI_REPAIR" =~ ^[0-9\ ]+$ ]]; then
+            echo "::error::'versioni_repair' deve contenere solo numeri separati da spazi, es. \"20260817000000 20260817010000\"."
+            exit 1
+          fi
+
+          # shellcheck disable=SC2086 # word-splitting voluto: la CLI
+          # vuole più argomenti-versione separati, non una stringa
+          # sola — sicuro perché il valore è già stato validato sopra
+          # come "solo cifre e spazi".
+          supabase migration repair --status applied $VERSIONI_REPAIR \
+            --project-ref "$SUPABASE_PROJECT_REF" \
+            --password "$SUPABASE_DB_PASSWORD"
