@@ -1,18 +1,20 @@
 import { createClient } from "@/src/lib/supabase/server";
 import { getOrariSito } from "@/src/lib/orari-sito";
 import {
+  addGiorni,
   giornoSettimanaDaData,
   oggiEOraRoma,
   orariPrenotabili,
 } from "@/src/lib/prenotazioni/disponibilita";
 import { risposteExtraDaJson } from "@/src/lib/prenotazioni/evento-contesto";
-import { SelettoreData } from "./_components/SelettoreData";
-import {
-  PrenotazioniListClient,
-  type PrenotazioneRiga,
-} from "./_components/PrenotazioniListClient";
+import { SezionePrenotazioniClient } from "./_components/SezionePrenotazioniClient";
+import type { PrenotazioneRiga } from "./_components/PrenotazioniListClient";
+import type { GiornoStriscia } from "./_components/StriscettaSettimanale";
 import { CapienzaPanel } from "./_components/CapienzaPanel";
 import type { StatoPrenotazione } from "./_actions";
+
+/** Ampiezza della striscia settimanale: oggi + 6 giorni successivi. */
+const GIORNI_STRISCIA = 7;
 
 export const dynamic = "force-dynamic";
 
@@ -28,27 +30,58 @@ export default async function PrenotazioniPage({
   const dataSelezionata = dataParam && FORMATO_DATA.test(dataParam) ? dataParam : oggi;
 
   const supabase = await createClient();
+  const fineStriscia = addGiorni(oggi, GIORNI_STRISCIA - 1);
 
-  // Tre letture indipendenti per la stessa data: partono insieme.
-  const [{ data: prenotazioni, error: erroreLista }, { data: capienzaRighe }, orari] =
-    await Promise.all([
-      supabase
-        .from("prenotazioni")
-        .select("id, nome, telefono, fascia, coperti, note, stato, risposte_extra")
-        .eq("data", dataSelezionata)
-        .order("fascia"),
-      supabase
-        .from("capienza_config")
-        .select("fascia, limite_coperti")
-        .eq("data", dataSelezionata),
-      getOrariSito(supabase, "it"),
-    ]);
+  // Quattro letture indipendenti: partono insieme. Il riepilogo della
+  // striscia settimanale è sempre sull'intervallo oggi..oggi+6, non su
+  // dataSelezionata — le due cose sono deliberatamente disaccoppiate
+  // (si può selezionare un giorno fuori dai 7 mostrati dal calendario
+  // completo, senza che la striscia cambi finestra).
+  const [
+    { data: prenotazioni, error: erroreLista },
+    { data: capienzaRighe },
+    orari,
+    { data: riepilogoRighe, error: erroreRiepilogo },
+  ] = await Promise.all([
+    supabase
+      .from("prenotazioni")
+      .select("id, nome, telefono, fascia, coperti, note, stato, risposte_extra, vista")
+      .eq("data", dataSelezionata)
+      .order("fascia"),
+    supabase
+      .from("capienza_config")
+      .select("fascia, limite_coperti")
+      .eq("data", dataSelezionata),
+    getOrariSito(supabase, "it"),
+    supabase.rpc("riepilogo_settimana_prenotazioni", { p_da: oggi, p_a: fineStriscia }),
+  ]);
 
   if (erroreLista) {
     console.error("[/gestione/prenotazioni] lettura prenotazioni fallita:", erroreLista, {
       dataSelezionata,
     });
   }
+  if (erroreRiepilogo) {
+    console.error("[/gestione/prenotazioni] riepilogo settimana fallito:", erroreRiepilogo, {
+      oggi,
+      fineStriscia,
+    });
+  }
+
+  // Fallback a zero se la RPC fallisce: la striscia resta utilizzabile
+  // (si vede comunque quale giorno è oggi, si può comunque navigare),
+  // solo senza i numeri — meglio di una pagina rotta per un errore su
+  // un solo aggregato accessorio.
+  const perData = new Map((riepilogoRighe ?? []).map((r) => [r.data, r]));
+  const giorniStriscia: GiornoStriscia[] = Array.from({ length: GIORNI_STRISCIA }, (_, i) => {
+    const data = addGiorni(oggi, i);
+    const riga = perData.get(data);
+    return {
+      data,
+      coperti: riga?.coperti ?? 0,
+      nonViste: riga?.non_viste ?? 0,
+    };
+  });
 
   const giorno = giornoSettimanaDaData(dataSelezionata);
   const infoGiorno = orari.settimana[giorno];
@@ -64,6 +97,7 @@ export default async function PrenotazioniPage({
     note: p.note,
     stato: p.stato as StatoPrenotazione,
     risposteExtra: risposteExtraDaJson(p.risposte_extra),
+    vista: p.vista,
   }));
 
   const occupatiPerFascia: Record<string, number> = {};
@@ -89,27 +123,14 @@ export default async function PrenotazioniPage({
 
   return (
     <div className="p-8 md:p-12">
-      <SelettoreData data={dataSelezionata} oggi={oggi} />
-
-      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3 max-w-2xl">
-        <StatTile numero={prenotazioniAttive} etichetta="Prenotazioni" />
-        <StatTile numero={copertiTotali} etichetta="Coperti totali" />
-        <StatTile numero={noShow} etichetta="No-show" />
-      </div>
-
-      {/* key={dataSelezionata}: la lista tiene uno stato locale (per
-          l'aggiornamento ottimistico dello stato e la sincronia col
-          pannello di dettaglio) inizializzato una sola volta da questa
-          prop. Senza una key che cambia con la data, passare a un altro
-          giorno aggiornerebbe correttamente il rendering server (data,
-          statistiche) ma NON lo stato locale già montato — la lista
-          continuerebbe a mostrare le prenotazioni del giorno precedente
-          finché non si ricarica la pagina. La key forza React a
-          rimontare il componente da zero a ogni cambio di giorno. */}
-      <PrenotazioniListClient
-        key={dataSelezionata}
+      <SezionePrenotazioniClient
+        oggi={oggi}
+        dataSelezionata={dataSelezionata}
+        giorniIniziali={giorniStriscia}
         prenotazioni={righe}
-        data={dataSelezionata}
+        prenotazioniAttive={prenotazioniAttive}
+        copertiTotali={copertiTotali}
+        noShow={noShow}
       />
 
       <div className="mt-12 pt-8 border-t border-admin-line">
@@ -123,17 +144,6 @@ export default async function PrenotazioniPage({
           occupati={occupatiPerFascia}
         />
       </div>
-    </div>
-  );
-}
-
-function StatTile({ numero, etichetta }: { numero: number; etichetta: string }) {
-  return (
-    <div className="rounded-[2px] border border-admin-line bg-admin-surface px-4 py-3">
-      <p className="font-serif text-3xl font-medium text-admin-text">{numero}</p>
-      <p className="font-sans text-[10px] tracking-widest uppercase text-admin-text-2 mt-1">
-        {etichetta}
-      </p>
     </div>
   );
 }

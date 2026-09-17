@@ -561,6 +561,7 @@ export type Database = {
           stato: string
           telefono: string
           token_gestione: string
+          vista: boolean
         }
         Insert: {
           aggiornata_il?: string
@@ -578,6 +579,7 @@ export type Database = {
           stato?: string
           telefono: string
           token_gestione?: string
+          vista?: boolean
         }
         Update: {
           aggiornata_il?: string
@@ -595,6 +597,7 @@ export type Database = {
           stato?: string
           telefono?: string
           token_gestione?: string
+          vista?: boolean
         }
         Relationships: [
           {
@@ -688,6 +691,10 @@ export type Database = {
       reorder_piatti: {
         Args: { p_categoria_id: string; p_ordini: Json }
         Returns: undefined
+      }
+      riepilogo_settimana_prenotazioni: {
+        Args: { p_a: string; p_da: string }
+        Returns: { coperti: number; data: string; non_viste: number }[]
       }
       riscatta_coupon: {
         Args: { p_codice: string }

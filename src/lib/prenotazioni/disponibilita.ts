@@ -61,6 +61,20 @@ export function giornoSettimanaDaData(dataISO: string): number {
 }
 
 /**
+ * Data "YYYY-MM-DD" spostata di n giorni (anche negativo). Stesso
+ * calcolo puramente calendariale di giornoSettimanaDaData: Date.UTC
+ * evita che il fuso orario locale faccia scivolare la data di un
+ * giorno, e lasciare che i "giorni in eccesso" del terzo argomento
+ * (es. 31 + 3) trabocchino nel mese successivo è un comportamento
+ * nativo di Date.UTC, non un caso da gestire a mano.
+ */
+export function addGiorni(dataISO: string, n: number): string {
+  const [y, m, d] = dataISO.split("-").map(Number);
+  const data = new Date(Date.UTC(y, m - 1, d + n));
+  return data.toISOString().slice(0, 10);
+}
+
+/**
  * Orari selezionabili per una data: incrocia gli orari reali del
  * locale con, se la data è oggi, l'ora corrente — un turno delle
  * 12:00 non ha senso se sono già le 15:00.

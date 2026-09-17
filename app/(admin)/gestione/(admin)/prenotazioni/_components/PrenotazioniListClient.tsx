@@ -5,6 +5,7 @@ import { TopbarSlot } from "@/src/components/admin/TopbarSlot";
 import { StatusSelect } from "@/src/components/admin/StatusSelect";
 import {
   cambiaStatoPrenotazione,
+  segnaPrenotazioneVista,
   type StatoPrenotazione,
 } from "../_actions";
 import { STATI } from "./stati";
@@ -25,6 +26,7 @@ export interface PrenotazioneRiga {
   note: string | null;
   stato: StatoPrenotazione;
   risposteExtra: RispostaExtraRiga[];
+  vista: boolean;
 }
 
 const searchClass =
@@ -33,9 +35,17 @@ const searchClass =
 export function PrenotazioniListClient({
   prenotazioni: iniziali,
   data,
+  onPrenotazioneVista,
 }: {
   prenotazioni: PrenotazioneRiga[];
   data: string;
+  /**
+   * Chiamato la prima volta che una riga di QUESTO giorno passa a
+   * vista=true — mai per riaperture successive. Il chiamante (la
+   * striscia settimanale) lo usa per far scendere di uno il contatore
+   * "non ancora aperte" del giorno, senza dover rileggere il server.
+   */
+  onPrenotazioneVista: (data: string) => void;
 }) {
   const [prenotazioni, setPrenotazioni] = useState(iniziali);
   const [ricerca, setRicerca] = useState("");
@@ -57,6 +67,25 @@ export function PrenotazioniListClient({
   function apriDettaglio(riga: PrenotazioneRiga) {
     triggerRef.current = document.activeElement as HTMLElement;
     setSelezionataId(riga.id);
+
+    // Una sola direzione, una sola volta: se questa riga era già vista
+    // non si tocca né lo stato locale né il server.
+    if (riga.vista) return;
+    setPrenotazioni((prev) =>
+      prev.map((p) => (p.id === riga.id ? { ...p, vista: true } : p)),
+    );
+    onPrenotazioneVista(data);
+    startTransition(async () => {
+      try {
+        await segnaPrenotazioneVista(riga.id);
+      } catch (err) {
+        // Nessun rollback: lo staff ha comunque aperto e visto la
+        // prenotazione — vedi il commento in _actions.ts.
+        console.error("[apriDettaglio] impossibile segnare la prenotazione come vista:", err, {
+          id: riga.id,
+        });
+      }
+    });
   }
 
   function chiudiDettaglio() {
@@ -153,8 +182,14 @@ function PrenotazioneRow({
           <span className="font-mono text-sm text-admin-brick flex-shrink-0">
             {riga.fascia}
           </span>
-          <span className="font-serif text-lg font-medium text-admin-text">
-            {riga.nome}
+          <span className="inline-flex items-center gap-1.5">
+            {!riga.vista && (
+              <span aria-hidden="true" className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-admin-amber" />
+            )}
+            <span className="font-serif text-lg font-medium text-admin-text">
+              {riga.nome}
+            </span>
+            {!riga.vista && <span className="sr-only">Non ancora aperta.</span>}
           </span>
         </div>
         <p className="font-sans text-sm text-admin-text-2 mt-0.5">

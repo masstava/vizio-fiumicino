@@ -58,6 +58,39 @@ export async function cambiaStatoPrenotazione(
   }
 }
 
+/**
+ * Segna una prenotazione come vista — chiamata quando lo staff apre il
+ * pannello di dettaglio. Una sola direzione (false → true): il
+ * chiamante (PrenotazioniListClient) invoca questa action solo se la
+ * riga non era già vista, quindi qui non serve rileggerla prima.
+ *
+ * Il filtro .eq("vista", false) è una rete di sicurezza in più, non la
+ * fonte di verità: se per qualunque motivo arrivasse comunque una
+ * chiamata su una riga già vista, l'update non troverebbe righe e
+ * resterebbe un no-op invece di un errore o di un touch inutile di
+ * aggiornata_il.
+ *
+ * Nessun rollback ottimistico lato client se questa fallisce (a
+ * differenza di cambiaStatoPrenotazione): lo staff ha comunque aperto
+ * e visto la prenotazione, indipendentemente dall'esito di questo
+ * scrivere — un fallimento qui si autocorregge da solo al prossimo
+ * caricamento della pagina.
+ */
+export async function segnaPrenotazioneVista(id: string): Promise<void> {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("prenotazioni")
+    .update({ vista: true })
+    .eq("id", id)
+    .eq("vista", false);
+
+  if (error) {
+    console.error("[segnaPrenotazioneVista] update fallito:", error, { id });
+    throw new Error(error.message);
+  }
+  revalidatePath("/gestione/prenotazioni");
+}
+
 export interface RigaCapienzaInput {
   /** "HH:MM" */
   fascia: string;
