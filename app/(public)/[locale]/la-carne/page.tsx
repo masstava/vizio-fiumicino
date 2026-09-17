@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Footer } from "@/src/components/home/Footer";
 import { SiteHeader } from "@/src/components/home/SiteHeader";
 import { Reveal } from "@/src/components/motion/Reveal";
-import { NotaBozza } from "@/src/components/pagine/NotaBozza";
 import { PaginaHero } from "@/src/components/pagine/PaginaHero";
 import {
   PiattoIcona,
@@ -160,7 +159,6 @@ export default async function LaCarnePage({
               </p>
             ))}
           </div>
-          <NotaBozza testo={copy.daConfermare} locale={locale} />
         </Section>
       </Reveal>
 

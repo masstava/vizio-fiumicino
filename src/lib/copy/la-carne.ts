@@ -8,16 +8,12 @@ import type { Locale } from "@/src/lib/i18n/config";
 // pesce domina, la carne è ciò che distingue Vizio ed è oggi
 // sotto-comunicata. Questa pagina esiste per correggere quello.
 //
-// L'intera pagina è ora testo definitivo: hero, nicchia, icona, fuoco
-// e chiusura. Zero frammenti di bozza residui — l'unico dato ancora
-// aperto è il blocco "daConfermare" qui sotto (provenienza/razze/
-// frollatura), che è un dato di filiera non ancora fornito, non
-// testo da scrivere.
-//
-// Nessun dato tecnico è inventato qui: provenienza, razze e tempi di
-// frollatura NON sono nella specifica né nel database, quindi restano
-// in un blocco segnaposto esplicito (vedi "daConfermare") invece di
-// essere riempiti a fantasia.
+// L'intera pagina è testo definitivo: hero, nicchia, icona, fuoco e
+// chiusura. Provenienza, razze e tempi di frollatura sono stati
+// deliberatamente esclusi (decisione del committente, non un
+// contenuto ancora da scrivere): quei dati non sono né nella
+// specifica né nel database, e il committente ha scelto di non
+// pubblicarli invece di lasciarli come placeholder.
 //
 // I dettagli del piatto-icona non stanno in questo file: si leggono
 // dal database (nome, descrizione, foto, badge reali), così la pagina
@@ -53,8 +49,6 @@ const it = {
       "Una cottura scelta per esaltare la carne, non per nasconderla.",
     ],
   },
-  daConfermare:
-    "[DA CONFERMARE: provenienza, razze e tempi di frollatura — da compilare con i dati reali del locale prima della pubblicazione]",
   chiusura: {
     titolo: "La griglia è accesa.",
     testo: "Il resto del menu è a un clic. Il tavolo, a una telefonata.",
@@ -89,8 +83,6 @@ const en: CopyLaCarne = {
       "A cooking method chosen to bring out the meat, not to mask it.",
     ],
   },
-  daConfermare:
-    "[TO BE CONFIRMED: sourcing, breeds and ageing times — to be filled in with the venue's real data before publication]",
   chiusura: {
     titolo: "The grill is lit.",
     testo: "The rest of the menu is a click away. The table, a phone call away.",

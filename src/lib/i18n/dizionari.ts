@@ -359,12 +359,6 @@ const it = {
     seguici: "Seguici",
     apriSu: (rete: string) => `Apri il profilo ${rete} in una nuova scheda`,
   },
-  // Etichetta del riquadro che segnala un testo ancora da approvare.
-  // Deve restare visibile: serve proprio a non farlo pubblicare per
-  // distrazione.
-  bozza: {
-    etichetta: "Nota di redazione — da confermare prima della pubblicazione",
-  },
 };
 
 // Niente "as const" sull'italiano: darebbe tipi letterali ("Prenota"
@@ -716,9 +710,6 @@ const en: Dizionario = {
     whatsapp: "WhatsApp",
     seguici: "Follow us",
     apriSu: (rete: string) => `Open the ${rete} profile in a new tab`,
-  },
-  bozza: {
-    etichetta: "Editorial note — to be confirmed before publication",
   },
 };
 
