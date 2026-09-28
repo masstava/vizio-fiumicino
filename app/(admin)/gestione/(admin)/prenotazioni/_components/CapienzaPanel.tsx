@@ -5,7 +5,7 @@ import { Button } from "@/src/components/ui/Button";
 import { salvaCapienzaGiorno } from "../_actions";
 
 const inputClass =
-  "min-h-11 sm:min-h-0 w-24 sm:w-28 flex-shrink-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-1.5 font-sans text-sm text-admin-text transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
+  "min-h-11 sm:pointer-fine:min-h-0 w-24 sm:w-28 flex-shrink-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-1.5 font-sans text-sm text-admin-text transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
 
 interface CapienzaPanelProps {
   data: string;

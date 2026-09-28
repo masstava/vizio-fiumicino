@@ -7,7 +7,7 @@ import { GRUPPI_CONTENUTI } from "@/src/lib/contenuti";
 import { saveContenuti } from "../_actions";
 
 const inputClass =
-  "w-full min-h-11 md:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-2 font-sans text-sm text-admin-text placeholder:text-admin-text-3 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
+  "w-full min-h-11 md:pointer-fine:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-2 font-sans text-sm text-admin-text placeholder:text-admin-text-3 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
 
 // Solo campi di testo etichettati in italiano: nessuna chiave
 // tecnica a schermo, nessun editor di layout, nessun drag-and-drop.

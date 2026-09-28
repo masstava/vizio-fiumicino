@@ -57,7 +57,8 @@ export function SelezionaPiattoPanel({
         aria-modal="false"
         aria-label="Scegli un piatto"
         className={[
-          "fixed inset-y-0 right-0 z-40 flex w-full max-w-md flex-col bg-admin-surface",
+          // top-[68px] sotto md: vedi DettaglioPrenotazionePanel.tsx.
+          "fixed bottom-0 right-0 top-[68px] z-40 flex w-full max-w-md flex-col bg-admin-surface md:top-0",
           "border-l border-admin-line transition-transform duration-200 motion-reduce:transition-none",
           aperto ? "translate-x-0" : "translate-x-full",
         ].join(" ")}

@@ -212,6 +212,14 @@ pannello dello stesso tipo:
   interattivo, tipicamente il pulsante di chiusura o il campo di
   ricerca).
 - **Nessun focus trap di proposito**: Tab può uscire dal pannello.
+- **Sotto md parte sotto la barra superiore mobile** (`top-[68px]
+  md:top-0`, la stessa misura del `pt-[68px]` del pannello di
+  navigazione): la barra è `sticky z-50`, il pannello `z-40` — con
+  `inset-y-0` l'intestazione, pulsante di chiusura compreso, finiva
+  nascosta sotto la barra e a 380px (pannello a tutta larghezza) non
+  restava nessun modo visibile per chiuderlo. Non alzare lo z-index del
+  pannello sopra la barra per risolverlo: coprirebbe anche il toast
+  (`z-50`) di una nuova prenotazione arrivata a pannello aperto.
 - **Il contenuto resta visibile durante la chiusura**: se il pannello
   mostra dati di un record specifico, tenerne una copia in uno stato
   locale che si aggiorna solo quando il pannello è aperto (non
@@ -262,6 +270,32 @@ evento e nel form piatto — sono un campo da compilare insieme al
 resto, non lo stato di sola-azione di una riga. Non convertirli a
 `StatusToggle`: quel componente è pensato per l'azione isolata di una
 riga di lista, non per un campo tra altri in un form.
+
+## Tocco: misure legate al puntatore, non alla larghezza
+
+Il breakpoint `md` (768px) decide il LAYOUT (sidebar fissa o pannello a
+scomparsa), non la precisione del dito: un telefono girato in
+orizzontale lo supera e riceve la sidebar desktop, ma resta un
+touch. Per questo:
+
+- **Tap target**: ogni controllo porta `min-h-11` (44px) e lo riduce
+  solo con mouse/trackpad — `md:pointer-fine:min-h-0` (o `sm:` dove la
+  densità cambia già da sm, es. prospetto orari), MAI `md:min-h-0` da
+  solo. Stesso principio per `min-w-11` e per le poche varianti di
+  padding che sostituiscono l'altezza minima su desktop.
+- **Area estesa via pseudo-elemento** (`data-tocco-esteso` in
+  `globals.css`, interruttori e pillole di stato): attiva sotto md
+  **o** con `pointer: coarse`.
+- **Campi a 16px su touch** (`[data-area-gestione]` in `globals.css`,
+  sulla radice di `AdminShell` e della pagina di login): sotto i 16px
+  Safari su iOS ingrandisce la pagina a ogni tocco su un campo. Non si
+  usa `maximum-scale` nel viewport: bloccherebbe anche l'ingrandimento
+  con due dita.
+- **Drag-and-drop** (riordino piatti): `MouseSensor` + `TouchSensor`
+  (pressione prolungata 200ms), non `PointerSensor` — quest'ultimo
+  risponde anche al dito e scavalca il delay. La maniglia è
+  `touch-manipulation`: uno swipe rapido scorre la pagina, solo la
+  pressione prolungata avvia il riordino.
 
 ## Pulsanti
 

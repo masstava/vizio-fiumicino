@@ -99,7 +99,7 @@ function RigaMedia({ slot }: { slot: SlotMedia }) {
 
       <div className="flex items-center gap-3 flex-shrink-0">
         <label
-          className="inline-flex min-h-11 items-center rounded-[2px] border border-admin-line bg-admin-surface px-3 font-sans text-sm text-admin-text cursor-pointer transition-colors hover:border-admin-brick/50 md:min-h-0 md:py-1.5"
+          className="inline-flex min-h-11 items-center rounded-[2px] border border-admin-line bg-admin-surface px-3 font-sans text-sm text-admin-text cursor-pointer transition-colors hover:border-admin-brick/50 md:pointer-fine:min-h-0 md:pointer-fine:py-1.5"
         >
           {uploading ? "Caricamento…" : url ? "Cambia" : "Carica"}
           <input
@@ -115,7 +115,7 @@ function RigaMedia({ slot }: { slot: SlotMedia }) {
             type="button"
             onClick={handleRimuovi}
             disabled={uploading}
-            className="inline-flex min-h-11 items-center font-sans text-sm text-admin-text-2 hover:text-admin-brick transition-colors disabled:opacity-50 md:min-h-0"
+            className="inline-flex min-h-11 items-center font-sans text-sm text-admin-text-2 hover:text-admin-brick transition-colors disabled:opacity-50 md:pointer-fine:min-h-0"
           >
             Rimuovi
           </button>

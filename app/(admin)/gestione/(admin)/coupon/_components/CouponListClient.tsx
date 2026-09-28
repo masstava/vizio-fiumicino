@@ -22,7 +22,7 @@ export interface CouponRiga {
 }
 
 const selectClass =
-  "min-h-11 md:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-2 font-sans text-sm text-admin-text transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
+  "min-h-11 md:pointer-fine:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-2 font-sans text-sm text-admin-text transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
 
 const MOTIVO_TESTO: Record<MotivoRiscattoFallito, string> = {
   scaduto: "Coupon scaduto.",
@@ -181,7 +181,7 @@ function CouponRow({
           type="button"
           disabled={isPending || !puoRiscattare}
           onClick={onSegnaComeUsato}
-          className="inline-flex min-h-11 items-center font-sans text-sm text-admin-brick transition-opacity hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:opacity-40 md:min-h-0"
+          className="inline-flex min-h-11 items-center font-sans text-sm text-admin-brick transition-opacity hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:opacity-40 md:pointer-fine:min-h-0"
         >
           Segna come usato
         </button>

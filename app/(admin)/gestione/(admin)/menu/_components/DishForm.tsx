@@ -48,7 +48,7 @@ const DARK_MACRO_NAMES = new Set(["Bar & Cocktail", "Experience"]);
 // almeno 44px per essere centrati col dito. Da md in su restano come
 // prima, per non alterare la densità del form su desktop.
 const inputClass =
-  "w-full min-h-11 md:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-2 font-sans text-sm text-admin-text placeholder:text-admin-text-3 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
+  "w-full min-h-11 md:pointer-fine:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-2 font-sans text-sm text-admin-text placeholder:text-admin-text-3 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
 
 export function DishForm({
   mode,
@@ -314,7 +314,7 @@ export function DishForm({
               onChange={(e) => setPrezzo(e.target.value)}
             />
           </Field>
-          <label className="flex min-h-11 items-center gap-2 pb-2.5 font-sans text-sm text-admin-text whitespace-nowrap md:min-h-0">
+          <label className="flex min-h-11 items-center gap-2 pb-2.5 font-sans text-sm text-admin-text whitespace-nowrap md:pointer-fine:min-h-0">
             <input
               type="checkbox"
               checked={prezzoVariabile}
@@ -349,13 +349,13 @@ export function DishForm({
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
-                className="min-h-11 font-sans text-xs text-admin-text-2 file:mr-3 file:min-h-11 file:rounded-[2px] file:border file:border-admin-line file:bg-admin-surface file:px-3 file:font-sans file:text-xs file:text-admin-text md:min-h-0 md:file:min-h-0 md:file:py-1"
+                className="min-h-11 font-sans text-xs text-admin-text-2 file:mr-3 file:min-h-11 file:rounded-[2px] file:border file:border-admin-line file:bg-admin-surface file:px-3 file:font-sans file:text-xs file:text-admin-text md:pointer-fine:min-h-0 md:pointer-fine:file:min-h-0 md:pointer-fine:file:py-1"
               />
               {(fotoUrl || fotoFile) && (
                 <button
                   type="button"
                   onClick={removeFoto}
-                  className="inline-flex min-h-11 items-center rounded-[2px] text-left font-sans text-xs text-admin-brick hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 md:min-h-0"
+                  className="inline-flex min-h-11 items-center rounded-[2px] text-left font-sans text-xs text-admin-brick hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 md:pointer-fine:min-h-0"
                 >
                   Rimuovi foto
                 </button>
@@ -370,7 +370,7 @@ export function DishForm({
             {allergeniList.map((a) => (
               <label
                 key={a.id}
-                className="flex min-h-11 items-center gap-2 font-sans text-sm text-admin-text md:min-h-0"
+                className="flex min-h-11 items-center gap-2 font-sans text-sm text-admin-text md:pointer-fine:min-h-0"
               >
                 <input
                   type="checkbox"
@@ -416,7 +416,7 @@ export function DishForm({
                 <button
                   type="button"
                   onClick={() => removeBadge(index)}
-                  className="inline-flex min-h-11 min-w-11 flex-shrink-0 items-center justify-center self-end rounded-[2px] font-sans text-lg leading-none text-admin-text-2 hover:text-admin-brick focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 sm:min-h-0 sm:self-auto"
+                  className="inline-flex min-h-11 min-w-11 flex-shrink-0 items-center justify-center self-end rounded-[2px] font-sans text-lg leading-none text-admin-text-2 hover:text-admin-brick focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 sm:pointer-fine:min-h-0 sm:self-auto"
                   aria-label="Rimuovi badge"
                 >
                   ×
@@ -426,7 +426,7 @@ export function DishForm({
             <button
               type="button"
               onClick={addBadge}
-              className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-sm text-admin-brick hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 md:min-h-0"
+              className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-sm text-admin-brick hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 md:pointer-fine:min-h-0"
             >
               + Aggiungi badge
             </button>
@@ -461,7 +461,7 @@ export function DishForm({
               </p>
               <Link
                 href="/gestione/contenuti"
-                className="inline-flex min-h-11 items-center font-sans text-sm text-admin-brick hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 md:min-h-0"
+                className="inline-flex min-h-11 items-center font-sans text-sm text-admin-brick hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 md:pointer-fine:min-h-0"
               >
                 Gestisci in Gestione sito →
               </Link>
@@ -482,7 +482,7 @@ export function DishForm({
           <button
             type="button"
             onClick={() => router.push("/gestione/menu")}
-            className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-sm text-admin-text-2 transition-colors hover:text-admin-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 md:min-h-0"
+            className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-sm text-admin-text-2 transition-colors hover:text-admin-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 md:pointer-fine:min-h-0"
           >
             Annulla
           </button>

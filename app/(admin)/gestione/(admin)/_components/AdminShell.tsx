@@ -61,7 +61,7 @@ export function AdminShell({ children, contatori }: AdminShellProps) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col md:flex-row">
+    <div data-area-gestione className="flex min-h-screen flex-col md:flex-row">
       {/* Barra superiore, solo mobile */}
       {/* z-50 sopra il pannello (z-40): aperto il menu, l'hamburger
           diventa una X e deve restare visibile e toccabile. Coprirlo

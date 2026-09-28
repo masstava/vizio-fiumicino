@@ -152,7 +152,7 @@ export function SezionePrenotazioniClient({
           type="button"
           onClick={() => setCalendarioAperto((v) => !v)}
           aria-expanded={calendarioAperto}
-          className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-sm text-admin-brick hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 md:min-h-0"
+          className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-sm text-admin-brick hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 md:pointer-fine:min-h-0"
         >
           {calendarioAperto ? "Nascondi calendario" : "Apri calendario completo"}
         </button>

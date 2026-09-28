@@ -248,10 +248,11 @@ html {
 }
 
 /* Area di tocco degli interruttori: l'elemento visibile resta 36x20,
-   ma sotto md diventa sensibile su 44x44 — la soglia sotto la quale
-   il dito manca il bersaglio. Solo su mobile: col puntatore la
-   precisione non è un problema e il layout resta quello verificato. */
-@media (max-width: 767px) {
+   ma sotto md — e su qualunque schermo touch, anche largo (telefono in
+   orizzontale) — diventa sensibile su 44x44, la soglia sotto la quale
+   il dito manca il bersaglio. Col mouse la precisione non è un
+   problema e il layout resta quello verificato. */
+@media (max-width: 767px), (pointer: coarse) {
   [data-tocco-esteso] {
     position: relative;
   }
@@ -263,5 +264,17 @@ html {
     width: 44px;
     height: 44px;
     transform: translate(-50%, -50%);
+  }
+}
+
+/* Campi della dashboard su schermi touch: testo a 16px. Sotto i 16px
+   Safari su iOS ingrandisce la pagina a ogni tocco su un campo e la
+   lascia ingrandita. Non si blocca lo zoom (maximum-scale) perché
+   toglierebbe anche l'ingrandimento con due dita. Solo pointer: coarse,
+   non per larghezza: l'iPhone in orizzontale supera md e zoomerebbe
+   comunque. Fuori da @layer apposta, per prevalere su text-sm. */
+@media (pointer: coarse) {
+  [data-area-gestione] :is(input, select, textarea) {
+    font-size: 16px;
   }
 }

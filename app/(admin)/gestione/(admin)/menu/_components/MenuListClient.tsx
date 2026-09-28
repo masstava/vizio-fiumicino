@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import {
   DndContext,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
   TouchSensor,
   closestCenter,
   useSensor,
@@ -28,7 +28,7 @@ import { deletePiatto, reorderPiatti } from "../_actions";
 import type { MacroGroup, PiattoListItem } from "./types";
 
 const fieldClass =
-  "min-h-11 md:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-2 font-sans text-sm text-admin-text transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
+  "min-h-11 md:pointer-fine:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-2 font-sans text-sm text-admin-text transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
 
 interface MenuListClientProps {
   groups: MacroGroup[];
@@ -120,7 +120,12 @@ export function MenuListClient({ groups: initialGroups }: MenuListClientProps) {
   const sensors = useSensors(
     // Mouse/trackpad: una piccola soglia di distanza evita che un
     // semplice click sui pulsanti della riga venga scambiato per drag.
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    // MouseSensor e non PointerSensor: quest'ultimo risponde anche al
+    // tocco (il dito genera eventi pointer) e partirebbe dopo 8px di
+    // movimento, scavalcando il delay del TouchSensor qui sotto — uno
+    // swipe rapido sulla maniglia riordinava il piatto invece di
+    // scorrere la pagina.
+    useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
     // Touch: un breve delay lascia lo scroll naturale della pagina
     // funzionare; solo una pressione prolungata sulla maniglia avvia
     // il trascinamento.

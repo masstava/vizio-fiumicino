@@ -114,7 +114,7 @@ export default async function MenuPage() {
           href="/api/pdf/menu?lang=it"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-sans text-sm text-admin-brick hover:opacity-70 transition-opacity"
+          className="inline-flex min-h-11 items-center font-sans text-sm text-admin-brick hover:opacity-70 transition-opacity md:pointer-fine:min-h-0"
         >
           Scarica PDF menu (IT)
         </a>
@@ -122,7 +122,7 @@ export default async function MenuPage() {
           href="/api/pdf/menu?lang=en"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-sans text-sm text-admin-brick hover:opacity-70 transition-opacity"
+          className="inline-flex min-h-11 items-center font-sans text-sm text-admin-brick hover:opacity-70 transition-opacity md:pointer-fine:min-h-0"
         >
           Download menu PDF (EN)
         </a>

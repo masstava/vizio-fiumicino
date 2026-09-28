@@ -25,7 +25,7 @@ interface EventFormProps {
 }
 
 const inputClass =
-  "w-full min-h-11 md:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-2 font-sans text-sm text-admin-text placeholder:text-admin-text-3 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
+  "w-full min-h-11 md:pointer-fine:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-2 font-sans text-sm text-admin-text placeholder:text-admin-text-3 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50";
 
 export function EventForm({ mode, eventoId, initialData }: EventFormProps) {
   const router = useRouter();
@@ -188,7 +188,7 @@ export function EventForm({ mode, eventoId, initialData }: EventFormProps) {
               <button
                 type="button"
                 onClick={() => rimuoviCampoExtra(index)}
-                className="inline-flex min-h-11 min-w-11 flex-shrink-0 items-center justify-center rounded-[2px] font-sans text-lg leading-none text-admin-text-2 hover:text-admin-brick focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 sm:min-h-0"
+                className="inline-flex min-h-11 min-w-11 flex-shrink-0 items-center justify-center rounded-[2px] font-sans text-lg leading-none text-admin-text-2 hover:text-admin-brick focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 sm:pointer-fine:min-h-0"
                 aria-label="Rimuovi campo extra"
               >
                 ×
@@ -204,7 +204,7 @@ export function EventForm({ mode, eventoId, initialData }: EventFormProps) {
           <button
             type="button"
             onClick={aggiungiCampoExtra}
-            className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-sm text-admin-brick hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 md:min-h-0"
+            className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-sm text-admin-brick hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 md:pointer-fine:min-h-0"
           >
             + Aggiungi campo extra
           </button>
@@ -220,7 +220,7 @@ export function EventForm({ mode, eventoId, initialData }: EventFormProps) {
         <button
           type="button"
           onClick={() => router.push("/gestione/eventi")}
-          className="inline-flex min-h-11 items-center px-1 font-sans text-sm text-admin-text-2 hover:text-admin-text transition-colors md:min-h-0 md:px-0"
+          className="inline-flex min-h-11 items-center px-1 font-sans text-sm text-admin-text-2 hover:text-admin-text transition-colors md:pointer-fine:min-h-0 md:pointer-fine:px-0"
         >
           Annulla
         </button>

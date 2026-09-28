@@ -44,8 +44,11 @@ export function SortableDishRow({ dish, onDelete }: SortableDishRowProps) {
           // Sotto md la maniglia arriva a 44px di larghezza: è già
           // alta quanto la riga, ma a 30px il dito la mancava e il
           // riordino su telefono era di fatto impossibile.
-          "flex-shrink-0 flex items-center justify-center min-w-11 px-2 text-admin-text-2 hover:text-admin-text md:min-w-0 md:justify-start",
-          "cursor-grab active:cursor-grabbing touch-none",
+          "flex-shrink-0 flex items-center justify-center min-w-11 px-2 text-admin-text-2 hover:text-admin-text md:pointer-fine:min-w-0 md:pointer-fine:justify-start",
+          // touch-manipulation (non touch-none): uno swipe rapido deve
+          // scorrere la pagina come sul resto della riga; il drag parte
+          // solo dopo la pressione prolungata del TouchSensor.
+          "cursor-grab active:cursor-grabbing touch-manipulation select-none",
           "focus-visible:outline-none focus-visible:text-admin-brick",
         )}
       >

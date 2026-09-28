@@ -190,7 +190,7 @@ function SlotGriglia({
               type="button"
               onClick={() => onRimuovi(p.id)}
               aria-label={`Rimuovi ${p.nome} da "${titolo}"`}
-              className="absolute right-1.5 top-1.5 inline-flex h-11 w-11 items-center justify-center rounded-[2px] text-admin-text-2 hover:text-admin-brick focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 sm:h-6 sm:w-6"
+              className="absolute right-1.5 top-1.5 inline-flex h-11 w-11 items-center justify-center rounded-[2px] text-admin-text-2 hover:text-admin-brick focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 sm:pointer-fine:h-6 sm:pointer-fine:w-6"
               data-tocco-esteso
             >
               <span aria-hidden="true" className="text-base leading-none">×</span>

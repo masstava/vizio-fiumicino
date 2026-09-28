@@ -90,7 +90,10 @@ export function DettaglioPrenotazionePanel({
             : "Dettaglio prenotazione"
         }
         className={[
-          "fixed inset-y-0 right-0 z-40 flex w-full max-w-md flex-col bg-admin-surface shadow-none",
+          // top-[68px] sotto md: la barra superiore mobile (AdminShell,
+          // sticky z-50) resta sopra al pannello e ne coprirebbe
+          // l'intestazione — pulsante di chiusura compreso.
+          "fixed bottom-0 right-0 top-[68px] z-40 flex w-full max-w-md flex-col bg-admin-surface shadow-none md:top-0",
           "border-l border-admin-line transition-transform duration-200 motion-reduce:transition-none",
           aperto ? "translate-x-0" : "translate-x-full",
         ].join(" ")}

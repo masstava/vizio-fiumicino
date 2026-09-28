@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Button } from "@/src/components/ui/Button";
 
 const inputClass =
-  "w-full bg-admin-surface border border-admin-line rounded-[2px] px-3 py-2 font-sans text-sm text-admin-text placeholder:text-admin-text-3 focus:outline-none focus:border-admin-brick/50 transition-colors";
+  "w-full min-h-11 sm:pointer-fine:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-2 font-sans text-sm text-admin-text placeholder:text-admin-text-3 focus:outline-none focus:border-admin-brick/50 transition-colors";
 
 export function PdfDownloadControls() {
   // Campi non persistiti: solo per il download corrente, si svuotano

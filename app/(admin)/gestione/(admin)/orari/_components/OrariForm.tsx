@@ -45,12 +45,13 @@ function buildInitialDays(initialOrari: OrarioGiornoRow[]): DayState[] {
   });
 }
 
-// min-h-11 solo sotto sm: su telefono i campi vanno centrati col
-// dito. Da sm in su la densità del prospetto settimanale resta quella
-// di prima — qui si guardano sette giorni insieme, e allargare le
-// righe renderebbe l'insieme meno leggibile.
+// min-h-11 ovunque si usi il dito: i campi vanno centrati col dito.
+// Solo con mouse/trackpad (pointer-fine) da sm in su la densità del
+// prospetto settimanale resta quella di prima — qui si guardano sette
+// giorni insieme, e allargare le righe renderebbe l'insieme meno
+// leggibile.
 const inputClass =
-  "min-h-11 sm:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-1.5 font-sans text-sm text-admin-text transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50 disabled:opacity-40";
+  "min-h-11 sm:pointer-fine:min-h-0 bg-admin-surface border border-admin-line rounded-[2px] px-3 py-1.5 font-sans text-sm text-admin-text transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 focus-visible:border-admin-brick/50 disabled:opacity-40";
 
 export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] }) {
   const [days, setDays] = useState<DayState[]>(() => buildInitialDays(initialOrari));
@@ -204,7 +205,7 @@ export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] })
               <button
                 type="button"
                 onClick={() => applyToAllDays(dayIndex)}
-                className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-xs text-admin-text-2 transition-colors hover:text-admin-brick focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 sm:min-h-0"
+                className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-xs text-admin-text-2 transition-colors hover:text-admin-brick focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 sm:pointer-fine:min-h-0"
               >
                 Applica a tutti i giorni
               </button>
@@ -217,10 +218,12 @@ export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] })
                   // una riga sola non ci sta: i 332px disponibili non
                   // bastano e la × finiva fuori dallo schermo. Qui
                   // diventa una griglia a due colonne con le etichette
-                  // sopra i campi; da sm torna la riga inline.
+                  // sopra i campi; da sm torna la riga inline, che può
+                  // andare a capo se non ci sta (telefono in orizzontale
+                  // con la sidebar accanto: ~450px utili, meno della riga).
                   <div
                     key={fascia.key}
-                    className="grid grid-cols-[1fr_1fr_auto] items-end gap-2 sm:flex sm:items-center"
+                    className="grid grid-cols-[1fr_1fr_auto] items-end gap-2 sm:flex sm:flex-wrap sm:items-center"
                   >
                     <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
                       <label
@@ -264,7 +267,7 @@ export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] })
                       <button
                         type="button"
                         onClick={() => removeFascia(dayIndex, fasciaIndex)}
-                        className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[2px] font-sans text-lg leading-none text-admin-text-2 hover:text-admin-brick focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 sm:min-h-0 sm:min-w-0 sm:px-1"
+                        className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[2px] font-sans text-lg leading-none text-admin-text-2 hover:text-admin-brick focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 sm:pointer-fine:min-h-0 sm:pointer-fine:min-w-0 sm:pointer-fine:px-1"
                         aria-label="Rimuovi fascia oraria"
                       >
                         ×
@@ -281,7 +284,7 @@ export function OrariForm({ initialOrari }: { initialOrari: OrarioGiornoRow[] })
                 <button
                   type="button"
                   onClick={() => addFascia(dayIndex)}
-                  className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-xs text-admin-brick hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 sm:min-h-0"
+                  className="inline-flex min-h-11 items-center rounded-[2px] font-sans text-xs text-admin-brick hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60 sm:pointer-fine:min-h-0"
                 >
                   + Aggiungi fascia oraria
                 </button>

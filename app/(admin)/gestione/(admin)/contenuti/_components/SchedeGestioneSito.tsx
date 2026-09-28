@@ -29,7 +29,7 @@ export function SchedeGestioneSito() {
             role="tab"
             aria-selected={attivo}
             className={cn(
-              "inline-flex min-h-11 items-center border-b-2 px-4 font-sans text-sm transition-colors md:min-h-0 md:py-2.5",
+              "inline-flex min-h-11 items-center border-b-2 px-4 font-sans text-sm transition-colors md:pointer-fine:min-h-0 md:pointer-fine:py-2.5",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brick/60",
               attivo
                 ? "border-admin-brick font-medium text-admin-text"

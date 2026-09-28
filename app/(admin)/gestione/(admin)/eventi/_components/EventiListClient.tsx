@@ -113,14 +113,14 @@ function EventoRow({
         />
         <Link
           href={`/gestione/eventi/${evento.id}`}
-          className="inline-flex min-h-11 items-center font-sans text-sm text-admin-brick hover:opacity-70 transition-opacity md:min-h-0"
+          className="inline-flex min-h-11 items-center font-sans text-sm text-admin-brick hover:opacity-70 transition-opacity md:pointer-fine:min-h-0"
         >
           Modifica
         </Link>
         <button
           type="button"
           onClick={onDelete}
-          className="inline-flex min-h-11 items-center font-sans text-sm text-admin-text-2 hover:text-admin-brick transition-colors md:min-h-0"
+          className="inline-flex min-h-11 items-center font-sans text-sm text-admin-text-2 hover:text-admin-brick transition-colors md:pointer-fine:min-h-0"
         >
           Elimina
         </button>
