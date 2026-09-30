@@ -117,9 +117,15 @@ const CONTENT_VERTICAL_SAFE_MARGIN = 40;
 
 const QR_SIZE = 96;
 
+// Corpo bianco puro, non il crema delle sezioni chiare del sito: è un
+// foglio da stampare. Un fondo pieno consuma inchiostro e, sulle
+// stampanti senza stampa a bordo pieno, lascia una cornice bianca non
+// stampata intorno al foglio. Riallinea anche ai PDF originali del
+// locale (colonna scura + corpo bianco). Costante locale a questo file:
+// il token --color-cream del sito e OrariDocument non sono toccati.
 const COLORS = {
   ink: "#1A1A1A",
-  cream: "#F7F2E9",
+  paper: "#FFFFFF",
   dark: "#0A0705",
   bordeaux: "#8B1A1A",
   muted: "#5F5E5A",
@@ -128,7 +134,7 @@ const COLORS = {
 const styles = StyleSheet.create({
   page: {
     padding: 0,
-    backgroundColor: COLORS.cream,
+    backgroundColor: COLORS.paper,
   },
   // Usato dalle pagine con testo in flusso normale (contenuto e chiusura):
   // il padding verticale è sulla Page stessa, non su una View interna,
@@ -137,7 +143,7 @@ const styles = StyleSheet.create({
     padding: 0,
     paddingTop: CONTENT_VERTICAL_SAFE_MARGIN,
     paddingBottom: CONTENT_VERTICAL_SAFE_MARGIN,
-    backgroundColor: COLORS.cream,
+    backgroundColor: COLORS.paper,
   },
   columnImage: {
     position: "absolute",
