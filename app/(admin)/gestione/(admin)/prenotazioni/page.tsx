@@ -6,12 +6,11 @@ import {
   oggiEOraRoma,
   orariPrenotabili,
 } from "@/src/lib/prenotazioni/disponibilita";
-import { risposteExtraDaJson } from "@/src/lib/prenotazioni/evento-contesto";
 import { SezionePrenotazioniClient } from "./_components/SezionePrenotazioniClient";
 import type { PrenotazioneRiga } from "./_components/PrenotazioniListClient";
+import { rigaDaRecord } from "./_components/riga-prenotazione";
 import type { GiornoStriscia } from "./_components/StriscettaSettimanale";
 import { CapienzaPanel } from "./_components/CapienzaPanel";
-import type { StatoPrenotazione } from "./_actions";
 
 /** Ampiezza della striscia settimanale: oggi + 6 giorni successivi. */
 const GIORNI_STRISCIA = 7;
@@ -88,17 +87,8 @@ export default async function PrenotazioniPage({
   const fasceGiorno =
     infoGiorno && !infoGiorno.chiuso ? infoGiorno.fasce.flatMap(orariPrenotabili) : [];
 
-  const righe: PrenotazioneRiga[] = (prenotazioni ?? []).map((p) => ({
-    id: p.id,
-    nome: p.nome,
-    telefono: p.telefono,
-    fascia: p.fascia.slice(0, 5),
-    coperti: p.coperti,
-    note: p.note,
-    stato: p.stato as StatoPrenotazione,
-    risposteExtra: risposteExtraDaJson(p.risposte_extra),
-    vista: p.vista,
-  }));
+  // Stessa conversione usata per le prenotazioni in arrivo dal vivo.
+  const righe: PrenotazioneRiga[] = (prenotazioni ?? []).map(rigaDaRecord);
 
   const occupatiPerFascia: Record<string, number> = {};
   righe.forEach((r) => {

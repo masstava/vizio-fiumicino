@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/src/lib/supabase/client";
 import { Toast } from "@/src/components/admin/Toast";
@@ -10,6 +10,7 @@ import {
   PrenotazioniListClient,
   type PrenotazioneRiga,
 } from "./PrenotazioniListClient";
+import { rigaDaRecord, type RecordPrenotazione } from "./riga-prenotazione";
 
 interface ToastNuovaPrenotazione {
   titolo: string;
@@ -48,6 +49,9 @@ export function SezionePrenotazioniClient({
   const [giorni, setGiorni] = useState(giorniIniziali);
   const [calendarioAperto, setCalendarioAperto] = useState(false);
   const [toast, setToast] = useState<ToastNuovaPrenotazione | null>(null);
+  // Prenotazioni ricevute dal vivo dall'ultima navigazione, con la
+  // loro data: alla lista arrivano solo quelle del giorno selezionato.
+  const [arrivi, setArrivi] = useState<{ data: string; riga: PrenotazioneRiga }[]>([]);
 
   // Riallinea la striscia ai dati freschi del server a ogni nuova
   // navigazione (cambio di giorno, ricarica) — l'aggiornamento in
@@ -56,6 +60,12 @@ export function SezionePrenotazioniClient({
   useEffect(() => {
     setGiorni(giorniIniziali);
   }, [giorniIniziali]);
+
+  // Nuova lettura server (cambio di giorno, ricarica): contiene già
+  // tutto ciò che era arrivato dal vivo prima — si riparte da vuoto.
+  useEffect(() => {
+    setArrivi([]);
+  }, [prenotazioni]);
 
   useEffect(() => {
     if (!toast) return;
@@ -71,12 +81,7 @@ export function SezionePrenotazioniClient({
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "prenotazioni" },
         (payload) => {
-          const nuova = payload.new as {
-            nome: string;
-            fascia: string;
-            coperti: number;
-            data: string;
-          };
+          const nuova = payload.new as RecordPrenotazione & { data: string };
 
           setToast({
             titolo: "Nuova prenotazione",
@@ -98,6 +103,11 @@ export function SezionePrenotazioniClient({
                 : g,
             ),
           );
+
+          // Per la lista: qualunque data, il filtro sul giorno
+          // selezionato è sotto (qui la data selezionata di questa
+          // closure sarebbe quella del montaggio, non quella attuale).
+          setArrivi((prev) => [...prev, { data: nuova.data, riga: rigaDaRecord(nuova) }]);
         },
       )
       .subscribe();
@@ -122,6 +132,26 @@ export function SezionePrenotazioniClient({
   }
 
   const totaleNonViste = giorni.reduce((acc, g) => acc + g.nonViste, 0);
+
+  // Arrivi del giorno selezionato. Memo: la lista li unisce in un
+  // effetto, e un array nuovo a ogni render lo rilancerebbe a vuoto.
+  const arriviDelGiorno = useMemo(
+    () => arrivi.filter((a) => a.data === dataSelezionata).map((a) => a.riga),
+    [arrivi, dataSelezionata],
+  );
+
+  // Le tessere del giorno seguono la lista: al dato server si somma ciò
+  // che è arrivato dal vivo e la lettura server non conteneva ancora.
+  // Stessi criteri di page.tsx (attive = non cancellate; coperti =
+  // confermate + completate).
+  const nuoveDelGiorno = arriviDelGiorno.filter((r) => !prenotazioni.some((p) => p.id === r.id));
+  const attiveLive = prenotazioniAttive + nuoveDelGiorno.filter((r) => r.stato !== "cancellata").length;
+  const copertiLive =
+    copertiTotali +
+    nuoveDelGiorno
+      .filter((r) => r.stato === "confermata" || r.stato === "completata")
+      .reduce((acc, r) => acc + r.coperti, 0);
+  const noShowLive = noShow + nuoveDelGiorno.filter((r) => r.stato === "no-show").length;
 
   return (
     <div>
@@ -161,9 +191,9 @@ export function SezionePrenotazioniClient({
       {calendarioAperto && <SelettoreData data={dataSelezionata} oggi={oggi} />}
 
       <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3 max-w-2xl">
-        <StatTile numero={prenotazioniAttive} etichetta="Prenotazioni" />
-        <StatTile numero={copertiTotali} etichetta="Coperti totali" />
-        <StatTile numero={noShow} etichetta="No-show" />
+        <StatTile numero={attiveLive} etichetta="Prenotazioni" />
+        <StatTile numero={copertiLive} etichetta="Coperti totali" />
+        <StatTile numero={noShowLive} etichetta="No-show" />
       </div>
 
       {/* key={dataSelezionata}: vedi il commento originale in page.tsx
@@ -175,6 +205,7 @@ export function SezionePrenotazioniClient({
       <PrenotazioniListClient
         key={dataSelezionata}
         prenotazioni={prenotazioni}
+        arrivi={arriviDelGiorno}
         data={dataSelezionata}
         onPrenotazioneVista={handlePrenotazioneVista}
       />

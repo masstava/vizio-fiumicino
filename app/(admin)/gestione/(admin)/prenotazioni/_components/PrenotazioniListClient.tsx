@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { TopbarSlot } from "@/src/components/admin/TopbarSlot";
 import { StatusSelect } from "@/src/components/admin/StatusSelect";
 import {
@@ -10,6 +10,7 @@ import {
 } from "../_actions";
 import { STATI } from "./stati";
 import { DettaglioPrenotazionePanel } from "./DettaglioPrenotazionePanel";
+import { inserisciInOrdine } from "./riga-prenotazione";
 
 export interface RispostaExtraRiga {
   etichetta: string;
@@ -34,10 +35,18 @@ const searchClass =
 
 export function PrenotazioniListClient({
   prenotazioni: iniziali,
+  arrivi,
   data,
   onPrenotazioneVista,
 }: {
   prenotazioni: PrenotazioneRiga[];
+  /**
+   * Nuove prenotazioni di QUESTO giorno ricevute dal vivo (Realtime)
+   * dopo la lettura server. Entrano nello stato già in memoria, nella
+   * posizione del loro orario — nessun rimontaggio della lista, quindi
+   * ricerca, pannello aperto e stati già cambiati restano come sono.
+   */
+  arrivi: PrenotazioneRiga[];
   data: string;
   /**
    * Chiamato la prima volta che una riga di QUESTO giorno passa a
@@ -52,6 +61,19 @@ export function PrenotazioniListClient({
   const [selezionataId, setSelezionataId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const triggerRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (arrivi.length === 0) return;
+    setPrenotazioni((prev) => {
+      let next = prev;
+      // Per id: una riga già presente (letta dal server dopo
+      // l'inserimento, o già ricevuta) non entra una seconda volta.
+      for (const riga of arrivi) {
+        if (!next.some((p) => p.id === riga.id)) next = inserisciInOrdine(next, riga);
+      }
+      return next;
+    });
+  }, [arrivi]);
 
   const filtrate = useMemo(() => {
     const q = ricerca.trim().toLowerCase();
