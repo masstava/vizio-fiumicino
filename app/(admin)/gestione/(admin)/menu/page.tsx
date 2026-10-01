@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/src/lib/supabase/server";
 import { MenuListClient } from "./_components/MenuListClient";
 import { NuovoPiattoAction } from "./_components/NuovoPiattoAction";
+import { SchedeMenu } from "./_components/SchedeMenu";
 import type { MacroGroup, PiattoListItem } from "./_components/types";
 
 export const dynamic = "force-dynamic";
@@ -108,6 +109,7 @@ export default async function MenuPage() {
   return (
     <div className="p-8 md:p-12">
       <NuovoPiattoAction />
+      <SchedeMenu />
 
       <div className="flex items-center gap-4 mb-8">
         <a

@@ -42,8 +42,6 @@ interface DishFormProps {
   initialData?: DishFormInitialData;
 }
 
-const DARK_MACRO_NAMES = new Set(["Bar & Cocktail", "Experience"]);
-
 // min-h-11 solo sotto md: su telefono i campi devono essere alti
 // almeno 44px per essere centrati col dito. Da md in su restano come
 // prima, per non alterare la densità del form su desktop.
@@ -113,16 +111,17 @@ export function DishForm({
     return () => URL.revokeObjectURL(url);
   }, [fotoFile]);
 
-  const selectedMacroNome = useMemo(() => {
+  // Tono dell'anteprima dal ruolo della macro, non dal nome: i drink
+  // del bar compaiono su fondo scuro in home e su /cocktail-bar; tutto
+  // il resto, sul menu, è su fondo chiaro.
+  const selectedMacroRuolo = useMemo(() => {
     const group = categorieGrouped.find((g) =>
       g.categorie.some((c) => c.id === categoriaId),
     );
-    return group?.macroNome ?? "";
+    return group?.macroRuolo ?? null;
   }, [categorieGrouped, categoriaId]);
 
-  const previewTone: "light" | "dark" = DARK_MACRO_NAMES.has(selectedMacroNome)
-    ? "dark"
-    : "light";
+  const previewTone: "light" | "dark" = selectedMacroRuolo === "bar" ? "dark" : "light";
 
   const previewDish = {
     id: piattoId ?? "anteprima",

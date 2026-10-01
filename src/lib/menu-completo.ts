@@ -5,6 +5,7 @@ import type { Database } from "@/src/lib/database.types";
 import type { PiattoRiga } from "@/src/lib/dominio";
 import { campoLocalizzato, campoLocalizzatoOpzionale } from "@/src/lib/i18n/campi";
 import type { Locale } from "@/src/lib/i18n/config";
+import { ruoloMacro } from "@/src/lib/ruolo-macro";
 
 // =============================================================
 // Lettura del menu completo — fonte unica
@@ -37,7 +38,7 @@ export async function getMenuCompleto(
   ] = await Promise.all([
     supabase
       .from("categorie_macro")
-      .select("id, nome, nome_en, ordine")
+      .select("id, nome, nome_en, ordine, ruolo")
       .order("ordine"),
     supabase
       .from("categorie")
@@ -122,7 +123,7 @@ export async function getMenuCompleto(
     .map((m) => ({
       id: m.id,
       nome: campoLocalizzato(m.nome, m.nome_en, locale),
-      chiave: m.nome,
+      ruolo: ruoloMacro(m.ruolo),
       categorie: (categorieRows ?? [])
         .filter((c) => c.categoria_macro_id === m.id)
         .map((c) => ({

@@ -4,8 +4,6 @@ import type { PiattoConBadge } from "@/src/lib/dominio";
 import { campoLocalizzato, campoLocalizzatoOpzionale } from "@/src/lib/i18n/campi";
 import type { Locale } from "@/src/lib/i18n/config";
 
-export const MACRO_BAR = "Bar & Cocktail";
-
 // Quanti drink mostrare nella vetrina della pagina.
 const QUANTI = 4;
 
@@ -36,7 +34,9 @@ const PREFERENZA = [
 /**
  * Vetrina del bancone: fino a QUANTI drink disponibili, ciascuno da
  * una categoria diversa. Nessun nome scritto a mano: se la carta
- * cambia, cambia la pagina.
+ * cambia, cambia la pagina. La macro del bar si riconosce dal ruolo
+ * (categorie_macro.ruolo = 'bar'), non dal nome: rinominarla dalla
+ * dashboard non svuota la vetrina.
  */
 export async function getSelezioneBar(
   supabase: SupabaseClient<Database>,
@@ -45,7 +45,7 @@ export async function getSelezioneBar(
   const { data: macro } = await supabase
     .from("categorie_macro")
     .select("id")
-    .eq("nome", MACRO_BAR)
+    .eq("ruolo", "bar")
     .maybeSingle();
   if (!macro) return [];
 

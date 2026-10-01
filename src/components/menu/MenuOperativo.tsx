@@ -12,6 +12,7 @@ import type { CategoriaMenu, MacroMenu } from "@/src/components/menu/MenuComplet
 import type { VoceAllergene } from "@/src/components/menu/LegendaAllergeni";
 import type { PiattoRiga } from "@/src/lib/dominio";
 import type { Locale } from "@/src/lib/i18n/config";
+import type { RuoloMacro } from "@/src/lib/ruolo-macro";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
 
 // Sopra questa soglia di voci, E con più di una sotto-categoria, una
@@ -51,13 +52,13 @@ export function MenuOperativo({
   macro,
   legenda,
   locale,
-  chiaveSuggerita,
+  ruoloSuggerito,
 }: {
   macro: MacroMenu[];
   legenda: VoceAllergene[];
   locale: Locale;
-  /** Macro pre-selezionata dall'ora: riceve il segno "Ora". */
-  chiaveSuggerita: string;
+  /** Ruolo della macro pre-selezionata dall'ora: riceve il segno "Ora". */
+  ruoloSuggerito: RuoloMacro;
 }) {
   const t = getDizionario(locale);
 
@@ -89,7 +90,7 @@ export function MenuOperativo({
                 className="inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap rounded-[2px] border border-ink/20 px-3 font-sans text-sm text-ink transition-colors hover:bg-ink/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux"
               >
                 {m.nome}
-                {m.chiave === chiaveSuggerita && (
+                {m.ruolo === ruoloSuggerito && (
                   <span className="rounded-[2px] bg-bordeaux px-1.5 py-0.5 font-sans text-[10px] font-medium uppercase tracking-wide text-cream-text">
                     {t.menuOperativo.consigliatoOra}
                   </span>

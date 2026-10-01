@@ -133,7 +133,8 @@ posizione orizzontale, indipendente da quale portale monta per primo
 
 | Sezione | Ricerca in topbar | Azione primaria in topbar |
 |---|---|---|
-| Menu | sì (nome piatto) | sì ("+ Nuovo piatto") |
+| Menu → Piatti | sì (nome piatto) | sì ("+ Nuovo piatto") |
+| Menu → Categorie | non pertinente (poche decine di righe, tutte visibili) | sì ("+ Nuova macro-categoria"; le sotto-categorie si aggiungono dentro la propria macro) |
 | Orari | non pertinente (non è una lista) | non pertinente |
 | Eventi | non pertinente (lista troppo corta) | sì ("+ Nuovo evento") |
 | Prenotazioni | sì (nome/telefono) | non pertinente (una prenotazione la crea il cliente dal sito, non lo staff) |
@@ -145,15 +146,17 @@ pagina ha più un'intestazione propria duplicata nel corpo.
 ## Schede (tab)
 
 Per una sezione con più viste equivalenti sotto lo stesso nome di
-sidebar (oggi: "Gestione sito" — Home, Foto delle pagine, Testi; e
-"Coupon" — Lista, Analytics). Rotte vere (`/gestione/contenuti`,
+sidebar (oggi: "Gestione sito" — Home, Foto delle pagine, Testi;
+"Coupon" — Lista, Analytics; e "Menu" — Piatti, Categorie). Rotte vere (`/gestione/contenuti`,
 `/gestione/contenuti/foto`, `/gestione/contenuti/testi`;
-`/gestione/coupon`, `/gestione/coupon/analytics`), non stato client:
+`/gestione/coupon`, `/gestione/coupon/analytics`; `/gestione/menu`,
+`/gestione/menu/categorie`), non stato client:
 ogni scheda ha una propria voce in `AdminTopbar`, l'URL resta
 condivisibile e il tasto indietro del browser funziona come ci si
 aspetta. Striscia di schede (`contenuti/_components/SchedeGestioneSito.tsx`,
-`coupon/_components/SchedeCoupon.tsx` — stesso componente-tipo, non
-condiviso: due sezioni indipendenti con le proprie rotte) con
+`coupon/_components/SchedeCoupon.tsx`, `menu/_components/SchedeMenu.tsx`
+— stesso componente-tipo, non condiviso: sezioni indipendenti con le
+proprie rotte) con
 indicatore a bordo inferiore di 2px in `--admin-brick` sulla scheda
 attiva — stesso principio della barra laterale della sidebar (un
 indicatore lineare, non un riempimento). Riusare questo pattern per
@@ -291,7 +294,8 @@ touch. Per questo:
   Safari su iOS ingrandisce la pagina a ogni tocco su un campo. Non si
   usa `maximum-scale` nel viewport: bloccherebbe anche l'ingrandimento
   con due dita.
-- **Drag-and-drop** (riordino piatti): `MouseSensor` + `TouchSensor`
+- **Drag-and-drop** (riordino piatti, macro-categorie e
+  sotto-categorie): `MouseSensor` + `TouchSensor`
   (pressione prolungata 200ms), non `PointerSensor` — quest'ultimo
   risponde anche al dito e scavalca il delay. La maniglia è
   `touch-manipulation`: uno swipe rapido scorre la pagina, solo la
@@ -330,6 +334,14 @@ reale nei dati o nell'interazione:
   spazio per form lunghi — allergeni, badge, campi extra — di quanto
   ne abbia comodamente uno slide-over stretto), non va fatto per sola
   uniformità.
+- **Riassegnare il ruolo Cucina/Bar di una macro-categoria**
+  (`/gestione/menu/categorie`): il ruolo (`categorie_macro.ruolo`) è
+  mostrato come `StatusBadge` di sola lettura. È lui, non il nome, a
+  decidere cosa va in home, nella vetrina del bar e nel suggerimento
+  orario del menu al tavolo — rinominare è sicuro. Spostarlo su
+  un'altra macro è rimandato di proposito; per lo stesso motivo una
+  macro con ruolo non si elimina (il ruolo andrebbe perso senza modo di
+  rimetterlo dalla dashboard).
 
 Se in futuro emerge un bisogno reale in una di queste aree, il
 pattern/token è già pronto — non serve inventarlo, solo collegarlo.

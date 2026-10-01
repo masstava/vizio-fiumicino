@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/src/lib/supabase/server";
 import { DishForm } from "../_components/DishForm";
 import type { CategoriaGroupOption } from "../_components/types";
+import { ruoloMacro } from "@/src/lib/ruolo-macro";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,7 @@ export default async function ModificaPiattoPage({
     { data: anteprimaRow },
   ] = await Promise.all([
     supabase.from("piatti").select("*").eq("id", id).maybeSingle(),
-    supabase.from("categorie_macro").select("id, nome, ordine").order("ordine"),
+    supabase.from("categorie_macro").select("id, nome, ordine, ruolo").order("ordine"),
     supabase
       .from("categorie")
       .select("id, nome, ordine, categoria_macro_id")
@@ -52,6 +53,7 @@ export default async function ModificaPiattoPage({
   const categorieGrouped: CategoriaGroupOption[] = (macros ?? []).map((m) => ({
     macroId: m.id,
     macroNome: m.nome,
+    macroRuolo: ruoloMacro(m.ruolo),
     categorie: (categorie ?? [])
       .filter((c) => c.categoria_macro_id === m.id)
       .map((c) => ({ id: c.id, nome: c.nome })),

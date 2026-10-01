@@ -20,6 +20,7 @@ import { TOPBAR_SLOT_ID } from "./TopbarSlot";
 const VOCI: { match: (p: string) => boolean; titolo: string; sottotitolo: string }[] = [
   { match: (p) => p === "/gestione", titolo: "Dashboard", sottotitolo: "Panoramica dell'account" },
   { match: (p) => p === "/gestione/menu/nuovo", titolo: "Nuovo piatto", sottotitolo: "Aggiungi un piatto al menu" },
+  { match: (p) => p === "/gestione/menu/categorie", titolo: "Menu", sottotitolo: "Macro-categorie e sotto-categorie" },
   { match: (p) => p.startsWith("/gestione/menu/"), titolo: "Modifica piatto", sottotitolo: "Modifica i dati del piatto" },
   { match: (p) => p === "/gestione/menu", titolo: "Menu", sottotitolo: "Piatti, categorie e disponibilità" },
   { match: (p) => p === "/gestione/contenuti/foto", titolo: "Gestione sito", sottotitolo: "Foto delle pagine" },

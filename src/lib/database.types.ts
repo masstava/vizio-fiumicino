@@ -182,18 +182,21 @@ export type Database = {
           nome: string
           nome_en: string | null
           ordine: number
+          ruolo: string | null
         }
         Insert: {
           id?: string
           nome: string
           nome_en?: string | null
           ordine?: number
+          ruolo?: string | null
         }
         Update: {
           id?: string
           nome?: string
           nome_en?: string | null
           ordine?: number
+          ruolo?: string | null
         }
         Relationships: []
       }
@@ -696,6 +699,14 @@ export type Database = {
         Args: { p_a: string; p_da: string }
         Returns: { coperti: number; data: string; non_viste: number }[]
       }
+      riordina_categorie: {
+        Args: { p_categoria_macro_id: string; p_ordini: Json }
+        Returns: undefined
+      }
+      riordina_categorie_macro: {
+        Args: { p_ordini: Json }
+        Returns: undefined
+      }
       riscatta_coupon: {
         Args: { p_codice: string }
         Returns: Json
@@ -734,6 +745,10 @@ export type Database = {
           p_prezzo_variabile: boolean
         }
         Returns: string
+      }
+      sposta_categoria: {
+        Args: { p_categoria_id: string; p_categoria_macro_id: string }
+        Returns: undefined
       }
       verifica_limite_richieste: {
         Args: Record<string, never>

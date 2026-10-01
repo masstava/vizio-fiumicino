@@ -4,6 +4,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { DishRow } from "@/src/components/ui/DishRow";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs";
 import type { PiattoRiga } from "@/src/lib/dominio";
+import type { RuoloMacro } from "@/src/lib/ruolo-macro";
 
 export interface CategoriaMenu {
   id: string;
@@ -16,12 +17,11 @@ export interface MacroMenu {
   /** Nome già tradotto nella lingua della pagina. */
   nome: string;
   /**
-   * Nome originale del database, non tradotto. Serve a chi deve
-   * riconoscere una macro specifica per nome (per esempio la
-   * pre-selezione oraria della vista al tavolo): "nome" cambia con la
-   * lingua e non è utilizzabile come chiave.
+   * Ruolo della macro (cucina/bar), per chi deve riconoscerne una
+   * specifica — la pre-selezione oraria della vista al tavolo. Mai il
+   * nome: cambia con la lingua ed è modificabile dalla dashboard.
    */
-  chiave?: string;
+  ruolo?: RuoloMacro | null;
   categorie: CategoriaMenu[];
 }
 

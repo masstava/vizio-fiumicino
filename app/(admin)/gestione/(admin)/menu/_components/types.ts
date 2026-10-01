@@ -1,3 +1,5 @@
+import type { RuoloMacro } from "@/src/lib/ruolo-macro";
+
 export interface PiattoListItem {
   id: string;
   nome: string;
@@ -31,6 +33,8 @@ export interface CategoriaOption {
 export interface CategoriaGroupOption {
   macroId: string;
   macroNome: string;
+  /** Ruolo della macro: decide il tono dell'anteprima (bar = scuro). */
+  macroRuolo: RuoloMacro | null;
   categorie: CategoriaOption[];
 }
 

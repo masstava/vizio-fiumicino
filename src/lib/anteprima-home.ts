@@ -3,6 +3,7 @@ import type { Database } from "@/src/lib/database.types";
 import type { PiattoConBadge } from "@/src/lib/dominio";
 import { campoLocalizzato, campoLocalizzatoOpzionale } from "./i18n/campi";
 import type { Locale } from "./i18n/config";
+import { ruoloMacro, type RuoloMacro } from "./ruolo-macro";
 
 // Selezione curata dell'anteprima home. Estratto da app/page.tsx
 // perché la logica (selezione + ricaduta + split per macro) è ormai
@@ -10,8 +11,10 @@ import type { Locale } from "./i18n/config";
 // progetto: fetch espliciti e join lato JS con Map, mai join
 // annidati di PostgREST.
 
-export const MACRO_MANGIARE = "Da mangiare";
-export const MACRO_BAR = "Bar & Cocktail";
+// Cucina e bar si riconoscono dal RUOLO della macro
+// (categorie_macro.ruolo), mai dal nome: il nome si modifica dalla
+// dashboard e un confronto per nome sposterebbe in silenzio i drink
+// nella sezione menu (o svuoterebbe la ricaduta) alla prima rinomina.
 
 // Usato solo dalla ricaduta automatica, quando nessun piatto è stato
 // ancora selezionato in dashboard.
@@ -50,13 +53,13 @@ async function badgeByPiatto(
   return out;
 }
 
-// categoria_id → nome della macro-categoria, per separare i piatti
+// categoria_id → ruolo della macro-categoria, per separare i piatti
 // del menu da quelli del bar.
-async function macroByCategoria(
+async function ruoloByCategoria(
   supabase: SupabaseClient<Database>,
   categoriaIds: string[],
-): Promise<Map<string, string>> {
-  const out = new Map<string, string>();
+): Promise<Map<string, RuoloMacro>> {
+  const out = new Map<string, RuoloMacro>();
   if (categoriaIds.length === 0) return out;
 
   const { data: categorie } = await supabase
@@ -71,13 +74,13 @@ async function macroByCategoria(
 
   const { data: macros } = await supabase
     .from("categorie_macro")
-    .select("id, nome")
+    .select("id, ruolo")
     .in("id", macroIds);
 
-  const nomeByMacroId = new Map((macros ?? []).map((m) => [m.id, m.nome]));
+  const ruoloByMacroId = new Map((macros ?? []).map((m) => [m.id, ruoloMacro(m.ruolo)]));
   (categorie ?? []).forEach((c) => {
-    const nome = nomeByMacroId.get(c.categoria_macro_id);
-    if (nome) out.set(c.id, nome);
+    const ruolo = ruoloByMacroId.get(c.categoria_macro_id);
+    if (ruolo) out.set(c.id, ruolo);
   });
   return out;
 }
@@ -88,13 +91,13 @@ async function macroByCategoria(
 // la selezione non è ancora stata fatta. La dashboard lo segnala.
 async function ricaduta(
   supabase: SupabaseClient<Database>,
-  macroNome: string,
+  ruolo: RuoloMacro,
   locale: Locale,
 ): Promise<PiattoConBadge[]> {
   const { data: macro } = await supabase
     .from("categorie_macro")
     .select("id")
-    .eq("nome", macroNome)
+    .eq("ruolo", ruolo)
     .maybeSingle();
   if (!macro) return [];
 
@@ -156,8 +159,8 @@ export async function getAnteprimaHome(
 
   if (ids.length === 0) {
     const [menu, cocktail] = await Promise.all([
-      ricaduta(supabase, MACRO_MANGIARE, locale),
-      ricaduta(supabase, MACRO_BAR, locale),
+      ricaduta(supabase, "cucina", locale),
+      ricaduta(supabase, "bar", locale),
     ]);
     return { menu, cocktail, ricadutaAutomatica: true };
   }
@@ -169,9 +172,9 @@ export async function getAnteprimaHome(
     .eq("disponibile", true);
 
   const righe = piatti ?? [];
-  const [badges, macroByCat] = await Promise.all([
+  const [badges, ruoloByCat] = await Promise.all([
     badgeByPiatto(supabase, righe.map((p) => p.id)),
-    macroByCategoria(supabase, [...new Set(righe.map((p) => p.categoria_id))]),
+    ruoloByCategoria(supabase, [...new Set(righe.map((p) => p.categoria_id))]),
   ]);
 
   const piattoById = new Map(righe.map((p) => [p.id, p]));
@@ -199,7 +202,7 @@ export async function getAnteprimaHome(
     };
     // Tutto ciò che non è bar finisce nell'anteprima menu: così un
     // piatto in una macro nuova resta visibile invece di sparire.
-    if (macroByCat.get(p.categoria_id) === MACRO_BAR) cocktail.push(dish);
+    if (ruoloByCat.get(p.categoria_id) === "bar") cocktail.push(dish);
     else menu.push(dish);
   });
 

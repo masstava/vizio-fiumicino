@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { MenuOperativo } from "@/src/components/menu/MenuOperativo";
-import { conSezioneSuggerita, macroDaMostrarePerPrima } from "@/src/lib/fascia-oraria";
+import { conSezioneSuggerita, ruoloDaMostrarePerPrimo } from "@/src/lib/fascia-oraria";
 import { isLocale, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
 import { alternatesPerPagina } from "@/src/lib/i18n/metadata";
@@ -57,8 +57,8 @@ export default async function MenuOnlinePage({
   // client non la ricalcola mai. Se il cliente resta sulla pagina
   // mentre scatta l'ora dell'aperitivo, l'ordine delle sezioni non
   // cambia sotto le sue dita.
-  const chiaveSuggerita = macroDaMostrarePerPrima();
-  const ordinate = conSezioneSuggerita(macro, chiaveSuggerita);
+  const ruoloSuggerito = ruoloDaMostrarePerPrimo();
+  const ordinate = conSezioneSuggerita(macro, ruoloSuggerito);
 
   return (
     <main className="min-h-dvh bg-cream">
@@ -66,7 +66,7 @@ export default async function MenuOnlinePage({
         macro={ordinate}
         legenda={legenda}
         locale={locale}
-        chiaveSuggerita={chiaveSuggerita}
+        ruoloSuggerito={ruoloSuggerito}
       />
     </main>
   );
