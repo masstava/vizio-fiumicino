@@ -49,6 +49,13 @@ import type { Locale } from "@/src/lib/i18n/config";
 // di Resend è correttamente in Privacy Policy §3.1/§6/§7, non qui.
 // Stesso trattamento già dato a TheFork il 2026-08-26: sottosezione
 // rimossa, non svuotata. Google Maps scende da §4.3 a §4.2.
+//
+// AGGIORNAMENTO 2026-10-01: §2, riga "Necessari" — tolti "ricordare
+// la lingua" (la lingua viene dall'URL, /en, e non è memorizzata da
+// nessuna parte) e "mantenere il sito sicuro" (nessun cookie lo fa).
+// Verificato dal vivo su 13 pagine pubbliche IT/EN: senza scelta nulla
+// viene scritto; dopo la scelta solo le due voci di §3; l'unico
+// dominio terzo contattato è Google, e solo dopo il clic sulla mappa.
 // =============================================================
 
 const it: Informativa = {
@@ -97,7 +104,7 @@ const it: Informativa = {
             {
               categoria: "Necessari",
               finalita:
-                "Consegnare la pagina richiesta, ricordare la lingua e la scelta espressa sui cookie, mantenere il sito sicuro.",
+                "Consegnare la pagina richiesta e ricordare la scelta espressa sui cookie.",
               base: "Non richiedono consenso (art. 122 Codice Privacy)",
               durata: "Fino a 12 mesi",
             },
@@ -340,7 +347,7 @@ const en: Informativa = {
             {
               categoria: "Necessary",
               finalita:
-                "Delivering the page requested, remembering your language and your cookie choice, keeping the site secure.",
+                "Delivering the page requested and remembering your cookie choice.",
               base: "No consent required (Art. 122, Italian Privacy Code)",
               durata: "Up to 12 months",
             },

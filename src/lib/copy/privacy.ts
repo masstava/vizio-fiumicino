@@ -24,11 +24,9 @@ import type { Locale } from "@/src/lib/i18n/config";
 //  - §6: Google è indicato come responsabile "se attivato". La
 //    qualificazione per GA4 è dibattuta e dipende dalla
 //    configurazione.
-//  - §5: i 12 mesi indicati per i dati di prenotazione sono una
-//    PROPOSTA, non un valore confermato dal committente — coerente
-//    con l'ordine di grandezza già usato per le richieste di
-//    contatto (24 mesi), ma da confermare prima che questo testo
-//    valga come definitivo.
+//  - §5: i 12 mesi per i dati di prenotazione erano una proposta;
+//    confermati come valore definitivo dal committente il 2026-10-01
+//    (vedi l'aggiornamento in fondo a questo commento).
 //
 // Aggiornamento 2026-08-26: il sistema di prenotazione nativo (§21)
 // è ora completo e in produzione. I dati di chi prenota dal sito
@@ -74,15 +72,45 @@ import type { Locale } from "@/src/lib/i18n/config";
 //    di benvenuto attuale non contiene alcun link di unsubscribe, e
 //    coupon non ha un campo che registri una revoca. Corretto per
 //    descrivere il meccanismo VERO oggi disponibile (scrivere ai
-//    recapiti indicati), non uno automatico che non c'è. Un vero
-//    meccanismo di disiscrizione (link nell'email + stato nel
-//    database) resta da costruire: quando esisterà, questo paragrafo
-//    andrà aggiornato per descriverlo.
+//    recapiti indicati), non uno automatico che non c'è. (Superato:
+//    il meccanismo vero è stato costruito subito dopo, vedi
+//    l'aggiornamento 2026-10-01.)
 //
 //  - §6, §7: Resend sostituisce Brevo come responsabile per le email
 //    di benvenuto newsletter — non una voce nuova, la STESSA voce già
 //    presente per le email di prenotazione, perché è lo stesso
 //    fornitore usato per entrambe le finalità.
+//
+// Aggiornamento 2026-10-01 (verifica mirata dopo i passaggi
+// precedenti, decisioni del committente):
+//
+//  - §3.1: la disiscrizione con link «Disiscriviti» esiste dal
+//    2026-09-04 (migration 20260905000000, pagina
+//    /disiscrivi-newsletter): il testo ora la descrive, mantenendo la
+//    via scritta per chi si è iscritto prima e ha un'email senza link.
+//  - §3.1 + §5, FINALITÀ NUOVA: dopo la revoca la riga coupon (email +
+//    codice) NON viene cancellata — serve a impedire di ottenere più
+//    coupon di benvenuto con cicli disiscrizione/re-iscrizione (la
+//    re-iscrizione riattiva la stessa riga). Dichiarata con base
+//    legittimo interesse (6.1.f) e durata 12 mesi dalla revoca, resa
+//    vera dal job pulizia_dati_prenotazioni (migration
+//    20260911000000). Introduce finalità e base giuridica nuove: da
+//    far rileggere a un professionista prima di considerarla
+//    definitiva.
+//  - §2.1: la newsletter raccoglie solo l'email; il nome facoltativo
+//    del riquadro in /prenota serve solo al saluto nell'email di
+//    benvenuto e non è registrato (iscriviti_newsletter riceve solo
+//    p_email). Il telefono non è mai stato raccolto.
+//  - §3.3 + §5: sul sito non c'è alcun modulo di contatto; il punto
+//    ora riguarda chi scrive o chiama direttamente. 24 mesi invariati.
+//  - §5 prenotazioni: "dalla registrazione" e non "dalla data": il job
+//    conta da creata_il, il testo ora dice la stessa cosa.
+//  - §6 Supabase: non solo "contenuti" — contiene prenotazioni e
+//    iscrizioni, e serve direttamente al browser il video della home.
+//  - TheFork: TheFork Manager riceve ancora prenotazioni fuori dal
+//    sito, senza alcuna integrazione tecnica con esso; questa
+//    informativa copre solo i dati raccolti dal sito, quindi non va
+//    citato (confermato dal committente).
 // =============================================================
 
 const it: Informativa = {
@@ -120,17 +148,17 @@ const it: Informativa = {
       ],
       sottosezioni: [
         {
-          titolo: "2.1 Dati conferiti tramite i moduli di contatto e newsletter",
+          titolo: "2.1 Dati conferiti tramite il modulo newsletter",
           blocchi: [
             {
               tipo: "p",
               testo:
-                "Nome, indirizzo email e, facoltativamente, numero di telefono, quando li comunichi per iscriverti alla newsletter o per chiederci qualcosa. Il telefono non è obbligatorio: serve solo se preferisci essere richiamato.",
+                "Per iscriverti alla newsletter ci comunichi il tuo indirizzo email. Il riquadro di iscrizione presente nella pagina di prenotazione chiede anche, facoltativamente, il tuo nome: serve solo a salutarti per nome nell'email di benvenuto e non viene registrato nella nostra base dati.",
             },
             {
               tipo: "p",
               testo:
-                "Iscrivendoti alla newsletter, il modulo invia il tuo indirizzo email (e il nome, se lo indichi) al nostro sistema, che genera un codice sconto personale e lo registra insieme al tuo indirizzo email nella nostra base dati (infrastruttura Supabase — vedi §4 e §6). Nel nostro sistema l'iscrizione alla newsletter e il coupon che ne deriva sono la stessa registrazione, non due trattamenti distinti con un'archiviazione separata: non esiste un elenco iscritti a parte dal coupon che ricevi. Un'email di benvenuto con il codice ti viene inviata tramite Resend (vedi §3.1 e §6).",
+                "Iscrivendoti alla newsletter, il modulo invia il tuo indirizzo email al nostro sistema, che genera un codice sconto personale e lo registra insieme al tuo indirizzo email nella nostra base dati (infrastruttura Supabase — vedi §4 e §6). Nel nostro sistema l'iscrizione alla newsletter e il coupon che ne deriva sono la stessa registrazione, non due trattamenti distinti con un'archiviazione separata: non esiste un elenco iscritti a parte dal coupon che ricevi. Un'email di benvenuto con il codice ti viene inviata tramite Resend (vedi §3.1 e §6).",
             },
           ],
         },
@@ -189,7 +217,12 @@ const it: Informativa = {
             {
               tipo: "p",
               testo:
-                "Il consenso è revocabile in qualsiasi momento: al momento la revoca non avviene tramite un link automatico nell'email, ma scrivendo ai recapiti indicati al punto 1 e segnalando l'indirizzo da cancellare. La revoca non tocca la liceità di quanto fatto prima della richiesta.",
+                "Il consenso è revocabile in qualsiasi momento con il link «Disiscriviti» presente nell'email di benvenuto. Chi si è iscritto prima del 4 settembre 2026 ha ricevuto un'email che non contiene ancora quel link: in quel caso, o se preferisci, puoi scrivere ai recapiti indicati al punto 1 segnalando l'indirizzo per cui revocare il consenso. La revoca non tocca la liceità di quanto fatto prima della richiesta.",
+            },
+            {
+              tipo: "p",
+              testo:
+                "Dopo la revoca conserviamo l'indirizzo email e il codice sconto associato, senza più usarli per la newsletter, al solo scopo di impedire che il coupon di benvenuto venga ottenuto più volte disiscrivendosi e iscrivendosi di nuovo. Base giuridica: legittimo interesse (art. 6.1.f) a prevenire questo uso ripetuto. Per quanto tempo è indicato al punto 5; puoi opporti ai sensi dell'articolo 21 scrivendo ai recapiti indicati al punto 1.",
             },
           ],
         },
@@ -204,12 +237,12 @@ const it: Informativa = {
           ],
         },
         {
-          titolo: "3.3 Riscontro alle richieste di contatto",
+          titolo: "3.3 Riscontro a chi ci scrive o ci chiama",
           blocchi: [
             {
               tipo: "p",
               testo:
-                "Base giuridica: esecuzione di misure precontrattuali o del contratto (art. 6.1.b). Trattiamo quanto ci comunichi per risponderti e per dare seguito alla richiesta.",
+                "Base giuridica: esecuzione di misure precontrattuali o del contratto (art. 6.1.b). Se ci scrivi o ci chiami direttamente, ai recapiti indicati sul sito, trattiamo quanto ci comunichi (ad esempio nome, recapito e contenuto del messaggio) per risponderti e per dare seguito alla richiesta.",
             },
           ],
         },
@@ -286,17 +319,18 @@ const it: Informativa = {
           voci: [
             {
               termine: "Iscrizione alla newsletter (e coupon associato)",
-              descrizione: "Fino alla revoca del consenso.",
+              descrizione:
+                "Fino alla revoca del consenso. Dopo la revoca, l'indirizzo email e il coupon restano registrati per 12 mesi dalla data della revoca, per la sola finalità indicata al punto 3.1 (impedire l'uso ripetuto del coupon di benvenuto), e vengono poi cancellati insieme allo storico dei relativi utilizzi. Se nel frattempo ti iscrivi di nuovo, l'iscrizione riprende sulla stessa registrazione.",
             },
             {
-              termine: "Richieste di contatto",
+              termine: "Messaggi e richieste ricevuti via email o telefono",
               descrizione:
                 "24 mesi dall'ultimo scambio, salvo quanto debba essere conservato più a lungo per obbligo di legge.",
             },
             {
               termine: "Dati di prenotazione",
               descrizione:
-                "12 mesi dalla data della prenotazione, salvo la necessità di conservarli più a lungo per obblighi fiscali o contabili.",
+                "12 mesi dalla registrazione della prenotazione, salvo la necessità di conservarli più a lungo per obblighi fiscali o contabili.",
             },
             {
               termine: "Dati di navigazione",
@@ -333,7 +367,7 @@ const it: Informativa = {
             {
               termine: "Supabase Inc. — responsabile",
               descrizione:
-                "Infrastruttura della base dati dei contenuti del sito. Regione Unione europea, eu-west-3 (Parigi).",
+                "Base dati del sito — contenuti, prenotazioni, iscrizioni alla newsletter con i relativi coupon — e archivio dei file multimediali, fra cui il video della home, che il tuo browser riceve direttamente dai suoi server. Regione Unione europea, eu-west-3 (Parigi).",
             },
             {
               termine: "Vercel Inc. — responsabile",
@@ -499,17 +533,17 @@ const en: Informativa = {
       ],
       sottosezioni: [
         {
-          titolo: "2.1 Data provided through the contact and newsletter forms",
+          titolo: "2.1 Data provided through the newsletter form",
           blocchi: [
             {
               tipo: "p",
               testo:
-                "Name, email address and, optionally, a phone number, when you give them to subscribe to the newsletter or to ask us something. The phone number is not required: it's only there if you'd rather be called back.",
+                "To subscribe to the newsletter you give us your email address. The sign-up box on the booking page also asks, optionally, for your name: it is used only to greet you by name in the welcome email and is not recorded in our database.",
             },
             {
               tipo: "p",
               testo:
-                "When you subscribe to the newsletter, the form sends your email address (and your name, if you give it) to our system, which generates a personal discount code and records it together with your email address in our database (Supabase infrastructure — see §4 and §6). In our system, the newsletter subscription and the resulting coupon are the same record, not two separate treatments with separate storage: there is no subscriber list kept apart from the coupon you receive. A welcome email with the code is sent to you through Resend (see §3.1 and §6).",
+                "When you subscribe to the newsletter, the form sends your email address to our system, which generates a personal discount code and records it together with your email address in our database (Supabase infrastructure — see §4 and §6). In our system, the newsletter subscription and the resulting coupon are the same record, not two separate treatments with separate storage: there is no subscriber list kept apart from the coupon you receive. A welcome email with the code is sent to you through Resend (see §3.1 and §6).",
             },
           ],
         },
@@ -568,7 +602,12 @@ const en: Informativa = {
             {
               tipo: "p",
               testo:
-                "Consent can be withdrawn at any time: withdrawal currently does not happen through an automatic link in the email, but by writing to the contacts given in point 1 and telling us which address to remove. Withdrawal does not affect the lawfulness of processing carried out before the request.",
+                "Consent can be withdrawn at any time using the «Unsubscribe» link in the welcome email. If you subscribed before 4 September 2026, the email you received does not yet contain that link: in that case, or if you prefer, you can write to the contacts given in point 1, telling us which address the withdrawal is for. Withdrawal does not affect the lawfulness of processing carried out before the request.",
+            },
+            {
+              tipo: "p",
+              testo:
+                "After withdrawal we keep the email address and its discount code, no longer using them for the newsletter, solely to prevent the welcome coupon from being obtained repeatedly by unsubscribing and subscribing again. Legal basis: legitimate interest (Art. 6(1)(f)) in preventing such repeated use. How long is set out in point 5; you may object under Article 21 by writing to the contacts given in point 1.",
             },
           ],
         },
@@ -583,12 +622,12 @@ const en: Informativa = {
           ],
         },
         {
-          titolo: "3.3 Responding to contact requests",
+          titolo: "3.3 Replying to people who write to or call us",
           blocchi: [
             {
               tipo: "p",
               testo:
-                "Legal basis: performance of pre-contractual measures or of the contract (Art. 6(1)(b)). We process what you tell us in order to reply and follow up on your request.",
+                "Legal basis: performance of pre-contractual measures or of the contract (Art. 6(1)(b)). If you write to us or call us directly, using the contact details given on the site, we process what you tell us (such as your name, contact details and the content of your message) in order to reply and follow up on your request.",
             },
           ],
         },
@@ -665,17 +704,18 @@ const en: Informativa = {
           voci: [
             {
               termine: "Newsletter subscription (and its coupon)",
-              descrizione: "Until consent is withdrawn.",
+              descrizione:
+                "Until consent is withdrawn. After withdrawal, the email address and the coupon remain on record for 12 months from the date of withdrawal, solely for the purpose set out in point 3.1 (preventing repeated use of the welcome coupon), and are then deleted together with the record of their use. If you subscribe again in the meantime, the subscription resumes on the same record.",
             },
             {
-              termine: "Contact requests",
+              termine: "Messages and requests received by email or phone",
               descrizione:
                 "24 months from the last exchange, save for anything that must be kept longer by law.",
             },
             {
               termine: "Booking data",
               descrizione:
-                "12 months from the date of the booking, save for the need to keep it longer for tax or accounting obligations.",
+                "12 months from when the booking was made, save for the need to keep it longer for tax or accounting obligations.",
             },
             { termine: "Browsing data", descrizione: "No more than 12 months." },
             {
@@ -707,7 +747,7 @@ const en: Informativa = {
             {
               termine: "Supabase Inc. — processor",
               descrizione:
-                "Database infrastructure for the site's content. European Union region, eu-west-3 (Paris).",
+                "Site database — content, bookings, newsletter subscriptions and their coupons — and storage for media files, including the home page video, which your browser receives directly from its servers. European Union region, eu-west-3 (Paris).",
             },
             {
               termine: "Vercel Inc. — processor",
