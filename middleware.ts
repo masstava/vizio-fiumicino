@@ -27,6 +27,15 @@ function instradaLingua(request: NextRequest) {
     return NextResponse.next({ request: conHeaderLingua(request, "en") });
   }
 
+  // Anteprime social (opengraph-image, generate da Next sotto
+  // /it/...): l'URL lo sceglie Next ed è quello dichiarato in og:image.
+  // Un redirect qui costringerebbe i social a seguirlo per arrivare
+  // all'immagine, e non tutti lo fanno. Non è una pagina: nessun
+  // rischio di contenuto duplicato.
+  if (/\/opengraph-image(-[a-z0-9]+)?$/.test(pathname)) {
+    return NextResponse.next();
+  }
+
   // "/it/..." non deve esistere come URL pubblico: sarebbe un
   // doppione dell'italiano già servito su "/", con il rischio di
   // contenuti duplicati per i motori di ricerca.

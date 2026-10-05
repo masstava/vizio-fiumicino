@@ -16,7 +16,7 @@ import { getCopyCocktailBar } from "@/src/lib/copy/cocktail-bar";
 import { campoLocalizzato, campoLocalizzatoOpzionale } from "@/src/lib/i18n/campi";
 import { isLocale, localizedPath, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
-import { alternatesPerPagina } from "@/src/lib/i18n/metadata";
+import { metadatiPagina } from "@/src/lib/i18n/metadata";
 import { getMediaPagina } from "@/src/lib/media-pagine";
 import { getOrariSito } from "@/src/lib/orari-sito";
 import { getSelezioneBar } from "@/src/lib/selezione-bar";
@@ -35,9 +35,12 @@ export async function generateMetadata({
   const locale: Locale = isLocale(raw) ? raw : "it";
   const t = getDizionario(locale);
   return {
-    title: t.pagine.cocktailBar.titolo,
-    description: t.pagine.cocktailBar.descrizione,
-    alternates: alternatesPerPagina(PERCORSO, locale),
+    ...metadatiPagina({
+      percorso: PERCORSO,
+      locale,
+      titolo: t.pagine.cocktailBar.titolo,
+      descrizione: t.pagine.cocktailBar.descrizione,
+    }),
   };
 }
 

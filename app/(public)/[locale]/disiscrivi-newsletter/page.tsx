@@ -7,7 +7,7 @@ import { PaginaHero } from "@/src/components/pagine/PaginaHero";
 import { Section } from "@/src/components/ui/Section";
 import { isLocale, localizedPath, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
-import { alternatesPerPagina } from "@/src/lib/i18n/metadata";
+import { metadatiPagina } from "@/src/lib/i18n/metadata";
 import { getOrariSito } from "@/src/lib/orari-sito";
 import { createClient } from "@/src/lib/supabase/server";
 import { disiscrivitiNewsletter } from "./_actions";
@@ -25,9 +25,12 @@ export async function generateMetadata({
   const locale: Locale = isLocale(raw) ? raw : "it";
   const t = getDizionario(locale);
   return {
-    title: t.paginaDisiscrizione.titolo,
-    description: t.paginaDisiscrizione.descrizione,
-    alternates: alternatesPerPagina(PERCORSO, locale),
+    ...metadatiPagina({
+      percorso: PERCORSO,
+      locale,
+      titolo: t.paginaDisiscrizione.titolo,
+      descrizione: t.paginaDisiscrizione.descrizione,
+    }),
     // Pagina personale, raggiunta solo dal link nell'email: stesso
     // trattamento di /gestisci-prenotazione.
     robots: { index: false, follow: true },

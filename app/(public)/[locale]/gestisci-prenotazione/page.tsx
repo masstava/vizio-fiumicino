@@ -6,7 +6,7 @@ import { PaginaHero } from "@/src/components/pagine/PaginaHero";
 import { Section } from "@/src/components/ui/Section";
 import { isLocale, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
-import { alternatesPerPagina } from "@/src/lib/i18n/metadata";
+import { metadatiPagina } from "@/src/lib/i18n/metadata";
 import { getOrariSito } from "@/src/lib/orari-sito";
 import { createClient } from "@/src/lib/supabase/server";
 import { leggiPrenotazioneDaToken } from "./_actions";
@@ -25,9 +25,12 @@ export async function generateMetadata({
   const locale: Locale = isLocale(raw) ? raw : "it";
   const t = getDizionario(locale);
   return {
-    title: t.paginaGestisci.titolo,
-    description: t.paginaGestisci.descrizione,
-    alternates: alternatesPerPagina(PERCORSO, locale),
+    ...metadatiPagina({
+      percorso: PERCORSO,
+      locale,
+      titolo: t.paginaGestisci.titolo,
+      descrizione: t.paginaGestisci.descrizione,
+    }),
     // Pagina personale, raggiunta solo dal link nell'email: niente da
     // posizionare sui motori di ricerca, stesso trattamento di
     // /menu-online.

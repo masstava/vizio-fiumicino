@@ -7,7 +7,7 @@ import { Section } from "@/src/components/ui/Section";
 import type { GiornoOrario } from "@/src/lib/dominio";
 import { isLocale, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
-import { alternatesPerPagina } from "@/src/lib/i18n/metadata";
+import { metadatiPagina } from "@/src/lib/i18n/metadata";
 import { getMenuCompleto } from "@/src/lib/menu-completo";
 import { isApertoOra } from "@/src/lib/orari";
 import { createClient } from "@/src/lib/supabase/server";
@@ -24,9 +24,12 @@ export async function generateMetadata({
   const t = getDizionario(locale);
 
   return {
-    title: t.menu.titoloPagina,
-    description: t.menu.descrizionePagina,
-    alternates: alternatesPerPagina("/menu", locale),
+    ...metadatiPagina({
+      percorso: "/menu",
+      locale,
+      titolo: t.menu.titoloPagina,
+      descrizione: t.menu.descrizionePagina,
+    }),
   };
 }
 

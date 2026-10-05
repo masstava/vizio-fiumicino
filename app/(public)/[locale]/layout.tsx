@@ -11,6 +11,7 @@ import { OverlayProvider } from "@/src/components/overlay/OverlayContext";
 import { fontVariables } from "@/src/lib/fonts";
 import { LOCALES, isLocale, type Locale } from "@/src/lib/i18n/config";
 import { INDICIZZABILE } from "@/src/lib/indicizzazione";
+import { DESCRIZIONE_SITO, TITOLO_SITO } from "@/src/lib/i18n/metadata";
 import { SITE_URL } from "@/src/lib/site-url";
 
 // Genera in anticipo i due alberi di rotte: /it (servito su "/" grazie
@@ -18,16 +19,6 @@ import { SITE_URL } from "@/src/lib/site-url";
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
 }
-
-const DESCRIZIONE: Record<Locale, string> = {
-  it: "Carne alla griglia, cocktail d'autore e aperitivo fino a notte fonda, a Fiumicino. Via delle Ombrine 25.",
-  en: "Grilled meat, signature cocktails and aperitivo until late, in Fiumicino. Via delle Ombrine 25.",
-};
-
-const TITOLO: Record<Locale, string> = {
-  it: "Vizio Bistrot — Fiumicino",
-  en: "Vizio Bistrot — Fiumicino",
-};
 
 export async function generateMetadata({
   params,
@@ -38,15 +29,15 @@ export async function generateMetadata({
   const locale: Locale = isLocale(raw) ? raw : "it";
 
   // Niente canonical/hreflang qui: valgono per pagina, non per
-  // sottoalbero. Ogni pagina li dichiara con alternatesPerPagina()
+  // sottoalbero. Ogni pagina li dichiara con metadatiPagina()
   // passando il proprio percorso (vedi src/lib/i18n/metadata.ts).
   return {
     metadataBase: new URL(SITE_URL),
     title: {
-      default: TITOLO[locale],
+      default: TITOLO_SITO[locale],
       template: "%s · Vizio Bistrot",
     },
-    description: DESCRIZIONE[locale],
+    description: DESCRIZIONE_SITO[locale],
     // Interruttore unico (src/lib/indicizzazione.ts). Le pagine che
     // devono restare sempre fuori dai risultati (menu al tavolo,
     // pagine con token) dichiarano un robots proprio, che sostituisce
@@ -57,13 +48,13 @@ export async function generateMetadata({
       locale: locale === "it" ? "it_IT" : "en_GB",
       alternateLocale: locale === "it" ? "en_GB" : "it_IT",
       siteName: "Vizio Bistrot",
-      title: TITOLO[locale],
-      description: DESCRIZIONE[locale],
+      title: TITOLO_SITO[locale],
+      description: DESCRIZIONE_SITO[locale],
     },
     twitter: {
       card: "summary_large_image",
-      title: TITOLO[locale],
-      description: DESCRIZIONE[locale],
+      title: TITOLO_SITO[locale],
+      description: DESCRIZIONE_SITO[locale],
     },
   };
 }

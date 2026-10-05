@@ -3,7 +3,7 @@ import { MenuOperativo } from "@/src/components/menu/MenuOperativo";
 import { conSezioneSuggerita, ruoloDaMostrarePerPrimo } from "@/src/lib/fascia-oraria";
 import { isLocale, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
-import { alternatesPerPagina } from "@/src/lib/i18n/metadata";
+import { metadatiPagina } from "@/src/lib/i18n/metadata";
 import { getMenuCompleto } from "@/src/lib/menu-completo";
 import { createClient } from "@/src/lib/supabase/server";
 
@@ -20,9 +20,12 @@ export async function generateMetadata({
   const locale: Locale = isLocale(raw) ? raw : "it";
   const t = getDizionario(locale);
   return {
-    title: t.menuOperativo.titoloPagina,
-    description: t.menuOperativo.descrizionePagina,
-    alternates: alternatesPerPagina(PERCORSO, locale),
+    ...metadatiPagina({
+      percorso: PERCORSO,
+      locale,
+      titolo: t.menuOperativo.titoloPagina,
+      descrizione: t.menuOperativo.descrizionePagina,
+    }),
     // Vista di servizio, non una pagina da posizionare: la vetrina
     // indicizzabile è /menu, che mostra gli stessi piatti con
     // l'impaginazione editoriale. Due pagine con lo stesso menu in

@@ -20,9 +20,62 @@ function intestazioniIndicizzazione() {
   ];
 }
 
+// Redirect permanenti dal vecchio sito WordPress (§15). Next usa 308,
+// che per Google equivale a 301. Le vecchie pagine amministrative
+// (elenco-*, nuovo-*, modifica-*, elimina-*, annulla-*, dashboard,
+// /clienti/*, /prenotazioni/*, coupon, attivazioni) NON hanno redirect
+// di proposito: devono rispondere 404, e nessuna rotta pubblica nuova
+// ha quei nomi. /cocktail-bar, /cookie-policy e /menu-online hanno lo
+// stesso percorso sul nuovo sito: nessun redirect.
+const REDIRECT_VECCHIO_SITO: [origine: string, destinazione: string][] = [
+  ["/aperitivo", "/menu"],
+  ["/pranzo", "/menu"],
+  ["/cena", "/menu"],
+  ["/dopo-cena", "/menu"],
+  ["/vino", "/menu"],
+  ["/cantina", "/menu"],
+  ["/birre", "/menu"],
+  ["/distillati", "/menu"],
+  ["/maincat/:percorso*", "/menu"],
+  // Gli allergeni non hanno una pagina propria: sono la legenda in
+  // fondo al menu, che ha l'ancora #allergeni.
+  ["/tabella-allergeni", "/menu#allergeni"],
+  ["/cocktails", "/cocktail-bar"],
+  ["/specialita-di-carne", "/la-carne"],
+  ["/experiences", "/experience-eventi"],
+  ["/eventi-vizio", "/experience-eventi"],
+  ["/eventi/:percorso*", "/experience-eventi"],
+  // La pagina "Chi siamo" non esiste ancora.
+  // DA TOGLIERE quando verrà costruita app/(public)/[locale]/chi-siamo:
+  // i redirect di next.config vengono prima delle rotte, quindi questa
+  // riga continuerebbe a mandare in home chi cerca la pagina nuova.
+  ["/chi-siamo", "/"],
+  ["/ex-prenota-da-vizio", "/prenota"],
+  ["/privacy-policy", "/privacy"],
+];
+
 const nextConfig: NextConfig = {
   async headers() {
     return intestazioniIndicizzazione();
+  },
+  // Lo slash finale lo gestiamo noi (ultima regola in redirects): con
+  // il redirect automatico di Next, "/aperitivo/" faceva DUE salti —
+  // prima "/aperitivo/" → "/aperitivo", poi → "/menu". Il vecchio sito
+  // WordPress usava proprio gli URL con lo slash finale.
+  skipTrailingSlashRedirect: true,
+  async redirects() {
+    return [
+      // {/}? — slash finale facoltativo: le due varianti arrivano a
+      // destinazione con un solo salto.
+      ...REDIRECT_VECCHIO_SITO.map(([source, destination]) => ({
+        source: `${source}{/}?`,
+        destination,
+        permanent: true,
+      })),
+      // Per tutto il resto, stesso comportamento del redirect
+      // automatico di Next che abbiamo spento: "/menu/" → "/menu".
+      { source: "/:percorso+/", destination: "/:percorso+", permanent: true },
+    ];
   },
   images: {
     remotePatterns: [

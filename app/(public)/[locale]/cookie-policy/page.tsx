@@ -5,7 +5,7 @@ import { InformativaLegale } from "@/src/components/pagine/Informativa";
 import { getCookiePolicy } from "@/src/lib/copy/cookie-policy";
 import { isLocale, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
-import { alternatesPerPagina } from "@/src/lib/i18n/metadata";
+import { metadatiPagina } from "@/src/lib/i18n/metadata";
 import { AGGIORNAMENTO_INFORMATIVE } from "@/src/lib/legale";
 import { getOrariSito } from "@/src/lib/orari-sito";
 import { createClient } from "@/src/lib/supabase/server";
@@ -23,9 +23,12 @@ export async function generateMetadata({
   const locale: Locale = isLocale(raw) ? raw : "it";
   const t = getDizionario(locale);
   return {
-    title: t.pagine.cookiePolicy.titolo,
-    description: t.pagine.cookiePolicy.descrizione,
-    alternates: alternatesPerPagina(PERCORSO, locale),
+    ...metadatiPagina({
+      percorso: PERCORSO,
+      locale,
+      titolo: t.pagine.cookiePolicy.titolo,
+      descrizione: t.pagine.cookiePolicy.descrizione,
+    }),
   };
 }
 

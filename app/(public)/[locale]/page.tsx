@@ -17,7 +17,7 @@ import { getMediaPagina } from "@/src/lib/media-pagine";
 import { campoLocalizzato, campoLocalizzatoOpzionale } from "@/src/lib/i18n/campi";
 import { isLocale, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
-import { alternatesPerPagina } from "@/src/lib/i18n/metadata";
+import { DESCRIZIONE_SITO, metadatiPagina } from "@/src/lib/i18n/metadata";
 import { risolviContenuti } from "@/src/lib/contenuti";
 import { isApertoOra } from "@/src/lib/orari";
 
@@ -30,7 +30,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : "it";
-  return { alternates: alternatesPerPagina("/", locale) };
+  return metadatiPagina({ percorso: "/", locale, descrizione: DESCRIZIONE_SITO[locale] });
 }
 
 type ClientSupabase = Awaited<ReturnType<typeof createClient>>;
