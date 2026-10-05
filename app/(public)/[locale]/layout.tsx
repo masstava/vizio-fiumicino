@@ -10,6 +10,7 @@ import { MotionProvider } from "@/src/components/motion/MotionProvider";
 import { OverlayProvider } from "@/src/components/overlay/OverlayContext";
 import { fontVariables } from "@/src/lib/fonts";
 import { LOCALES, isLocale, type Locale } from "@/src/lib/i18n/config";
+import { INDICIZZABILE } from "@/src/lib/indicizzazione";
 import { SITE_URL } from "@/src/lib/site-url";
 
 // Genera in anticipo i due alberi di rotte: /it (servito su "/" grazie
@@ -46,6 +47,11 @@ export async function generateMetadata({
       template: "%s · Vizio Bistrot",
     },
     description: DESCRIZIONE[locale],
+    // Interruttore unico (src/lib/indicizzazione.ts). Le pagine che
+    // devono restare sempre fuori dai risultati (menu al tavolo,
+    // pagine con token) dichiarano un robots proprio, che sostituisce
+    // questo: non vengono sbloccate quando l'interruttore si accende.
+    robots: INDICIZZABILE ? { index: true, follow: true } : { index: false, follow: false },
     openGraph: {
       type: "website",
       locale: locale === "it" ? "it_IT" : "en_GB",
