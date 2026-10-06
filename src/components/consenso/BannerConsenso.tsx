@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useRegistraOverlay } from "@/src/components/overlay/OverlayContext";
-import type { Locale } from "@/src/lib/i18n/config";
+import { localizedPath, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
 import { useConsenso } from "./ConsensoContext";
 
@@ -53,6 +54,16 @@ export function BannerConsenso({ locale }: { locale: Locale }) {
           <p className="mt-1 font-sans text-xs leading-relaxed text-muted">
             {t.consenso.testo}
           </p>
+          {/* L'informativa completa a un clic dal banner (Linee guida
+              del Garante 10/06/2021). Stesso stile dei link su fondo
+              chiaro del sito: bordeaux sottolineato, 8,3:1 sul crema.
+              Area di tocco 44px, ridotta solo con mouse/trackpad. */}
+          <Link
+            href={localizedPath("/cookie-policy", locale)}
+            className="mt-1 inline-flex min-h-11 items-center rounded-[2px] font-sans text-xs text-bordeaux underline underline-offset-4 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux focus-visible:ring-offset-2 focus-visible:ring-offset-cream md:pointer-fine:min-h-0"
+          >
+            {t.consenso.linkCookiePolicy}
+          </Link>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row md:flex-shrink-0">
           <button type="button" onClick={accettaTutti} className={pulsante}>

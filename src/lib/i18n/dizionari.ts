@@ -158,6 +158,7 @@ const it = {
     rifiutaTutti: "Rifiuta tutti",
     personalizza: "Personalizza",
     etichettaBanner: "Informativa sui cookie",
+    linkCookiePolicy: "Leggi la Cookie Policy",
 
     // Modale preferenze
     modaleTitolo: "Preferenze cookie",
@@ -515,6 +516,7 @@ const en: Dizionario = {
     rifiutaTutti: "Reject all",
     personalizza: "Customise",
     etichettaBanner: "Cookie notice",
+    linkCookiePolicy: "Read the Cookie Policy",
 
     modaleTitolo: "Cookie preferences",
     modaleTesto:
