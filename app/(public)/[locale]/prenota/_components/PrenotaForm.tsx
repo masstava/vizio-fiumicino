@@ -195,6 +195,8 @@ export function PrenotaForm({
         leggiCapienzaGiorno(data).then(setCapienza).catch(() => {});
       } else if (esito.messaggio === "RATE_LIMITED") {
         setErrore(t.paginaPrenota.erroreLimiteRichieste);
+      } else if (esito.messaggio === "EMAIL_NON_VALIDA") {
+        setErrore(t.paginaPrenota.erroreEmail);
       } else {
         setErrore(t.paginaPrenota.erroreGenerico);
       }
@@ -242,6 +244,9 @@ export function PrenotaForm({
         setNlStato("fatto");
       } else if (esito.motivo === "RATE_LIMITED") {
         setNlErrore(t.newsletter.erroreLimite);
+        setNlStato("errore");
+      } else if (esito.motivo === "EMAIL_NON_VALIDA") {
+        setNlErrore(t.newsletter.erroreEmail);
         setNlStato("errore");
       } else {
         setNlErrore(t.newsletter.erroreGenerico);

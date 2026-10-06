@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { INDIRIZZO, indirizzoSingolo } from "./indirizzo";
 
 // Mittente e destinatari staff: variabili d'ambiente, con i valori
 // storici come ricaduta — così un cambio di dominio o sottodominio
@@ -17,7 +18,6 @@ const DESTINATARI_STAFF_PREDEFINITI = [
   "m.tavaroli@easydigitalgroup.it",
 ];
 
-const INDIRIZZO = /^[^@\s<>,;]+@[^@\s<>,;]+\.[^@\s<>,;]+$/;
 
 /** Accetta "Nome <indirizzo>" oppure l'indirizzo da solo. */
 function mittenteValido(valore: string): boolean {
@@ -68,19 +68,8 @@ export const RISPONDI_A = (() => {
   return RISPONDI_A_PREDEFINITO;
 })();
 
-/**
- * Un SOLO indirizzo email valido, o undefined. Per il Reply-To della
- * notifica staff, che è l'email lasciata dal cliente: il modulo la
- * controlla solo nel browser (type="email"), e né la Server Action né
- * crea_prenotazione ne verificano il formato — chi chiamasse l'azione
- * direttamente potrebbe passare virgole (più destinatari) o a capo.
- * INDIRIZZO esclude spazi e a capo (\s), virgole, punti e virgola e < >.
- */
-export function indirizzoSingolo(valore: string | null | undefined): string | undefined {
-  const pulito = valore?.trim();
-  if (!pulito || pulito.length > 254 || !INDIRIZZO.test(pulito)) return undefined;
-  return pulito;
-}
+// Riesportata per i punti di invio: regola in ./indirizzo.ts.
+export { indirizzoSingolo };
 
 let client: Resend | null | undefined;
 

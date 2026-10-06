@@ -51,6 +51,8 @@ export function Newsletter({ locale, offerta }: { locale: Locale; offerta: strin
         setCodice(esito.codice);
       } else if (esito.motivo === "RATE_LIMITED") {
         setErrore(t.newsletter.erroreLimite);
+      } else if (esito.motivo === "EMAIL_NON_VALIDA") {
+        setErrore(t.newsletter.erroreEmail);
       } else {
         setErrore(t.newsletter.erroreGenerico);
       }

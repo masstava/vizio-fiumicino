@@ -76,6 +76,7 @@ const it = {
     invio: "Iscrizione in corso…",
     erroreGenerico: "Non è stato possibile completare l'iscrizione. Riprova più tardi.",
     erroreLimite: "Troppi tentativi in poco tempo. Aspetta qualche minuto e riprova.",
+    erroreEmail: "Questo indirizzo email non sembra valido. Controllalo e riprova.",
     fattoTitolo: "Iscrizione completata",
     codiceEtichetta: "Il tuo codice sconto",
     comeUsarlo: "Mostralo in cassa alla tua prossima visita.",
@@ -231,6 +232,7 @@ const it = {
     erroreCapienza: "Questo orario si è appena riempito. Scegline un altro.",
     erroreGenerico: "Qualcosa non ha funzionato. Riprova, o chiamaci.",
     erroreLimiteRichieste: "Troppi tentativi in poco tempo. Aspetta qualche minuto e riprova, o chiamaci.",
+    erroreEmail: "L'indirizzo email non sembra valido: controllalo, oppure lascia vuoto il campo (è facoltativo).",
 
     confermaTitolo: "Prenotazione registrata",
     confermaTesto: "Ti aspettiamo. A breve arriva anche la conferma via email, se ci hai lasciato un indirizzo.",
@@ -434,6 +436,7 @@ const en: Dizionario = {
     invio: "Signing up…",
     erroreGenerico: "We couldn't complete the sign-up. Please try again later.",
     erroreLimite: "Too many attempts in a short time. Wait a few minutes and try again.",
+    erroreEmail: "That email address doesn't look valid. Please check it and try again.",
     fattoTitolo: "You're signed up",
     codiceEtichetta: "Your discount code",
     comeUsarlo: "Show it at the till on your next visit.",
@@ -583,6 +586,7 @@ const en: Dizionario = {
     erroreCapienza: "That time just filled up. Please choose another.",
     erroreGenerico: "Something didn't work. Please try again, or call us.",
     erroreLimiteRichieste: "Too many attempts in a short time. Wait a few minutes and try again, or call us.",
+    erroreEmail: "That email address doesn't look valid: check it, or leave the field empty (it's optional).",
 
     confermaTitolo: "Booking confirmed",
     confermaTesto: "We'll be expecting you. A confirmation email is on its way too, if you left an address.",

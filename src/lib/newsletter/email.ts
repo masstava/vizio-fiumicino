@@ -1,4 +1,4 @@
-import { clientResend, MITTENTE_PRENOTAZIONI, RISPONDI_A } from "@/src/lib/email/resend";
+import { clientResend, indirizzoSingolo, MITTENTE_PRENOTAZIONI, RISPONDI_A } from "@/src/lib/email/resend";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
 import { localizedPath, type Locale } from "@/src/lib/i18n/config";
 import { SITE_URL } from "@/src/lib/site-url";
@@ -32,6 +32,15 @@ export interface DatiEmailBenvenutoNewsletter {
 export async function inviaEmailBenvenutoNewsletter(
   dati: DatiEmailBenvenutoNewsletter,
 ): Promise<void> {
+  // L'azione ha già validato l'indirizzo: qui è la stessa regola
+  // applicata al punto d'invio, così nessun chiamante futuro può
+  // passare una stringa con più destinatari.
+  const destinatario = indirizzoSingolo(dati.email);
+  if (!destinatario) {
+    console.error("[inviaEmailBenvenutoNewsletter] email non valida: benvenuto non inviato");
+    return;
+  }
+
   const resend = clientResend();
   if (!resend) {
     console.error(
@@ -47,7 +56,7 @@ export async function inviaEmailBenvenutoNewsletter(
   try {
     const { error } = await resend.emails.send({
       from: MITTENTE_PRENOTAZIONI,
-      to: dati.email,
+      to: destinatario,
       replyTo: RISPONDI_A,
       subject: t.oggetto,
       html: htmlEmailBenvenuto(dati, t, linkDisiscrizione),

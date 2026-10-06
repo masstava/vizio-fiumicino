@@ -5,6 +5,7 @@ import type { ArgomentiRpc, ArgomentiRpcStretti } from "@/src/lib/supabase/rpc";
 import type { Locale } from "@/src/lib/i18n/config";
 import type { RigaCapienza } from "@/src/lib/prenotazioni/disponibilita";
 import type { RispostaExtra } from "@/src/lib/prenotazioni/evento-contesto";
+import { indirizzoSingolo } from "@/src/lib/email/indirizzo";
 import { inviaEmailPrenotazione } from "@/src/lib/prenotazioni/email";
 
 // =============================================================
@@ -97,6 +98,17 @@ export async function creaPrenotazione(
     return { ok: true, id: crypto.randomUUID() };
   }
 
+  // Email facoltativa, ma se c'è deve essere UN indirizzo valido: il
+  // campo è controllato solo dal browser (type="email"), e chi chiama
+  // questa azione direttamente lo salta. La stessa regola la applica
+  // crea_prenotazione nel database (migration 20260912000000), per chi
+  // salta anche questa azione.
+  const emailGrezza = input.email?.trim() || null;
+  const email = emailGrezza ? indirizzoSingolo(emailGrezza) : null;
+  if (emailGrezza && !email) {
+    return { ok: false, capienzaEsaurita: false, messaggio: "EMAIL_NON_VALIDA" };
+  }
+
   const supabase = await createClient();
 
   // Tipizzato con ArgomentiRpc: il generatore emette gli argomenti
@@ -106,7 +118,7 @@ export async function creaPrenotazione(
   const argomenti: ArgomentiRpc<"crea_prenotazione"> = {
     p_nome: input.nome,
     p_telefono: input.telefono,
-    p_email: input.email,
+    p_email: email ?? null,
     p_data: input.data,
     p_fascia: input.fascia,
     p_coperti: input.coperti,
@@ -131,6 +143,9 @@ export async function creaPrenotazione(
     if (error.message === "RATE_LIMITATO") {
       return { ok: false, capienzaEsaurita: false, messaggio: "RATE_LIMITED" };
     }
+    if (error.message === "EMAIL_NON_VALIDA") {
+      return { ok: false, capienzaEsaurita: false, messaggio: "EMAIL_NON_VALIDA" };
+    }
     return { ok: false, capienzaEsaurita: false, messaggio: error.message };
   }
 
@@ -154,7 +169,7 @@ export async function creaPrenotazione(
     locale: input.locale,
     nome: input.nome,
     telefono: input.telefono,
-    email: input.email,
+    email: email ?? null,
     data: input.data,
     fascia: input.fascia,
     coperti: input.coperti,

@@ -66,6 +66,16 @@ export async function inviaEmailPrenotazione(dati: DatiEmailPrenotazione): Promi
 async function inviaEmailConfermaCliente(dati: DatiEmailPrenotazione): Promise<void> {
   // L'email è facoltativa nel form: nessun indirizzo non è un errore.
   if (!dati.email) return;
+  // Un solo indirizzo valido, mai la stringa così com'è (vedi
+  // src/lib/email/indirizzo.ts): un valore con virgole farebbe partire
+  // la conferma verso più destinatari.
+  const destinatario = indirizzoSingolo(dati.email);
+  if (!destinatario) {
+    console.error("[inviaEmailConfermaCliente] email non valida: conferma non inviata", {
+      prenotazioneId: dati.id,
+    });
+    return;
+  }
 
   const resend = clientResend();
   if (!resend) {
@@ -83,7 +93,7 @@ async function inviaEmailConfermaCliente(dati: DatiEmailPrenotazione): Promise<v
   try {
     const { error } = await resend.emails.send({
       from: MITTENTE_PRENOTAZIONI,
-      to: dati.email,
+      to: destinatario,
       replyTo: RISPONDI_A,
       subject: t.oggetto(riferimento),
       html: htmlEmailCliente(dati, riferimento, linkGestione),
@@ -260,6 +270,15 @@ export async function inviaEmailCancellazioneCliente(
   dati: DatiEmailCancellazione,
 ): Promise<void> {
   if (!dati.email) return;
+  // L'email qui viene dal database: righe salvate prima della
+  // validazione (migration 20260912000000) potrebbero non rispettarla.
+  const destinatario = indirizzoSingolo(dati.email);
+  if (!destinatario) {
+    console.error("[inviaEmailCancellazioneCliente] email non valida: avviso non inviato", {
+      prenotazioneId: dati.id,
+    });
+    return;
+  }
 
   const resend = clientResend();
   if (!resend) {
@@ -278,7 +297,7 @@ export async function inviaEmailCancellazioneCliente(
   try {
     const { error } = await resend.emails.send({
       from: MITTENTE_PRENOTAZIONI,
-      to: dati.email,
+      to: destinatario,
       replyTo: RISPONDI_A,
       subject: t.oggetto(riferimento),
       html: htmlEmailCancellazione(dati, t, tPrenotazione, linkPrenota),

@@ -1,5 +1,6 @@
 "use server";
 
+import { indirizzoSingolo } from "@/src/lib/email/indirizzo";
 import { createClient } from "@/src/lib/supabase/server";
 import type { ArgomentiRpc, ArgomentiRpcStretti } from "@/src/lib/supabase/rpc";
 import type { Locale } from "@/src/lib/i18n/config";
@@ -26,7 +27,7 @@ export interface IscrivitiNewsletterInput {
 
 export type IscrivitiNewsletterEsito =
   | { ok: true; codice: string }
-  | { ok: false; motivo: "RATE_LIMITED" | "GENERICO" };
+  | { ok: false; motivo: "RATE_LIMITED" | "EMAIL_NON_VALIDA" | "GENERICO" };
 
 /**
  * Unica via di iscrizione alla newsletter: chiama la RPC
@@ -54,9 +55,12 @@ export async function iscrivitiNewsletter(
     return { ok: true, codice: codiceFittizio() };
   }
 
-  const email = input.email.trim().toLowerCase();
+  // Stessa regola del database (iscriviti_newsletter →
+  // public.email_valida, migration 20260912000000): qui per dare un
+  // messaggio chiaro, là per chi chiama la RPC direttamente.
+  const email = indirizzoSingolo(input.email)?.toLowerCase();
   if (!email) {
-    return { ok: false, motivo: "GENERICO" };
+    return { ok: false, motivo: "EMAIL_NON_VALIDA" };
   }
 
   const supabase = await createClient();
@@ -70,6 +74,9 @@ export async function iscrivitiNewsletter(
   if (error) {
     if (error.message === "RATE_LIMITATO") {
       return { ok: false, motivo: "RATE_LIMITED" };
+    }
+    if (error.message === "EMAIL_NON_VALIDA") {
+      return { ok: false, motivo: "EMAIL_NON_VALIDA" };
     }
     console.error("[iscrivitiNewsletter] rpc fallita:", error, { email });
     return { ok: false, motivo: "GENERICO" };
