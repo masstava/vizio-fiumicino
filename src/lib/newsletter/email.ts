@@ -1,4 +1,4 @@
-import { clientResend, MITTENTE_PRENOTAZIONI } from "@/src/lib/email/resend";
+import { clientResend, MITTENTE_PRENOTAZIONI, RISPONDI_A } from "@/src/lib/email/resend";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
 import { localizedPath, type Locale } from "@/src/lib/i18n/config";
 import { SITE_URL } from "@/src/lib/site-url";
@@ -48,6 +48,7 @@ export async function inviaEmailBenvenutoNewsletter(
     const { error } = await resend.emails.send({
       from: MITTENTE_PRENOTAZIONI,
       to: dati.email,
+      replyTo: RISPONDI_A,
       subject: t.oggetto,
       html: htmlEmailBenvenuto(dati, t, linkDisiscrizione),
     });

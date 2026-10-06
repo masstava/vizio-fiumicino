@@ -53,6 +53,35 @@ export const DESTINATARI_NOTIFICA_STAFF = (() => {
   return validi;
 })();
 
+// Reply-To delle email al CLIENTE (conferma, cancellazione, benvenuto
+// newsletter): chi preme "Rispondi" deve arrivare a una casella letta,
+// non al mittente prenotazioni@, che serve solo a inviare. Stessa
+// regola delle altre due: variabile facoltativa, ricaduta se manca o è
+// malformata.
+const RISPONDI_A_PREDEFINITO = "info@vizio-fiumicino.it";
+
+export const RISPONDI_A = (() => {
+  const valore = process.env.EMAIL_REPLY_TO?.trim();
+  if (!valore) return RISPONDI_A_PREDEFINITO;
+  if (mittenteValido(valore)) return valore;
+  console.error("[email] EMAIL_REPLY_TO non valida, uso il predefinito:", valore);
+  return RISPONDI_A_PREDEFINITO;
+})();
+
+/**
+ * Un SOLO indirizzo email valido, o undefined. Per il Reply-To della
+ * notifica staff, che è l'email lasciata dal cliente: il modulo la
+ * controlla solo nel browser (type="email"), e né la Server Action né
+ * crea_prenotazione ne verificano il formato — chi chiamasse l'azione
+ * direttamente potrebbe passare virgole (più destinatari) o a capo.
+ * INDIRIZZO esclude spazi e a capo (\s), virgole, punti e virgola e < >.
+ */
+export function indirizzoSingolo(valore: string | null | undefined): string | undefined {
+  const pulito = valore?.trim();
+  if (!pulito || pulito.length > 254 || !INDIRIZZO.test(pulito)) return undefined;
+  return pulito;
+}
+
 let client: Resend | null | undefined;
 
 /**

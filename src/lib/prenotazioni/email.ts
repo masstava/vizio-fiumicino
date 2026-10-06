@@ -1,7 +1,9 @@
 import {
   clientResend,
   DESTINATARI_NOTIFICA_STAFF,
+  indirizzoSingolo,
   MITTENTE_PRENOTAZIONI,
+  RISPONDI_A,
 } from "@/src/lib/email/resend";
 import { SITE_URL } from "@/src/lib/site-url";
 import { localizedPath, type Locale } from "@/src/lib/i18n/config";
@@ -82,6 +84,7 @@ async function inviaEmailConfermaCliente(dati: DatiEmailPrenotazione): Promise<v
     const { error } = await resend.emails.send({
       from: MITTENTE_PRENOTAZIONI,
       to: dati.email,
+      replyTo: RISPONDI_A,
       subject: t.oggetto(riferimento),
       html: htmlEmailCliente(dati, riferimento, linkGestione),
     });
@@ -201,6 +204,9 @@ async function inviaNotificaStaff(
     const { error } = await resend.emails.send({
       from: MITTENTE_PRENOTAZIONI,
       to: DESTINATARI_NOTIFICA_STAFF,
+      // "Rispondi" dallo staff arriva al cliente — solo se ha lasciato
+      // un indirizzo valido (uno solo); altrimenti nessun Reply-To.
+      replyTo: indirizzoSingolo(dati.email),
       subject: `${prefisso} — ${dati.nome}, ${dataLeggibile}, ${dati.fascia}, ${dati.coperti} coperti`,
       text: righe.join("\n"),
     });
@@ -273,6 +279,7 @@ export async function inviaEmailCancellazioneCliente(
     const { error } = await resend.emails.send({
       from: MITTENTE_PRENOTAZIONI,
       to: dati.email,
+      replyTo: RISPONDI_A,
       subject: t.oggetto(riferimento),
       html: htmlEmailCancellazione(dati, t, tPrenotazione, linkPrenota),
     });
