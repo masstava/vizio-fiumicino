@@ -27,6 +27,30 @@ html {
   }
 }
 
+/* Font di ripiego con metriche allineate (src/lib/fonts.ts): mostrati
+   finché Fraunces e Inter non sono caricati (font-display: swap), con
+   corpo e interlinea tarati sul font vero per evitare lo scatto del
+   layout al cambio. Valori identici a quelli che generava
+   next/font/google (calculateSizeAdjustValues di Next per "Fraunces"
+   e "Inter"); vanno aggiornati solo se cambiano i file dei font. */
+@font-face {
+  font-family: "Fraunces Fallback";
+  src: local("Times New Roman");
+  ascent-override: 84.71%;
+  descent-override: 22.09%;
+  line-gap-override: 0%;
+  size-adjust: 115.45%;
+}
+
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial");
+  ascent-override: 90.44%;
+  descent-override: 22.52%;
+  line-gap-override: 0%;
+  size-adjust: 107.12%;
+}
+
 @theme {
   /* Font — variabili CSS iniettate da next/font nel root layout */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
