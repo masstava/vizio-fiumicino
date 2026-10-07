@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useState } from "react";
 
 // Registro degli elementi che occupano lo schermo sopra al contenuto:
 // popup newsletter di fine scroll, banner cookie (CMP), e in futuro
@@ -59,13 +59,19 @@ export function useOverlayAttivo(): boolean {
  */
 export function useRegistraOverlay(attivo: boolean): void {
   const registro = useContext(OverlayContext);
+  const registra = registro?.registra;
+  const rimuovi = registro?.rimuovi;
 
-  // useState invece di useEffect per non introdurre un frame in cui
-  // overlay e bottone sono visibili insieme.
-  const [registrato, setRegistrato] = useState(false);
-  if (registro && attivo !== registrato) {
-    setRegistrato(attivo);
-    if (attivo) registro.registra();
-    else registro.rimuovi();
-  }
+  // Layout effect, non useEffect: gira prima del paint, quindi non c'è
+  // un frame in cui overlay e bottone sono visibili insieme. Prima la
+  // registrazione avveniva DURANTE il render (setState nel corpo del
+  // componente): se React scartava e ripeteva quel render, il
+  // conteggio saliva due volte e scendeva una sola, e il bottone
+  // WhatsApp non tornava più fino al ricaricamento. Così ogni
+  // registrazione ha la sua rimozione, qualunque cosa faccia React.
+  useLayoutEffect(() => {
+    if (!attivo || !registra || !rimuovi) return;
+    registra();
+    return rimuovi;
+  }, [attivo, registra, rimuovi]);
 }

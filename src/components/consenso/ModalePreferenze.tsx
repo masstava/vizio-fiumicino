@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +14,7 @@ import { CATEGORIE, type Categoria, type Scelte } from "@/src/lib/consenso/tipi"
 import type { Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
 import { useConsenso } from "./ConsensoContext";
+import { focusSulContenuto, ID_PERSONALIZZA } from "./focus";
 
 // Modale delle preferenze.
 //
@@ -25,6 +26,14 @@ import { useConsenso } from "./ConsensoContext";
 //
 // Per questo le spunte vivono in uno stato LOCALE: finché non si
 // salva, muovere un interruttore non tocca il consenso effettivo.
+//
+// Ritorno del focus alla chiusura. Il modale si apre senza
+// DialogTrigger (dal banner o da "Gestisci cookie"), e in quel caso
+// Radix non sa dove riportare il focus: ricadeva su <body>. Qui si
+// torna su chi l'ha aperto, se esiste ancora (il pulsante "Gestisci
+// cookie"); altrimenti su "Personalizza", se il banner è tornato
+// perché si è chiuso senza salvare; altrimenti, scelta fatta dal
+// banner, sul contenuto della pagina.
 export function ModalePreferenze({ locale }: { locale: Locale }) {
   const t = getDizionario(locale);
   const { preferenzeAperte, chiudiPreferenze, scelte, salva } = useConsenso();
@@ -39,6 +48,8 @@ export function ModalePreferenze({ locale }: { locale: Locale }) {
 
   useRegistraOverlay(preferenzeAperte);
 
+  const apertoDa = useRef<HTMLElement | null>(null);
+
   return (
     <Dialog
       open={preferenzeAperte}
@@ -50,7 +61,28 @@ export function ModalePreferenze({ locale }: { locale: Locale }) {
           pr generoso nell'intestazione perché il pulsante di chiusura
           è in posizione assoluta nell'angolo e il titolo, senza, gli
           passava sotto. */}
-      <DialogContent closeLabel={t.consenso.chiudi} className="p-5 md:p-6">
+      <DialogContent
+        closeLabel={t.consenso.chiudi}
+        className="p-5 md:p-6"
+        // Radix chiama questo prima di spostare il focus nel modale:
+        // activeElement è ancora il pulsante che lo ha aperto.
+        onOpenAutoFocus={() => {
+          apertoDa.current =
+            document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        }}
+        onCloseAutoFocus={(evento) => {
+          evento.preventDefault();
+          const origine = apertoDa.current;
+          apertoDa.current = null;
+          if (origine?.isConnected && origine !== document.body) {
+            origine.focus();
+            return;
+          }
+          const personalizza = document.getElementById(ID_PERSONALIZZA);
+          if (personalizza) personalizza.focus();
+          else focusSulContenuto();
+        }}
+      >
         <DialogHeader className="pr-12 md:pr-10">
           <DialogTitle>{t.consenso.modaleTitolo}</DialogTitle>
           <DialogDescription>{t.consenso.modaleTesto}</DialogDescription>

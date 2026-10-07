@@ -99,9 +99,14 @@ export default async function PublicRootLayout({
               pulsante "Gestisci cookie" nel footer deve poter riaprire
               il modale, e il modale vive qui fuori. */}
           <ConsensoProvider>
+            {/* Il banner PRIMA del contenuto: è fisso in basso, quindi
+                l'ordine non cambia nulla a schermo, ma lo rende il
+                primo stop del Tab — chi usa la tastiera può scegliere
+                subito invece di attraversare tutta la pagina con il
+                focus nascosto sotto il banner. */}
+            <BannerConsenso locale={locale} />
             <MotionProvider>{children}</MotionProvider>
             <WhatsAppFab locale={locale} />
-            <BannerConsenso locale={locale} />
             <ModalePreferenze locale={locale} />
           </ConsensoProvider>
         </OverlayProvider>

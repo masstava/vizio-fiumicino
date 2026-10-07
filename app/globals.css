@@ -13,6 +13,42 @@ html {
   }
 }
 
+/* Spazio per il banner cookie, finché è aperto. La variabile la
+   scrive BannerConsenso con l'altezza reale del banner (cambia con la
+   larghezza dello schermo e con il testo che va a capo) e la toglie
+   quando l'utente sceglie.
+   - padding-bottom: in fondo alla pagina il footer (Privacy, Cookie
+     Policy, Gestisci cookie) si può far scorrere sopra il banner
+     invece di restarci sotto per sempre;
+   - scroll-padding-bottom: il browser, quando porta in vista
+     l'elemento che riceve il focus da tastiera, lo ferma sopra il
+     banner invece che sotto (WCAG 2.4.11).
+   Fuori dal banner la variabile non esiste: 0, nessun effetto. */
+html {
+  scroll-padding-bottom: var(--altezza-banner-consenso, 0px);
+}
+body {
+  padding-bottom: var(--altezza-banner-consenso, 0px);
+}
+/* Alla chiusura lo spazio si richiude in 200 ms invece che di colpo,
+   mentre il banner scivola giù con la stessa durata e la stessa curva
+   (--ease-out di Tailwind, la stessa di "ease-out" sul banner): chi
+   era in fondo alla pagina vede il footer scendere attaccato al
+   banner, senza scatti né strisce vuote. Vanno cambiate insieme
+   (BannerConsenso, DURATA_USCITA). */
+@media (prefers-reduced-motion: no-preference) {
+  body {
+    transition: padding-bottom 200ms var(--ease-out);
+  }
+}
+
+/* Dopo la scelta nel banner il focus va su <main> (vedi
+   src/components/consenso/focus.ts): è un punto di partenza per il
+   Tab, non un elemento da evidenziare. */
+main[tabindex="-1"]:focus {
+  outline: none;
+}
+
 /* Comparsa delle sezioni: chi ha ridotto il movimento vede il
    contenuto già al suo posto.
    Gestito in CSS e non in JavaScript perché agisce fin dal primo
