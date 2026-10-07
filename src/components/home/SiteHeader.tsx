@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Button } from "@/src/components/ui/Button";
+import { classiPulsante } from "@/src/components/ui/Button";
 import { Logo } from "@/src/components/ui/Logo";
 import { localizedPath, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
@@ -67,10 +67,8 @@ export function SiteHeader({ locale }: { locale: Locale }) {
 
         <div className="flex items-center gap-3">
           <LanguageSwitcher locale={locale} />
-          <Link href={localizedPath("/prenota", locale)}>
-            <Button type="button" variant="primary" className="px-4 md:px-6">
-              {t.cta.prenota}
-            </Button>
+          <Link href={localizedPath("/prenota", locale)} className={classiPulsante("primary", "px-4 md:px-6")}>
+            {t.cta.prenota}
           </Link>
 
           <button

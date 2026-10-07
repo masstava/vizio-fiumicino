@@ -32,7 +32,10 @@ export function DishRow({ dish, tone = "light", className }: DishRowProps) {
         {dish.foto_url ? (
           <Image
             src={dish.foto_url}
-            alt={dish.nome}
+            // Decorativa: il nome del piatto è scritto accanto. Con
+            // alt={nome} un lettore di schermo lo leggeva due volte, e
+            // nel menu al tavolo finiva doppio nel nome del pulsante.
+            alt=""
             width={80}
             height={80}
             className="w-full h-full object-cover"

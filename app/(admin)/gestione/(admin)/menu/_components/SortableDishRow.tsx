@@ -49,7 +49,9 @@ export function SortableDishRow({ dish, onDelete }: SortableDishRowProps) {
           // scorrere la pagina come sul resto della riga; il drag parte
           // solo dopo la pressione prolungata del TouchSensor.
           "cursor-grab active:cursor-grabbing touch-manipulation select-none",
-          "focus-visible:outline-none focus-visible:text-admin-brick",
+          // Anello come gli altri controlli della dashboard; inset perché
+          // la maniglia è a filo del bordo della riga.
+          "focus-visible:outline-none focus-visible:text-admin-brick focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-admin-brick/60",
         )}
       >
         <DragHandleIcon />

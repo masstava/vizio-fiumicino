@@ -113,14 +113,17 @@ export function Newsletter({ locale, offerta }: { locale: Locale; offerta: strin
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t.newsletter.emailPlaceholder}
                 aria-label={t.newsletter.emailLabel}
-                className="flex-1 rounded-[2px] border border-cream-text/25 bg-dark/60 px-3 py-2.5 font-sans text-sm text-cream-text placeholder:text-muted-dark/70 focus:outline-none focus:border-gold/60"
+                className="flex-1 rounded-[2px] border border-cream-text/25 bg-dark/60 px-3 py-2.5 font-sans text-sm text-cream-text placeholder:text-muted-dark/70 focus:outline-none focus:border-gold/60 focus-visible:ring-2 focus-visible:ring-gold/60"
               />
               <Button type="submit" variant="primary" disabled={inviando}>
                 {inviando ? t.newsletter.invio : t.newsletter.bottoneIscrizione}
               </Button>
             </form>
             {errore && (
-              <p className="mt-2 rounded-[2px] border border-bordeaux/40 bg-bordeaux/15 px-3 py-2 font-sans text-sm text-cream-text">
+              <p
+                role="alert"
+                className="mt-2 rounded-[2px] border border-bordeaux/40 bg-bordeaux/15 px-3 py-2 font-sans text-sm text-cream-text"
+              >
                 {errore}
               </p>
             )}

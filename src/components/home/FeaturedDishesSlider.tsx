@@ -45,7 +45,14 @@ export function FeaturedDishesSlider({
           </m.div>
         </AnimatePresence>
       </div>
-      <div className="mt-8 flex justify-center gap-2">
+      {/* Il pallino resta di 8px, ma il pulsante che lo contiene è
+          44x44 (target di tap del DoD; prima il bersaglio era il
+          pallino stesso, 8x8). Unica differenza visibile: i pallini
+          sono a 44px di passo invece di 16, perché due bersagli da 44
+          non possono stare più vicini senza sovrapporsi. I margini
+          compensano l'altezza in più: sopra e sotto lo spazio resta
+          quello di prima (32px sopra il pallino, nulla sotto). */}
+      <div className="mt-[14px] -mb-[18px] flex justify-center">
         {dishes.map((dish, i) => (
           <button
             key={dish.id}
@@ -53,11 +60,16 @@ export function FeaturedDishesSlider({
             aria-label={`${locale === "en" ? "Go to dish" : "Vai al piatto"} ${i + 1}/${dishes.length}`}
             aria-current={i === index}
             onClick={() => setIndex(i)}
-            className={cn(
-              "h-2 w-2 rounded-full transition-colors duration-150",
-              i === index ? "bg-gold" : "bg-cream-text/30",
-            )}
-          />
+            className="group inline-flex h-11 w-11 items-center justify-center rounded-full focus-visible:outline-none"
+          >
+            <span
+              aria-hidden="true"
+              className={cn(
+                "h-2 w-2 rounded-full transition-colors duration-150 group-focus-visible:ring-2 group-focus-visible:ring-gold group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-dark",
+                i === index ? "bg-gold" : "bg-cream-text/30",
+              )}
+            />
+          </button>
         ))}
       </div>
     </div>

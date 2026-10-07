@@ -113,7 +113,11 @@ const it = {
   },
   piatto: {
     chiudi: "Chiudi",
-    apriDettaglio: (nome: string) => `Vedi i dettagli di ${nome}`,
+    // Coda letta solo dai lettori di schermo nei pulsanti dei piatti:
+    // il nome accessibile resta il testo visibile (nome, prezzo…) più
+    // questo suggerimento — WCAG 2.5.3, chi usa i comandi vocali dice
+    // quello che vede.
+    vediDettagli: "vedi i dettagli",
     allergeni: "Allergeni",
     nessunaDescrizione: "Descrizione in arrivo.",
   },
@@ -472,7 +476,7 @@ const en: Dizionario = {
   },
   piatto: {
     chiudi: "Close",
-    apriDettaglio: (nome: string) => `See details for ${nome}`,
+    vediDettagli: "see details",
     allergeni: "Allergens",
     nessunaDescrizione: "Description coming soon.",
   },

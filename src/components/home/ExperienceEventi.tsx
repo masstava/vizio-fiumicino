@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button } from "@/src/components/ui/Button";
+import { classiPulsante } from "@/src/components/ui/Button";
 import { Section } from "@/src/components/ui/Section";
 import { localizedPath, type Locale } from "@/src/lib/i18n/config";
 import { getDizionario } from "@/src/lib/i18n/dizionari";
@@ -54,10 +54,8 @@ export function ExperienceEventi({
                 {evento.descrizione}
               </p>
             )}
-            <Link href={localizedPath("/prenota", locale)}>
-              <Button type="button" variant="primary">
-                {t.cta.prenotaPosto}
-              </Button>
+            <Link href={localizedPath("/prenota", locale)} className={classiPulsante("primary")}>
+              {t.cta.prenotaPosto}
             </Link>
           </>
         ) : (
@@ -68,10 +66,8 @@ export function ExperienceEventi({
             <p className="mb-6 font-sans text-sm leading-relaxed text-muted">
               {t.experience.testoGenerico}
             </p>
-            <Link href={localizedPath("/prenota", locale)}>
-              <Button type="button" variant="primary">
-                {t.cta.contattaci}
-              </Button>
+            <Link href={localizedPath("/prenota", locale)} className={classiPulsante("primary")}>
+              {t.cta.contattaci}
             </Link>
           </>
         )}

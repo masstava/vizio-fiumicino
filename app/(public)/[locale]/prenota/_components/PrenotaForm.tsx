@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/src/components/ui/Button";
 import { DarkSectionAccent } from "@/src/components/ui/DarkSectionAccent";
 import type { GiornoOrario } from "@/src/lib/dominio";
@@ -83,6 +83,15 @@ export function PrenotaForm({
   const [confermata, setConfermata] = useState<
     { id: string; riepilogo: Riepilogo } | null
   >(null);
+
+  // Il modulo viene sostituito dalla conferma: il pulsante appena
+  // premuto sparisce e il focus ricadrebbe su <body>, senza che un
+  // lettore di schermo annunci nulla. Il focus va sul titolo della
+  // conferma, che viene letto e da cui riparte il Tab.
+  const titoloConferma = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    if (confermata) titoloConferma.current?.focus();
+  }, [confermata]);
 
   // Invito post-prenotazione a iscriversi alla newsletter — §5:
   // email/nome precompilati da quanto appena inserito nel form sopra,
@@ -261,7 +270,11 @@ export function PrenotaForm({
   if (confermata) {
     return (
       <div className="max-w-xl">
-        <h2 className="font-serif text-2xl font-medium text-ink md:text-3xl">
+        <h2
+          ref={titoloConferma}
+          tabIndex={-1}
+          className="font-serif text-2xl font-medium text-ink focus:outline-none md:text-3xl"
+        >
           {t.paginaPrenota.confermaTitolo}
         </h2>
         <p className="mt-3 font-sans text-base leading-relaxed text-muted">
@@ -352,7 +365,7 @@ export function PrenotaForm({
                     type="text"
                     value={nlNome}
                     onChange={(e) => setNlNome(e.target.value)}
-                    className="w-full min-h-11 md:min-h-0 bg-dark/60 border border-cream-text/25 rounded-[2px] px-3 py-2 font-sans text-sm text-cream-text transition-colors focus:outline-none focus:border-gold/60"
+                    className="w-full min-h-11 md:min-h-0 bg-dark/60 border border-cream-text/25 rounded-[2px] px-3 py-2 font-sans text-sm text-cream-text transition-colors focus:outline-none focus:border-gold/60 focus-visible:ring-2 focus-visible:ring-gold/60"
                   />
                 </div>
                 <div>
@@ -364,13 +377,16 @@ export function PrenotaForm({
                     type="email"
                     value={nlEmail}
                     onChange={(e) => setNlEmail(e.target.value)}
-                    className="w-full min-h-11 md:min-h-0 bg-dark/60 border border-cream-text/25 rounded-[2px] px-3 py-2 font-sans text-sm text-cream-text transition-colors focus:outline-none focus:border-gold/60"
+                    className="w-full min-h-11 md:min-h-0 bg-dark/60 border border-cream-text/25 rounded-[2px] px-3 py-2 font-sans text-sm text-cream-text transition-colors focus:outline-none focus:border-gold/60 focus-visible:ring-2 focus-visible:ring-gold/60"
                   />
                 </div>
               </div>
 
               {nlErrore && (
-                <p className="mt-2 rounded-[2px] border border-bordeaux/40 bg-bordeaux/15 px-3 py-2 font-sans text-sm text-cream-text">
+                <p
+                  role="alert"
+                  className="mt-2 rounded-[2px] border border-bordeaux/40 bg-bordeaux/15 px-3 py-2 font-sans text-sm text-cream-text"
+                >
                   {nlErrore}
                 </p>
               )}
@@ -434,6 +450,7 @@ export function PrenotaForm({
           </label>
           <input
             id="pr-nome"
+            autoComplete="name"
             type="text"
             required
             value={nome}
@@ -447,6 +464,7 @@ export function PrenotaForm({
           </label>
           <input
             id="pr-telefono"
+            autoComplete="tel"
             type="tel"
             required
             value={telefono}
@@ -462,6 +480,7 @@ export function PrenotaForm({
         </label>
         <input
           id="pr-email"
+          autoComplete="email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -572,7 +591,14 @@ export function PrenotaForm({
         </div>
       ))}
 
-      {errore && <p className="font-sans text-sm text-bordeaux">{errore}</p>}
+      {/* role="alert": l'errore arriva dal server dopo l'invio, quando
+          il focus non è più su un campo — senza, il lettore di schermo
+          non lo annuncerebbe. */}
+      {errore && (
+        <p role="alert" className="font-sans text-sm text-bordeaux">
+          {errore}
+        </p>
+      )}
 
       <Button type="submit" variant="primary" disabled={inviando}>
         {inviando ? t.paginaPrenota.inviando : t.paginaPrenota.invia}

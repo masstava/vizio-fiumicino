@@ -32,7 +32,6 @@ export function CompactDishCard({
     <DishDetailDialog dish={dish} locale={locale}>
       <button
         type="button"
-        aria-label={t.piatto.apriDettaglio(dish.nome)}
         // Sollevamento all'hover in CSS e non con Motion: è uno stato
         // puramente visivo, il browser lo compone sulla GPU senza
         // passare dal thread principale. Farlo in JavaScript
@@ -51,7 +50,9 @@ export function CompactDishCard({
           {dish.foto_url ? (
             <Image
               src={dish.foto_url}
-              alt={dish.nome}
+              // Decorativa: il nome è scritto accanto, nello stesso
+              // pulsante, e qui lo ripeterebbe nel nome accessibile.
+              alt=""
               width={64}
               height={64}
               className="h-full w-full object-cover"
@@ -69,6 +70,7 @@ export function CompactDishCard({
           >
             {dish.nome}
           </p>
+          <span className="sr-only">, {t.piatto.vediDettagli}</span>
           {dish.badge && (
             <Badge variant={tone === "dark" ? "dark" : "light"} className="mt-1">
               {dish.badge}

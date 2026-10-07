@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button } from "@/src/components/ui/Button";
+import { classiPulsante } from "@/src/components/ui/Button";
 import { FlameAccent } from "@/src/components/ui/FlameAccent";
 import { ImagePlaceholder } from "@/src/components/ui/ImagePlaceholder";
 import { RECENSIONI } from "@/src/lib/contatti";
@@ -84,10 +84,8 @@ export function Hero({
         <h1 className="mb-8 font-serif text-4xl font-medium leading-[1.1] md:text-6xl">
           {headline}
         </h1>
-        <Link href={localizedPath("/prenota", locale)}>
-          <Button type="button" variant="primary">
-            {t.cta.prenotaTavolo}
-          </Button>
+        <Link href={localizedPath("/prenota", locale)} className={classiPulsante("primary")}>
+          {t.cta.prenotaTavolo}
         </Link>
 
         {/* Valori statici letti dalla fonte unica: diventeranno un

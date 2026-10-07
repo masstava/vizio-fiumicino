@@ -65,6 +65,9 @@ export default async function MenuOnlinePage({
 
   return (
     <main className="min-h-dvh bg-cream">
+      {/* Titolo per lettori di schermo e struttura della pagina: a
+          schermo il menu al tavolo parte direttamente dalle sezioni. */}
+      <h1 className="sr-only">{getDizionario(locale).menuOperativo.titoloPagina}</h1>
       <MenuOperativo
         macro={ordinate}
         legenda={legenda}

@@ -216,10 +216,13 @@ function ListaPiatti({
           >
             <button
               type="button"
-              aria-label={t.piatto.apriDettaglio(p.nome)}
               className="block w-full cursor-pointer text-left transition-colors hover:bg-ink/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bordeaux"
             >
               <DishRow dish={p} tone="light" />
+              {/* Nome accessibile = testo visibile + suggerimento (WCAG
+                  2.5.3): prima era solo "Vedi i dettagli di …", che non
+                  conteneva prezzo e descrizione mostrati a schermo. */}
+              <span className="sr-only">, {t.piatto.vediDettagli}</span>
             </button>
           </DishDetailDialog>
         </li>

@@ -14,6 +14,8 @@ interface AccordionSectionProps {
 // l'altezza via JS: la riga della grid passa da 0fr a 1fr, il
 // contenuto interno (overflow-hidden) segue l'altezza della riga.
 // Transizione breve (180ms) per restare percettibile ma non invadente.
+// Da chiusa il contenuto è inert: fuori dal Tab e dai lettori di
+// schermo, come se non ci fosse.
 export function AccordionSection({
   open,
   onToggle,
@@ -51,7 +53,12 @@ export function AccordionSection({
           open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
         }`}
       >
-        <div className="overflow-hidden">{children}</div>
+        {/* inert da chiusa: alta 0 ma ancora nel DOM, e senza inert
+            il Tab attraversava a vuoto maniglie e pulsanti invisibili
+            di tutti i piatti delle categorie chiuse. */}
+        <div className="overflow-hidden" inert={!open}>
+          {children}
+        </div>
       </div>
     </div>
   );
