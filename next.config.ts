@@ -51,6 +51,10 @@ const REDIRECT_VECCHIO_SITO: [origine: string, destinazione: string][] = [
   // riga continuerebbe a mandare in home chi cerca la pagina nuova.
   ["/chi-siamo", "/"],
   ["/ex-prenota-da-vizio", "/prenota"],
+  // Destinazione del QR "PRENOTA" dei cartelli orari stampati prima
+  // della correzione (https://vizio-fiumicino.it/prenota-da-vizio/):
+  // restano appesi, e devono continuare a portare alla prenotazione.
+  ["/prenota-da-vizio", "/prenota"],
   ["/privacy-policy", "/privacy"],
 ];
 

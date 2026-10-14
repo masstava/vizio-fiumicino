@@ -1,3 +1,4 @@
+import QRCode from "qrcode";
 import { NextRequest, NextResponse } from "next/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { createClient } from "@/src/lib/supabase/server";
@@ -5,6 +6,12 @@ import { OrariDocument, type OrarioGiorno } from "@/src/lib/pdf/OrariDocument";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+// Destinazione del QR "PRENOTA" del cartello orari. Indirizzo fisso e
+// non derivato da SITE_URL: il cartello si stampa e resta appeso per
+// mesi, e deve portare al dominio definitivo qualunque sia l'ambiente
+// in cui il PDF viene generato (anche da una preview).
+const PRENOTA_QR_URL = "https://vizio-fiumicino.it/prenota";
 
 const GIORNI_LABELS = [
   "Lunedì",
@@ -86,8 +93,17 @@ export async function GET(request: NextRequest) {
   // direttamente l'elemento <Document>, il tipo che renderToBuffer si
   // aspetta (passare il componente wrapper via JSX/createElement non
   // tipizza correttamente con le definizioni di @react-pdf/renderer).
+  // Moduli scuri come quelli dell'immagine originale, margine bianco di
+  // due moduli dentro la cornice: quello vecchio non ne aveva, ed era
+  // più difficile da leggere per le fotocamere.
+  const qrPrenotaDataUrl = await QRCode.toDataURL(PRENOTA_QR_URL, {
+    margin: 2,
+    width: 600,
+    color: { dark: "#1A1918", light: "#FFFFFF" },
+  });
+
   const buffer = await renderToBuffer(
-    OrariDocument({ giorni, titolo, sottotitolo }),
+    OrariDocument({ giorni, titolo, sottotitolo, qrPrenotaDataUrl }),
   );
 
   return new NextResponse(new Uint8Array(buffer), {

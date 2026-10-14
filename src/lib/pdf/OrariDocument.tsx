@@ -53,6 +53,18 @@ registerFonts();
 const HEADER_IMAGE_PATH = path.join(process.cwd(), "public", "pdf", "orari-header.png");
 const FOOTER_IMAGE_PATH = path.join(process.cwd(), "public", "pdf", "orari-footer.png");
 
+// QR "PRENOTA" sopra la fascia inferiore. L'immagine fornita contiene
+// già un QR, ma verso il vecchio sito (vizio-fiumicino.it/prenota-da-
+// vizio/, pagina inesistente) e senza margine bianco. Qui se ne
+// disegna uno nuovo, generato dalla route, esattamente sopra: stessa
+// cornice scura, stesso ingombro, e il vecchio resta coperto del tutto.
+// Misure in pixel dell'immagine orari-footer.png (2482x537), espresse
+// in percentuale della fascia: seguono la sua larghezza qualunque sia.
+const FOOTER_PX = { larghezza: 2482, altezza: 537 };
+const QR_CORNICE_PX = { x: 2007, y: 21, lato: 309, spessore: 11 };
+const percX = (px: number) => `${(px / FOOTER_PX.larghezza) * 100}%`;
+const percY = (px: number) => `${(px / FOOTER_PX.altezza) * 100}%`;
+
 function fileExists(filePath: string): boolean {
   try {
     return fs.existsSync(filePath);
@@ -79,6 +91,24 @@ const styles = StyleSheet.create({
   },
   footerImage: {
     width: "100%",
+  },
+  footerWrapper: {
+    position: "relative",
+  },
+  qrCornice: {
+    position: "absolute",
+    left: percX(QR_CORNICE_PX.x),
+    top: percY(QR_CORNICE_PX.y),
+    width: percX(QR_CORNICE_PX.lato),
+    height: percY(QR_CORNICE_PX.lato),
+    // Il padding in percentuale si misura sulla larghezza della fascia.
+    padding: percX(QR_CORNICE_PX.spessore),
+    // Colore della cornice dell'immagine originale.
+    backgroundColor: "#241F20",
+  },
+  qrImmagine: {
+    width: "100%",
+    height: "100%",
   },
   darkBandFallback: {
     backgroundColor: COLORS.dark,
@@ -171,6 +201,8 @@ interface OrariDocumentProps {
   giorni: OrarioGiorno[];
   titolo?: string;
   sottotitolo?: string;
+  /** QR verso /prenota come data URL PNG; sostituisce quello stampato nella fascia inferiore. */
+  qrPrenotaDataUrl?: string;
 }
 
 function formatFascia(fascia: OrarioFascia): string {
@@ -190,6 +222,7 @@ export function OrariDocument({
   giorni,
   titolo = "ORARI APERTURA",
   sottotitolo,
+  qrPrenotaDataUrl,
 }: OrariDocumentProps) {
   const hasHeaderImage = fileExists(HEADER_IMAGE_PATH);
   const hasFooterImage = fileExists(FOOTER_IMAGE_PATH);
@@ -224,8 +257,16 @@ export function OrariDocument({
         </View>
 
         {hasFooterImage ? (
-          // eslint-disable-next-line jsx-a11y/alt-text -- Image di @react-pdf/renderer (PDF), non next/image: non ha prop "alt"
-          <Image src={FOOTER_IMAGE_PATH} style={styles.footerImage} />
+          <View style={styles.footerWrapper}>
+            {/* eslint-disable-next-line jsx-a11y/alt-text -- Image di @react-pdf/renderer (PDF), non next/image: non ha prop "alt" */}
+            <Image src={FOOTER_IMAGE_PATH} style={styles.footerImage} />
+            {qrPrenotaDataUrl ? (
+              <View style={styles.qrCornice}>
+                {/* eslint-disable-next-line jsx-a11y/alt-text -- Image di @react-pdf/renderer (PDF), non next/image: non ha prop "alt" */}
+                <Image src={qrPrenotaDataUrl} style={styles.qrImmagine} />
+              </View>
+            ) : null}
+          </View>
         ) : (
           <View style={styles.footerBandFallback}>
             <Text style={styles.addressFallback}>
