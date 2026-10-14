@@ -7,6 +7,13 @@ import type { MacroGroup, PiattoListItem } from "./_components/types";
 
 export const dynamic = "force-dynamic";
 
+const PDF_STAMPA = [
+  { href: "/api/pdf/menu?menu=menu&lang=it", etichetta: "Scarica PDF menu (IT)" },
+  { href: "/api/pdf/menu?menu=menu&lang=en", etichetta: "Download menu PDF (EN)" },
+  { href: "/api/pdf/menu?menu=beverage&lang=it", etichetta: "Scarica PDF beverage (IT)" },
+  { href: "/api/pdf/menu?menu=beverage&lang=en", etichetta: "Download beverage PDF (EN)" },
+];
+
 export default async function MenuPage() {
   const supabase = await createClient();
 
@@ -111,23 +118,20 @@ export default async function MenuPage() {
       <NuovoPiattoAction />
       <SchedeMenu />
 
-      <div className="flex items-center gap-4 mb-8">
-        <a
-          href="/api/pdf/menu?lang=it"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex min-h-11 items-center font-sans text-sm text-admin-brick hover:opacity-70 transition-opacity md:pointer-fine:min-h-0"
-        >
-          Scarica PDF menu (IT)
-        </a>
-        <a
-          href="/api/pdf/menu?lang=en"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex min-h-11 items-center font-sans text-sm text-admin-brick hover:opacity-70 transition-opacity md:pointer-fine:min-h-0"
-        >
-          Download menu PDF (EN)
-        </a>
+      {/* Due PDF da stampare: in quale finisce ogni macro-categoria si
+          sceglie nella scheda Categorie. */}
+      <div className="mb-8 flex flex-wrap items-center gap-x-4">
+        {PDF_STAMPA.map(({ href, etichetta }) => (
+          <a
+            key={href}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center font-sans text-sm text-admin-brick hover:opacity-70 transition-opacity md:pointer-fine:min-h-0"
+          >
+            {etichetta}
+          </a>
+        ))}
       </div>
 
       {/* La selezione si gestisce in Gestione sito → Home dal

@@ -179,6 +179,7 @@ export type Database = {
       categorie_macro: {
         Row: {
           id: string
+          menu_stampato: string | null
           nome: string
           nome_en: string | null
           ordine: number
@@ -186,6 +187,7 @@ export type Database = {
         }
         Insert: {
           id?: string
+          menu_stampato?: string | null
           nome: string
           nome_en?: string | null
           ordine?: number
@@ -193,6 +195,7 @@ export type Database = {
         }
         Update: {
           id?: string
+          menu_stampato?: string | null
           nome?: string
           nome_en?: string | null
           ordine?: number

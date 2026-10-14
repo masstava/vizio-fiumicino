@@ -2,6 +2,7 @@ import QRCode from "qrcode";
 import { NextRequest, NextResponse } from "next/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { createClient } from "@/src/lib/supabase/server";
+import { TITOLO_MENU_STAMPATO, type MenuStampato } from "@/src/lib/menu-stampato";
 import {
   MenuDocument,
   type MenuAllergene,
@@ -18,12 +19,19 @@ const NEWSLETTER_SIGNUP_URL =
 export async function GET(request: NextRequest) {
   const langParam = request.nextUrl.searchParams.get("lang");
   const lang: "it" | "en" = langParam === "en" ? "en" : "it";
+  // Due PDF da stampare, "Menu" e "Beverage": ognuno contiene le
+  // macro-categorie che lo staff gli ha assegnato nell'editor
+  // categorie (categorie_macro.menu_stampato). Senza parametro, o con
+  // un valore sconosciuto, è il menu.
+  const tipo: MenuStampato =
+    request.nextUrl.searchParams.get("menu") === "beverage" ? "beverage" : "menu";
 
   const supabase = await createClient();
 
   const { data: macroRows, error: macroError } = await supabase
     .from("categorie_macro")
     .select("id, ordine")
+    .eq("menu_stampato", tipo)
     .order("ordine");
 
   if (macroError) {
@@ -142,13 +150,13 @@ export async function GET(request: NextRequest) {
   });
 
   const buffer = await renderToBuffer(
-    MenuDocument({ categorie, allergeni, lang, qrCodeDataUrl }),
+    MenuDocument({ categorie, allergeni, lang, qrCodeDataUrl, titolo: TITOLO_MENU_STAMPATO[tipo] }),
   );
 
   return new NextResponse(new Uint8Array(buffer), {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="menu-vizio-${lang}.pdf"`,
+      "Content-Disposition": `attachment; filename="${tipo}-vizio-${lang}.pdf"`,
     },
   });
 }
