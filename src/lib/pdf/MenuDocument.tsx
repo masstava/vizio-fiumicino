@@ -190,6 +190,10 @@ const styles = StyleSheet.create({
     letterSpacing: 4,
     color: COLORS.bordeaux,
   },
+  coverTitleLungo: {
+    fontSize: 44,
+    letterSpacing: 3,
+  },
   coverBottom: {
     position: "absolute",
     bottom: 44,
@@ -357,6 +361,8 @@ interface MenuDocumentProps {
   allergeni: MenuAllergene[];
   lang: "it" | "en";
   qrCodeDataUrl: string;
+  /** Titolo in copertina: "MENU" o "BEVERAGE". */
+  titolo: string;
 }
 
 function formatPrezzo(prezzo: number, variabile: boolean): string {
@@ -413,6 +419,7 @@ export function MenuDocument({
   allergeni,
   lang,
   qrCodeDataUrl,
+  titolo,
 }: MenuDocumentProps) {
   const allergeniLeft = allergeni.slice(0, 7);
   const allergeniRight = allergeni.slice(7);
@@ -434,7 +441,16 @@ export function MenuDocument({
         </View>
 
         <View style={styles.coverCenter}>
-          <Text style={styles.coverTitle}>MENU</Text>
+          {/* Una riga sola: "BEVERAGE" a corpo 60 non ci sta nella colonna
+              di testo e react-pdf lo spezzava in "BEVER-AGE". I titoli
+              più lunghi di "MENU" scendono di corpo, e nessuna
+              sillabazione. */}
+          <Text
+            style={[styles.coverTitle, titolo.length > 4 ? styles.coverTitleLungo : {}]}
+            hyphenationCallback={(parola) => [parola]}
+          >
+            {titolo}
+          </Text>
         </View>
 
         <View style={styles.coverBottom}>

@@ -1,4 +1,5 @@
 import { createClient } from "@/src/lib/supabase/server";
+import { menuStampato } from "@/src/lib/menu-stampato";
 import { ruoloMacro } from "@/src/lib/ruolo-macro";
 import { SchedeMenu } from "../_components/SchedeMenu";
 import { EditorCategorie } from "./_components/EditorCategorie";
@@ -11,7 +12,7 @@ export default async function CategoriePage() {
 
   const [{ data: macros, error: e1 }, { data: categorie, error: e2 }, { data: piatti, error: e3 }] =
     await Promise.all([
-      supabase.from("categorie_macro").select("id, nome, nome_en, ordine, ruolo").order("ordine"),
+      supabase.from("categorie_macro").select("id, nome, nome_en, ordine, ruolo, menu_stampato").order("ordine"),
       supabase.from("categorie").select("id, nome, nome_en, ordine, categoria_macro_id").order("ordine"),
       // Solo la colonna che serve al conteggio per categoria.
       supabase.from("piatti").select("categoria_id"),
@@ -29,6 +30,7 @@ export default async function CategoriePage() {
     nome: m.nome,
     nomeEn: m.nome_en,
     ruolo: ruoloMacro(m.ruolo),
+    menuStampato: menuStampato(m.menu_stampato),
     categorie: (categorie ?? [])
       .filter((c) => c.categoria_macro_id === m.id)
       .map((c) => ({

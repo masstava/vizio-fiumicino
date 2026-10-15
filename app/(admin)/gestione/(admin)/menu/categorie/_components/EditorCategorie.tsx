@@ -21,6 +21,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/src/lib/utils";
+import { ETICHETTA_MENU_STAMPATO, MENU_STAMPATI } from "@/src/lib/menu-stampato";
 import { Button } from "@/src/components/ui/Button";
 import { StatusBadge } from "@/src/components/admin/StatusBadge";
 import { TopbarSlot } from "@/src/components/admin/TopbarSlot";
@@ -29,6 +30,7 @@ import {
   creaMacro,
   eliminaCategoria,
   eliminaMacro,
+  impostaMenuStampato,
   riordinaCategorie,
   riordinaMacro,
   rinominaCategoria,
@@ -117,6 +119,22 @@ export function EditorCategorie({ macro: iniziali }: { macro: MacroEditor[] }) {
     }
   }
 
+  async function cambiaMenuStampato(macroId: string, valore: string) {
+    const chiave = `m:${macroId}`;
+    impostaErrore(chiave, null);
+    setInCorso(chiave);
+    try {
+      const esito = await impostaMenuStampato(macroId, valore === "" ? null : valore);
+      if (esito.ok) router.refresh();
+      else impostaErrore(chiave, esito.errore);
+    } catch (err) {
+      console.error(err);
+      impostaErrore(chiave, "Errore durante il salvataggio. Riprova.");
+    } finally {
+      setInCorso(null);
+    }
+  }
+
   async function sposta(categoria: SottoCategoriaEditor, macroId: string) {
     const chiave = `c:${categoria.id}`;
     impostaErrore(chiave, null);
@@ -186,7 +204,9 @@ export function EditorCategorie({ macro: iniziali }: { macro: MacroEditor[] }) {
         gruppi di piatti al loro interno. Trascina dalla maniglia per cambiare l&apos;ordine con
         cui appaiono sul sito. Le etichette <strong className="font-medium">Cucina</strong> e{" "}
         <strong className="font-medium">Bar</strong> indicano quali macro alimentano la home e la
-        vetrina del bar: restano valide anche se le rinomini.
+        vetrina del bar: restano valide anche se le rinomini. Il menu a tendina di ogni
+        macro sceglie in quale PDF da stampare finisce, <strong className="font-medium">Menu</strong>{" "}
+        o <strong className="font-medium">Beverage</strong>: vale solo per i PDF, il sito non cambia.
       </p>
 
       {modulo?.tipo === "nuova-macro" && (
@@ -238,7 +258,26 @@ export function EditorCategorie({ macro: iniziali }: { macro: MacroEditor[] }) {
                               <NomeInglese nomeEn={m.nomeEn} />
                             </div>
                             {!inRinomina && (
-                              <div className="flex items-center gap-4">
+                              <div className="flex w-full flex-wrap items-center gap-x-4 gap-y-1 sm:w-auto">
+                                {/* In quale dei due PDF da stampare finisce
+                                    la macro (solo PDF: il sito non cambia). */}
+                                <label htmlFor={`pdf-${m.id}`} className="sr-only">
+                                  PDF da stampare per {m.nome}
+                                </label>
+                                <select
+                                  id={`pdf-${m.id}`}
+                                  value={m.menuStampato ?? ""}
+                                  disabled={inCorso === chiave}
+                                  onChange={(e) => cambiaMenuStampato(m.id, e.target.value)}
+                                  className={cn(fieldClass, "py-1.5 sm:w-44")}
+                                >
+                                  {MENU_STAMPATI.map((v) => (
+                                    <option key={v} value={v}>
+                                      Nel PDF {ETICHETTA_MENU_STAMPATO[v]}
+                                    </option>
+                                  ))}
+                                  <option value="">In nessun PDF</option>
+                                </select>
                                 <button
                                   type="button"
                                   className={linkClass}

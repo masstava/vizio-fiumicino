@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { menuStampato } from "@/src/lib/menu-stampato";
 import { createClient } from "@/src/lib/supabase/server";
 import {
   nomeGiaUsato,
@@ -87,6 +88,20 @@ export async function rinominaMacro(id: string, input: NomiInput): Promise<Esito
     .update({ nome: nomi.nome, nome_en: nomi.nomeEn })
     .eq("id", id);
   if (errUpd) throw new Error(errUpd.message);
+  aggiorna();
+  return { ok: true };
+}
+
+// PDF in cui stampare la macro: "menu", "beverage" o null (nessuno).
+// Il valore arriva da un <select> del client: si accetta solo uno dei
+// tre, il resto lo rifiuta anche il vincolo nel database.
+export async function impostaMenuStampato(id: string, valore: string | null): Promise<Esito> {
+  const menu = valore === null ? null : menuStampato(valore);
+  if (valore !== null && menu === null) return { ok: false, errore: "Scelta non valida." };
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("categorie_macro").update({ menu_stampato: menu }).eq("id", id);
+  if (error) throw new Error(error.message);
   aggiorna();
   return { ok: true };
 }
